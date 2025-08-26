@@ -1,13 +1,8 @@
 package com.chunjae.studyroad.controller.home;
 
-import com.chunjae.studyroad.common.dto.APIResponse;
-import com.chunjae.studyroad.common.util.ControllerUtils;
-import com.chunjae.studyroad.common.util.JSONUtils;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 
 /**
  * HomeController 구현체
@@ -36,6 +31,7 @@ public class HomeControllerImpl implements HomeController {
 		
 		try {
 			request.getRequestDispatcher("/WEB-INF/views/common/home.jsp").forward(request, response);
+			
 		} catch (Exception e) {
 			
 		}

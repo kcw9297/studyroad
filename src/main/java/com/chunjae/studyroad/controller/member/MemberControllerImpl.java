@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.controller.member;
 
+import java.util.Objects;
+
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.util.ControllerUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
@@ -42,19 +44,34 @@ public class MemberControllerImpl implements MemberController {
 	@Override
 	public void postInfo(HttpServletRequest request, HttpServletResponse response) {
 
-		// [1] FORM 요청 파라미터 확인
-		String strId = request.getParameter("id");
-		String name = request.getParameter("name");
-		System.out.printf("strId = %s, name = %s\n", strId, name);
+		try {
+			String method = request.getMethod();
+			System.out.println(method);
+			
+			if (!Objects.equals(method, "POST")) {
+				response.sendRedirect("/studyroad");
+				return;
+			}
+			
+			
+			// [1] FORM 요청 파라미터 확인
+			String strId = request.getParameter("id");
+			String name = request.getParameter("name");
+			System.out.printf("strId = %s, name = %s\n", strId, name);
+			
+			long id = Long.parseLong(request.getParameter("id"));
+			
+			// [2] 회원정보 조회
+			MemberDTO.Info memberInfo = memberService.getInfo(id);
+			
+			
+			// [3] JSON 응답 반환
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!", memberInfo);
+			ControllerUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
 		
-		long id = Long.parseLong(request.getParameter("id"));
-		
-		// [2] 회원정보 조회
-		MemberDTO.Info memberInfo = memberService.getInfo(id);
-		
-		
-		// [3] JSON 응답 반환
-		APIResponse rp = APIResponse.success("요청에 성공했습니다!", memberInfo);
-		ControllerUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+		} catch (Exception e) {
+			
+		}
 	}
 }

@@ -7,16 +7,6 @@ import jakarta.servlet.http.*;
  * (폼을 이용하지 않는 로직에서 발생한 오류)
  */
 public interface ErrorController {
-
-	
-	void sessionError(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	void accessError(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	void noDataError(HttpServletRequest request, HttpServletResponse response);
-	
 	
 	void innerError(HttpServletRequest request, HttpServletResponse response);
 }
