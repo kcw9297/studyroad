@@ -11,7 +11,7 @@
  <body>
     <center>
     <h1>
-	    MY INDEX PAGE
+	    MY STUDYROAD PAGE
 	</h1>
     </center>
  </body>
