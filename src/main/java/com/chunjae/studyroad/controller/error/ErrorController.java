@@ -1,4 +1,4 @@
-package com.chunjae.studyroad.controller.common;
+package com.chunjae.studyroad.controller.error;
 
 import jakarta.servlet.http.*;
 

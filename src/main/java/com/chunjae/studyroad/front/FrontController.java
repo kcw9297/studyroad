@@ -3,7 +3,7 @@ package com.chunjae.studyroad.front;
 import java.io.*;
 import java.util.*;
 
-import com.chunjae.studyroad.controller.common.*;
+import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.member.*;
 
 import jakarta.servlet.*;
@@ -21,7 +21,7 @@ import jakarta.servlet.annotation.*;
 public class FrontController extends HttpServlet {
 	
 	// FrontController 내에서 연결할 Controller
-	private final CommonController baseController = CommonControllerImpl.getInstance();
+	private final HomeController baseController = HomeControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	
 	

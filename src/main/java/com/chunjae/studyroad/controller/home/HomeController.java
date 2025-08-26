@@ -1,11 +1,11 @@
-package com.chunjae.studyroad.controller.common;
+package com.chunjae.studyroad.controller.home;
 
 import jakarta.servlet.http.*;
 
 /**
  * Welcome Page (= HOME) 처리를 담당하는 컨트롤러
  */
-public interface CommonController {
+public interface HomeController {
 
 	/**
 	 * [GET] Welcome Page 페이지 반환 (HOME)
