@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.controller.error;
 
-public class ErrorControllerImpl {
+public class ErrorControllerImpl implements ErrorController {
+	
+	
 
 }

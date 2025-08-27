@@ -3,6 +3,10 @@ package com.chunjae.studyroad.front;
 import java.io.*;
 import java.util.*;
 
+import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.util.HttpUtils;
+import com.chunjae.studyroad.common.util.JSONUtils;
+import com.chunjae.studyroad.common.util.StatusCode;
 import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.member.*;
 
@@ -26,23 +30,56 @@ public class FrontController extends HttpServlet {
 	
 	
     @Override
-    public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void service(HttpServletRequest request, HttpServletResponse response) {
 
-        // [1] 요청 URL 확인
-        String path = request.getServletPath();
-        System.out.println("[FrontController] path = " + path);
-        
-        // 만약 잘못된 요청이면 HOME 이동 후 서블릿 요청/응답 종료
-        if (Objects.isNull(path)) {
-        	response.sendRedirect("/studyroad/home.do");
-        	return;
+        try {
+        	
+        	// [1] 요청 URL 확인
+            String path = request.getServletPath();
+            System.out.println("[FrontController] path = " + path);
+            
+            // 만약 잘못된 요청이면 HOME 이동 후 서블릿 요청/응답 종료
+            if (Objects.isNull(path)) {
+            	response.sendRedirect("/studyroad");
+            	return;
+            }
+            
+            
+            // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
+            if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
+            else if (Objects.equals(path, "/home.do")) baseController.getHome(request, response);
+            else response.sendRedirect("/studyroad"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
+        	
+        	
+        	
+            // [예외 발생] 컨트롤러에서 처리하지 못한 오류가 발생한 경우 범용적 처리 수행
+        } catch (Exception e) {
+        	
+        	// [1] 비동기/동기 요청 확인
+        	String xRequestedWith = request.getHeader("X-Requested-With");
+        	
+        	
+        	// [2] 비동기 처리는 JSON 실패 응답, 동기 처리는 에러 페이지로 redirect 수행
+        	if (Objects.equals(xRequestedWith, "XMLHttpRequest")) sendJSON(response);
+        	else HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
         }
+ 
         
-        // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
-        if (path.startsWith("/member/info.do")) memberController.getInfo(request, response);
-        else if (path.startsWith("/api/member/info.do")) memberController.postInfo(request, response);
-        else if (path.equals("/home.do")) baseController.getHome(request, response);
-        else response.sendRedirect("/studyroad/home.do"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
     }
+    
+    
+    
+    // 실패 응답 발송
+    private void sendJSON(HttpServletResponse response) {
+    	
+    	// [1] 응답객체 생성
+    	APIResponse rp = 
+    			APIResponse.error("내부 오류가 발생했습니다.\n잠시 후에 다시 시도해 주세요", "/studyroad", StatusCode.CODE_INTERNAL_ERROR);
+    	
+    	
+    	// [2] JSON 응답 전송
+    	HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+    
 
 }

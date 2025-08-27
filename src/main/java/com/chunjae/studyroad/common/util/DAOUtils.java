@@ -9,7 +9,6 @@ import com.chunjae.studyroad.common.exception.UtilsException;
  * DAO 내에서 자주 사용하는 기능 및 상수 저장
  */
 public class DAOUtils {
-
 	
 	// 사용 SQL
 	public static final String SQL_MEMBER_FIND_BY_ID = "SELECT * FROM member WHERE id = ?";
