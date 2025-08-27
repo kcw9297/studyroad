@@ -13,13 +13,20 @@ public class Page {
     /**
      * 페이지 요청 객체
      */
-    public static class Request {
-        private Integer page;      // 현재 페이지 번호
-        private Integer size;      // 한 페이지 당 가져올 행 개수
+    public static class Request<T> {
+    	
+    	private T data;				// 페이징 요청 DTO
+        private Integer page;       // 현재 페이지 번호
+        private Integer size;       // 한 페이지 당 가져올 행 개수
 
-        public Request(Integer page, Integer size) {
+        public Request(T data, Integer page, Integer size) {
+        	this.data = data;
             this.page = page;
             this.size = size;
+        }
+        
+        public T getData() {
+            return data;
         }
 
         public Integer getPage() {

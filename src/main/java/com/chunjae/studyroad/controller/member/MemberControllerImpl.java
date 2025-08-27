@@ -3,8 +3,7 @@ package com.chunjae.studyroad.controller.member;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.dto.APIResponse;
-import com.chunjae.studyroad.common.util.ControllerUtils;
-import com.chunjae.studyroad.common.util.JSONUtils;
+import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.*;
 
@@ -12,7 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public class MemberControllerImpl implements MemberController {
-	
+
+
 	// BaseController 인스턴스
 	private static final MemberControllerImpl INSTACE = new MemberControllerImpl();
 	
@@ -29,49 +29,78 @@ public class MemberControllerImpl implements MemberController {
 	
 	
 	@Override
-	public void getInfo(HttpServletRequest request, HttpServletResponse response) {
+	public void getInfoView(HttpServletRequest request, HttpServletResponse response) {
 		
-
 		try {
+
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			if (!HttpUtils.requireMethodOrRedirect(request, response, "GET")) return;
+			
+			
+			// [2] JSP Forward 수행
 			request.getRequestDispatcher("/WEB-INF/views/member/info.jsp").forward(request, response);
 			
-		} catch (Exception e) {
 			
+			// [예외 발생] 에러 페이지로 리다이렉트 수행
+		} catch (Exception e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
+	}
+	
+	
+	
+	@Override
+	public void getListView(HttpServletRequest request, HttpServletResponse response) {
+		
 	}
 
 	
 	@Override
-	public void postInfo(HttpServletRequest request, HttpServletResponse response) {
+	public void getJoinView(HttpServletRequest request, HttpServletResponse response) {
+		
+	}
 
+	
+	@Override
+	public void getEditView(HttpServletRequest request, HttpServletResponse response) {
+		
+	}
+
+	
+	@Override
+	public void postJoinAPI(HttpServletRequest request, HttpServletResponse response) {
+		
 		try {
-			String method = request.getMethod();
-			System.out.println(method);
 			
-			if (!Objects.equals(method, "POST")) {
-				response.sendRedirect("/studyroad");
-				return;
-			}
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			if (!HttpUtils.requireMethodOrRedirect(request, response, "POST")) return;
+
 			
-			
-			// [1] FORM 요청 파라미터 확인
-			String strId = request.getParameter("id");
-			String name = request.getParameter("name");
-			System.out.printf("strId = %s, name = %s\n", strId, name);
-			
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long id = Long.parseLong(request.getParameter("id"));
 			
-			// [2] 회원정보 조회
-			MemberDTO.Info memberInfo = memberService.getInfo(id);
+			
+			// [3] service 조회
+			MemberDTO.Info memberInfo = memberService.getInfo(id); // 반드시 고쳐야 함
 			
 			
-			// [3] JSON 응답 반환
+			// [4] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!", memberInfo);
-			ControllerUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
+			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
-			
+			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+		
 	}
+
+	
+	@Override
+	public void postEditAPI(HttpServletRequest request, HttpServletResponse response) {
+		
+	}
+
 }
