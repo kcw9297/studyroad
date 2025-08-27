@@ -38,7 +38,6 @@ public class FrontController extends HttpServlet {
         	return;
         }
         
-        
         // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
         if (path.startsWith("/member/info.do")) memberController.getInfo(request, response);
         else if (path.startsWith("/api/member/info.do")) memberController.postInfo(request, response);
