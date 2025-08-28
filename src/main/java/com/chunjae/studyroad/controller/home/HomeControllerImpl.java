@@ -30,7 +30,7 @@ public class HomeControllerImpl implements HomeController {
 	public void getHome(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
-			request.getRequestDispatcher("/WEB-INF/views/common/home.jsp").forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/views/home/home.jsp").forward(request, response);
 			
 		} catch (Exception e) {
 			
