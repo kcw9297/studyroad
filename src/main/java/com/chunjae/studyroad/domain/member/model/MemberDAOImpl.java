@@ -60,9 +60,10 @@ class MemberDAOImpl implements MemberDAO {
 							resultSet.getString(4),
 							resultSet.getString(5),
 							resultSet.getString(6),
-							resultSet.getTimestamp(7),
-							resultSet.getTimestamp(8),
-							resultSet.getString(9)
+							resultSet.getString(7),
+							resultSet.getDate(8),
+							resultSet.getDate(9),
+							resultSet.getString(10)
 				    ) : null;
 		}
 	}
