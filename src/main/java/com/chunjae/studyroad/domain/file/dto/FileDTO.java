@@ -1,12 +1,16 @@
 package com.chunjae.studyroad.domain.file.dto;
 
 /**
- * 파일 DTO
+ * 파일의 요청과 응답 정보를 담는 DTO
  */
 public class FileDTO {
+	
+	// 생성자 접근 제한
+	private FileDTO() {}
 
+	
     /**
-     * 파일 DTO - 게시글 내 저장된 파일 정보 조회
+     * 파일 DTO - 조회 응답 
      */
     public static class Info {
 
@@ -33,8 +37,9 @@ public class FileDTO {
         }
     }
 
+    
     /**
-     * 파일 DTO - 게시글에 첨부한 파일 저장
+     * 파일 DTO - 저장 요청
      */
     public static class Store {
 
@@ -82,8 +87,9 @@ public class FileDTO {
         }
     }
 
+    
     /**
-     * 파일 DTO - 게시글 수정 시 변경한 파일 대체
+     * 파일 DTO - 변경된 파일 대체 요청
      */
     public static class Replace {
 

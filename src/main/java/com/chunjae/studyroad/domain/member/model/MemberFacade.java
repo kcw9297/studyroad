@@ -1,4 +1,5 @@
 package com.chunjae.studyroad.domain.member.model;
+
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 /**

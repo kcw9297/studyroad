@@ -3,9 +3,7 @@ package com.chunjae.studyroad.domain.member.model;
 import java.util.Objects;
 
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.Edit;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.JoinRequest;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.JoinResponse;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO.*;
 
 /*
  * MemberService 인터페이스 구현체

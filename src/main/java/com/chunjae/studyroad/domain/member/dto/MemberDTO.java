@@ -3,7 +3,7 @@ package com.chunjae.studyroad.domain.member.dto;
 import java.util.*;
 
 /**
- * 회원 DTO
+ * 회원의 요청 및 응답 정보를 담는 DTO
  */
 public class MemberDTO {
 	
@@ -12,7 +12,7 @@ public class MemberDTO {
     
 	
 	/**
-	 * 회원 DTO - 회원가입 요청
+	 * 회원 DTO - 가입 요청
 	 */
     public static class JoinRequest {
 
@@ -59,7 +59,7 @@ public class MemberDTO {
     
     
 	/**
-	 * 회원 DTO - 회원가입 응답
+	 * 회원 DTO - 가입 응답
 	 */
     public static class JoinResponse {
 
@@ -88,7 +88,7 @@ public class MemberDTO {
 	
 	
     /**
-     * 회원 DTO - 회원정보 조회 응답
+     * 회원 DTO - 정보 조회 응답
      */
     public static class Info {
 
@@ -165,10 +165,9 @@ public class MemberDTO {
          }
     }
     
-    
 
     /**
-     * 회원 DTO - 정보수정 요청
+     * 회원 DTO - 수정 요청
      */
     public static class Edit {
 
