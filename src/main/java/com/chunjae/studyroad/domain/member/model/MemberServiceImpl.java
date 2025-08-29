@@ -3,6 +3,9 @@ package com.chunjae.studyroad.domain.member.model;
 import java.util.Objects;
 
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO.Edit;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO.JoinRequest;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO.JoinResponse;
 
 /*
  * MemberService 인터페이스 구현체
@@ -26,6 +29,31 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberDTO.Info getInfo(Long mId) {
 		return memberDAO.findById(mId).orElse(null);		
+	}
+
+	@Override
+	public JoinResponse join(JoinRequest request) {
+		return null;
+	}
+
+	@Override
+	public void edit(Edit request) {
+		
+	}
+
+	@Override
+	public void editPassword(Long memberId, String password) {
+		
+	}
+
+	@Override
+	public void quit(Long memberId) {
+		
+	}
+
+	@Override
+	public void recoverQuit(Long memberId) {
+		
 	}
 	
 	

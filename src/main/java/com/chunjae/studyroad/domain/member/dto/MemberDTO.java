@@ -2,6 +2,9 @@ package com.chunjae.studyroad.domain.member.dto;
 
 import java.util.*;
 
+/**
+ * 회원 DTO
+ */
 public class MemberDTO {
 	
 	// 생성자 접근 제한
@@ -112,6 +115,14 @@ public class MemberDTO {
              this.quitedAt = quitedAt;
              this.status = status;
          }
+         
+         
+         /**
+          *  조회된 비밀번호 삭제
+          */
+         public void removePassword() {
+         	 this.password = "";
+         }
 
          public Long getMemberId() {
              return memberId;
@@ -152,10 +163,6 @@ public class MemberDTO {
          public String getStatus() {
              return status;
          }
-         
-        public void removePassword() {
-        	this.password = "";
-        }
     }
     
     
