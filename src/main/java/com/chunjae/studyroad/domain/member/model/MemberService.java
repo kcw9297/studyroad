@@ -3,7 +3,7 @@ package com.chunjae.studyroad.domain.member.model;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 /**
- * 회원과 관련한 비즈니스 로직 처리
+ * 회원 비즈니스 로직 처리
  */
 public interface MemberService {
 

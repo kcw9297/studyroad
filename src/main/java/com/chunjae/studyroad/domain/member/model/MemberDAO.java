@@ -5,7 +5,7 @@ import java.util.*;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 /**
- * 회원 테이블과 상호작용하는 DAO
+ * 회원 DB 로직 관리
  */
 interface MemberDAO {
 
