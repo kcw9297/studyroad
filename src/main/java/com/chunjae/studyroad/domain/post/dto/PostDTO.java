@@ -2,6 +2,7 @@ package com.chunjae.studyroad.domain.post.dto;
 
 import java.util.*;
 
+import com.chunjae.studyroad.domain.file.dto.FileDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 
@@ -10,8 +11,8 @@ import com.chunjae.studyroad.domain.member.dto.MemberDTO;
  */
 public class PostDTO {
 
-    /**
-     * 게시글 DTO - 정보조회 응답
+	/**
+     * 게시글 DTO - 게시글 정보조회 응답
      */
     public static class Info {
 
@@ -27,7 +28,8 @@ public class PostDTO {
         private String status;
         private Boolean isNotice;
         private Long likeCount;
-        private MemberDTO.Info member;  // 게시글 작성회원 정보
+        private MemberDTO.Info member;  	// 게시글 작성회원 정보
+        private List<FileDTO.Info> files;	// 게시글 내 업로드된 파일 정보
 
         public Info(String postId, String title, String boardType, String category, String grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, MemberDTO.Info member) {
             this.postId = postId;
@@ -43,6 +45,15 @@ public class PostDTO {
             this.isNotice = isNotice;
             this.likeCount = likeCount;
             this.member = member;
+        }
+
+        
+        /**
+         * 게시글 내 업로드한 파일 정보 추가
+         * @param files 대상 파일 DTO List
+         */
+        public void setPostFiles(List<FileDTO.Info> files) {
+            this.files = files;
         }
 
         public String getPostId() {
@@ -96,8 +107,13 @@ public class PostDTO {
         public MemberDTO.Info getMember() {
             return member;
         }
+
+        public List<FileDTO.Info> getFiles() {
+            return files;
+        }
     }
 
+    
     /**
      * 게시글 DTO - 검색 요청
      */
@@ -138,6 +154,7 @@ public class PostDTO {
         }
     }
 
+    
     /**
      * 게시글 DTO - 작성 요청
      */
@@ -190,6 +207,7 @@ public class PostDTO {
         }
     }
 
+    
     /**
      * 게시글 DTO - 수정 요청
      */
