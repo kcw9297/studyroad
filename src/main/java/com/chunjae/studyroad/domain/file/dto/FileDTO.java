@@ -39,17 +39,17 @@ public class FileDTO {
 
     
     /**
-     * 파일 DTO - 저장 요청
+     * 파일 DTO - 게시글에 첨부한 파일 저장
      */
     public static class Store {
 
         private Long postId;
-        private Long originalName;
+        private String originalName;
         private String storedName;
         private Long size;
         private String ext;
 
-        public Store(Long postId, Long originalName) {
+        public Store(Long postId, String originalName) {
             this.postId = postId;
             this.originalName = originalName;
         }
@@ -70,7 +70,7 @@ public class FileDTO {
             return postId;
         }
 
-        public Long getOriginalName() {
+        public String getOriginalName() {
             return originalName;
         }
 
