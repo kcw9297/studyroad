@@ -3,7 +3,7 @@ package com.chunjae.studyroad.common.dto;
 import java.util.List;
 
 /**
- * 페이지 요청 및 응답을 제공하기 위한 객체
+ * 페이징 DTO - 페이지 요청 및 응답을 제공하기 위한 객체
  */
 public class Page {
 
@@ -11,20 +11,25 @@ public class Page {
     private Page() {}
 
     /**
-     * 페이지 요청 객체
+     * 페이징 DTO - 요청
      */
     public static class Request<T> {
-    	
-    	private T data;				// 페이징 요청 DTO
+
+        private T data;				// 페이징 요청 DTO
         private Integer page;       // 현재 페이지 번호
         private Integer size;       // 한 페이지 당 가져올 행 개수
-
-        public Request(T data, Integer page, Integer size) {
-        	this.data = data;
+        
+        public Request(Integer page, Integer size) {
             this.page = page;
             this.size = size;
         }
         
+        public Request(T data, Integer page, Integer size) {
+            this.data = data;
+            this.page = page;
+            this.size = size;
+        }
+
         public T getData() {
             return data;
         }
@@ -39,7 +44,7 @@ public class Page {
     }
 
     /**
-     * 페이지 응답 객체
+     * 페이징 DTO - 응답
      */
     public static class Response<T> {
 

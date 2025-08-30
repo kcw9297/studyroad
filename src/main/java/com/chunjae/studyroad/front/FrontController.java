@@ -3,10 +3,8 @@ package com.chunjae.studyroad.front;
 import java.io.*;
 import java.util.*;
 
-import com.chunjae.studyroad.common.dto.APIResponse;
-import com.chunjae.studyroad.common.util.HttpUtils;
-import com.chunjae.studyroad.common.util.JSONUtils;
-import com.chunjae.studyroad.common.util.StatusCode;
+import com.chunjae.studyroad.common.dto.*;
+import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.member.*;
 
@@ -21,7 +19,11 @@ import jakarta.servlet.annotation.*;
  */
 
 @WebServlet(urlPatterns = {"*.do"})
-@MultipartConfig   
+@MultipartConfig(
+		fileSizeThreshold = 1*1024*1024,	// RAM 저장 범위 : 1MB (초과 시 임시파일 사용)
+		maxFileSize = 5*1024*1024, 			// 최대 허용 범위 : 5MB
+		maxRequestSize = 15*1024*1024		// 모든 파일을 합쳐 15MB 초과 불가능
+)
 public class FrontController extends HttpServlet {
 	
 	// FrontController 내에서 연결할 Controller

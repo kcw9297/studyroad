@@ -3,54 +3,54 @@ package com.chunjae.studyroad.controller.member;
 import jakarta.servlet.http.*;
 
 /**
- * 회원 관련 페이지 및 비동기 로직 처리
+ * 회원 동기/비동기 요청 처리
  */
 public interface MemberController {
 
-	/**
-	 * [GET] /member/list.do
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	void getListView(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	/**
-	 * [GET] /member/info.do
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	void getInfoView(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	/**
-	 * [GET] /member/join.do
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	void getJoinView(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	/**
-	 * [GET] /member/edit.do
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	void getEditView(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	/**
-	 * [POST] /api/member/join.do
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	void postJoinAPI(HttpServletRequest request, HttpServletResponse response);
-	
-	
-	/**
-	 * [POST] /api/member/edit.do
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	void postEditAPI(HttpServletRequest request, HttpServletResponse response);
+    /**
+     * [GET] /member/join.do
+     */
+    void getJoinView(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [GET] /member/info.do
+     */
+    void getInfoView(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [GET] /member/edit.do
+     */
+    void getEditView(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [GET] /member/recover-quit.do
+     */
+    void getRecoverQuitView(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [POST] /member/join.do
+     */
+    void postJoinAPI(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [POST] /member/edit.do
+     */
+    void postEditAPI(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [POST] /member/quit.do
+     */
+    void postQuitAPI(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [POST] /member/recover-quit.do
+     */
+    void postRecoverQuitAPI(HttpServletRequest request, HttpServletResponse response);
 }
