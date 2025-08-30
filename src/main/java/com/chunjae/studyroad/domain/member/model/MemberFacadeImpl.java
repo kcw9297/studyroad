@@ -1,6 +1,6 @@
 package com.chunjae.studyroad.domain.member.model;
 
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.*;
+import com.chunjae.studyroad.domain.member.dto.*;
 
 
 public class MemberFacadeImpl implements MemberFacade {
@@ -13,36 +13,36 @@ public class MemberFacadeImpl implements MemberFacade {
 	
 	// 생성자 접근 제한
 	private MemberFacadeImpl() {}
-	
-	
+
 	@Override
-	public Info getInfo(Long memberId) {
+	public MemberDTO.Info getInfo(Long memberId) {
+		return memberService.getInfo(memberId);
+	}
+
+	@Override
+	public MemberDTO.Info join(MemberDTO.Join request) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public JoinResponse join(JoinRequest request) {
-		return null;
-	}
-
-	@Override
-	public void edit(Edit request) {
-		
-	}
-
-	@Override
-	public void editPassword(Long memberId, String password) {
+	public void edit(MemberDTO.Edit request) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void quit(Long memberId) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void recoverQuit(Long memberId) {
+		// TODO Auto-generated method stub
 		
 	}
+	
+
 
 }

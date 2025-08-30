@@ -7,6 +7,8 @@ import java.sql.*;
 
 import com.chunjae.studyroad.common.util.DAOUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO.Edit;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO.Join;
 
 class MemberDAOImpl implements MemberDAO {
 
@@ -66,6 +68,42 @@ class MemberDAOImpl implements MemberDAO {
 							resultSet.getString(10)
 				    ) : null;
 		}
+	}
+
+	@Override
+	public Long save(Join request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer updateName(Edit request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer updateNickname(Edit request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer updatePassword(Edit request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer updateAddress(Edit request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer updateStatus(Long memberId, String status) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

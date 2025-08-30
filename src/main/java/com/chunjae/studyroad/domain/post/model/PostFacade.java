@@ -21,7 +21,7 @@ public interface PostFacade {
      * @param request   게시글 페이징 검색요청 DTO
      * @return Info     검색된 페이징된 게시글정보 DTO 반환
      */
-    Page.Response<PostDTO.Info> search(Page.Request<PostDTO.Search> request);
+    Page.Response<PostDTO.Info> getList(Page.Request<PostDTO.Search> request);
 
 
     /**

@@ -30,29 +30,48 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public JoinResponse join(JoinRequest request) {
+	public Info join(Join request) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void edit(Edit request) {
+	public void editName(Edit request) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void editPassword(Long memberId, String password) {
+	public void editNickname(Edit request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void editPassword(Edit request) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void editAddress(Edit request) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void quit(Long memberId) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void recoverQuit(Long memberId) {
+		// TODO Auto-generated method stub
 		
 	}
+
+
 	
 	
 
