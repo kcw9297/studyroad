@@ -8,7 +8,7 @@ import com.chunjae.studyroad.domain.post.dto.PostDTO;
  */
 public interface PostService {
 
-    /**
+	/**
      * 게시글정보 조회
      * @param postId    대상 게시글번호 (PK)
      * @return Info     조회된 게시글정보 DTO 반환
@@ -60,17 +60,24 @@ public interface PostService {
      */
     void unlike(Long postId);
 
-    
+
     /**
      * 게시글 삭제
-     * @param postId	삭제 대상 게시글번호 (PK)
+     * @param postId    삭제 대상 게시글번호 (PK)
      */
     void remove(Long postId);
 
 
     /**
-     * 탈퇴 회원이 작성한 게시글 일괄 삭제
-     * @param memberId	탈퇴 대상 회원번호
+     * 탈퇴 회원이 작성한 게시글을 일괄 삭제상태로 변경
+     * @param memberId    삭제 대상 게시글번호 (PK)
      */
     void quit(Long memberId);
+
+
+    /**
+     * 탈퇴 회원이 작성한 게시글 복구
+     * @param memberId  탈퇴 대상 회원번호
+     */
+    void recoverQuit(Long memberId);
 }

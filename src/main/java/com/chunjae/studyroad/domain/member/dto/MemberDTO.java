@@ -12,9 +12,9 @@ public class MemberDTO {
     
 	
 	/**
-	 * 회원 DTO - 가입 요청
-	 */
-    public static class JoinRequest {
+     * 회원 DTO - 회원가입 요청
+     */
+    public static class Join {
 
         private String name;
         private String nickname;
@@ -23,7 +23,7 @@ public class MemberDTO {
         private String zipcode;
         private String address;
 
-        public JoinRequest(String name, String nickname, String email, String password, String zipcode, String address) {
+        public Join(String name, String nickname, String email, String password, String zipcode, String address) {
             this.name = name;
             this.nickname = nickname;
             this.email = email;
@@ -56,35 +56,7 @@ public class MemberDTO {
             return address;
         }
     }
-    
-    
-	/**
-	 * 회원 DTO - 가입 응답
-	 */
-    public static class JoinResponse {
 
-        private String name;
-        private String nickname;
-        private String joinedAt;
-
-        public JoinResponse(String name, String nickname, String joinedAt) {
-            this.name = name;
-            this.nickname = nickname;
-            this.joinedAt = joinedAt;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getNickname() {
-            return nickname;
-        }
-
-        public String getJoinedAt() {
-            return joinedAt;
-        }
-    }
 	
 	
     /**
@@ -167,24 +139,38 @@ public class MemberDTO {
     
 
     /**
-     * 회원 DTO - 수정 요청
+     * 회원 DTO - 정보수정 요청
      */
     public static class Edit {
 
         private Long memberId;
+        private String name;
         private String nickname;
-        private String email;
+        private String password;
         private String zipcode;
         private String address;
 
         // 생성자 접근 제한 : 메소드를 통해서만 접근하도록 통제
-        public Edit(Long memberId, String nickname, String email, String zipcode, String address) {
+        private Edit(Long memberId, String name, String nickname, String password, String zipcode, String address) {
             this.memberId = memberId;
+            this.name = name;
             this.nickname = nickname;
-            this.email = email;
+            this.password = password;
             this.zipcode = zipcode;
             this.address = address;
         }
+
+
+        /**
+         * 회원정보 수정 - 성함
+         * @param memberId  수정 요청 회원번호 (PK)
+         * @param name      수정 성함
+         * @return Edit     생성된 수정요청 DTO 반환
+         */
+        public static Edit editName(Long memberId, String name) {
+            return new Edit(memberId, name, null, null, null, null);
+        }
+
 
         /**
          * 회원정보 수정 - 닉네임
@@ -193,18 +179,20 @@ public class MemberDTO {
          * @return Edit     생성된 수정요청 DTO 반환
          */
         public static Edit editNickname(Long memberId, String nickname) {
-            return new Edit(memberId, nickname, null, null, null);
+            return new Edit(memberId, null, nickname, null, null, null);
         }
 
+
         /**
-         * 회원정보 수정 - 이메일
+         * 회원정보 수정 - 비밀번호
          * @param memberId  수정 요청 회원번호 (PK)
-         * @param email     수정 이메일
+         * @param password  수정 비밀번호
          * @return Edit     생성된 수정요청 DTO 반환
          */
-        public static Edit editEmail(Long memberId, String email) {
-            return new Edit(memberId, null, email, null, null);
+        public static Edit editPassword(Long memberId, String password) {
+            return new Edit(memberId, null, null, password, null, null);
         }
+
 
         /**
          * 회원정보 수정 - 주소 정보
@@ -214,7 +202,7 @@ public class MemberDTO {
          * @return Edit     생성된 수정요청 DTO 반환
          */
         public static Edit editAddress(Long memberId, String zipcode, String address) {
-            return new Edit(memberId, null, null, zipcode, address);
+            return new Edit(memberId, null, null, null, zipcode, address);
         }
 
 
@@ -222,12 +210,16 @@ public class MemberDTO {
             return memberId;
         }
 
+        public String getName() {
+            return name;
+        }
+
         public String getNickname() {
             return nickname;
         }
 
-        public String getEmail() {
-            return email;
+        public String getPassword() {
+            return password;
         }
 
         public String getZipcode() {
@@ -238,7 +230,6 @@ public class MemberDTO {
             return address;
         }
     }
-
 
 
 }

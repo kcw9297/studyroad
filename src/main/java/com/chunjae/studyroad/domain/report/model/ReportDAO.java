@@ -19,21 +19,24 @@ public interface ReportDAO {
     /**
      * 신고 작성
      * @param request   신고 작성요청 DTO
+     * @return Long     저장에 성공한 신고번호 반환
      */
-    void save(ReportDTO.Submit request);
+    Long save(ReportDTO.Submit request);
 
 
     /**
      * 신고번호 기반 상태 변경 (처리전 → 변경 후 상태)
      * @param reportId  삭제 대상 신고번호 (PK)
      * @param status    처리할 상태 (승인, 반려)
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
      */
-    void updateStatusById(Long reportId, String status);
+    Integer updateStatus(Long reportId, String status);
 
 
     /**
-     * 회원번호 기반 상태 변경 (처리전 → 반려)
-     * @param memberId    탈퇴 대상 회원번호
+     * 회원번호 기반 상태 변경 (처리전 ↔ 탈퇴됨)
+     * @param memberId  탈퇴 대상 회원번호
+     * @param status    처리할 상태 (처리전, 탈퇴됨)
      */
-    void updateStatusToRejectByMemberId(Long memberId);
+    void updateStatusByMemberId(Long memberId, String status);
 }

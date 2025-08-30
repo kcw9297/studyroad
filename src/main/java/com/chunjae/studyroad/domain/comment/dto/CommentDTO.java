@@ -96,6 +96,23 @@ public class CommentDTO {
         }
     }
     
+    
+    /**
+     * 댓글 DTO - 댓글 검색
+     */
+    public static class Search {
+
+        private String order;
+
+        public Search(String order) {
+            this.order = order;
+        }
+
+        public String getOrder() {
+            return order;
+        }
+    }
+    
 
     /**
      * 댓글 DTO - 작성 요청

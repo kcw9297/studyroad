@@ -18,24 +18,34 @@ public interface LikeDAO {
 
 
     /**
-     * 최초로 추천 버튼을 눌러 추천
+     * 추천 활성화 (추천정보 저장)
      * @param request   추천 요청 DTO
+     * @return Long     저장에 성공한 추천번호 반환
      */
     Long save(LikeDTO.Like request);
 
 
     /**
-     * 추천상태 변경 (활성화 ↔ 비활성화)
-     * @param memberId      추천을 시도하는 대상 회원번호
-     * @param targetId      대상 고유번호
-     * @param targetType    대상 유형 (게시글, 댓글)
+     * 추천번호 기반 상태 변경
+     * @param likeId    대상 추천번호 (PK)
+     * @param status    변경 상태 (활성화, 탈퇴됨)
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
      */
-    void toggleIsLiked(Long memberId, Long targetId, String targetType);
+    Integer updateStatus(Long likeId, String status);
 
 
     /**
-     * 회원번호 기반 추천상태 변경 (활성화 true → 비활성화 false)
-     * @param memberId    탈퇴 대상 회원번호
+     * 회원번호 기반 상태 변경
+     * @param memberId  대상 회원번호 (PK)
+     * @param status    변경 상태 (활성화, 탈퇴됨)
      */
-    void updateIsLikedToFalseByMemberId(Long memberId);
+    void updateStatusByMemberId(Long memberId, String status);
+
+
+    /**
+     * 회원번호 기반 추천정보 삭제
+     * @param likeId    대상 추천번호 (PK)
+     * @return Integer  삭제에 성공한 행 개수 반환 (성공 = 1)
+     */
+    Integer deleteById(Long likeId);
 }

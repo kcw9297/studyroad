@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.domain.post.model;
 
+import java.util.*;
+
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
@@ -13,7 +15,7 @@ public interface PostDAO {
      * @param postId    대상 게시글번호 (PK)
      * @return Info     조회된 게시글정보 DTO 반환
      */
-    PostDTO.Info findById(Long postId);
+    Optional<PostDTO.Info> findById(Long postId);
 
 
     /**
@@ -27,6 +29,7 @@ public interface PostDAO {
     /**
      * 게시글 작성
      * @param request   게시글 작성요청 DTO
+     * @return Long     저장에 성공한 게시글번호 반환
      */
     Long save(PostDTO.Write request);
 
@@ -34,28 +37,33 @@ public interface PostDAO {
     /**
      * 게시글 수정
      * @param request   게시글 수정요청 DTO
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
      */
-    void update(PostDTO.Edit request);
+    Integer update(PostDTO.Edit request);
 
 
-    /**
-     * 게시글번호 기반 상태 변경 (게시중 → 삭제)
-     * @param postId    삭제 대상 게시글번호 (PK)
-     */
-    void updateStatusById(Long postId);
-
-
-    /**
-     * 회원번호 기반 상태 변경 (게시중 → 삭제)
-     * @param memberId    탈퇴 대상 회원번호
-     */
-    void updateStatusToRemovedByMemberId(Long memberId);
-    
-    
     /**
      * 게시글번호 기반 상태 추천수 변경
      * @param postId    삭제 대상 게시글번호 (PK)
      * @param amount    변동 수량
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
      */
-    void updateLikeCountById(Long postId, Long amount);
+    Integer updateLikeCount(Long postId, Long amount);
+
+
+    /**
+     * 게시글번호 기반 상태 변경
+     * @param postId    삭제 대상 게시글번호 (PK)
+     * @param status    변경 상태 (게시중, 삭제)
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
+     */
+    Integer updateStatus(Long postId, String status);
+
+
+    /**
+     * 회원번호 기반 상태 변경
+     * @param memberId  탈퇴 대상 회원번호
+     * @param status    변경 상태 (게시중, 탈퇴됨)
+     */
+    void updateStatusByMemberId(Long memberId, String status);
 }

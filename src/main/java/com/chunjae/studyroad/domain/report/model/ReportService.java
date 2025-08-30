@@ -32,8 +32,15 @@ public interface ReportService {
 
 
     /**
-     * 탈퇴 회원이 작성한 신고 일괄 반려 처리
-     * @param memberId	탈퇴 대상 회원번호
+     * 탈퇴 회원이 작성한 신고를 일괄적으로 탈퇴됨 상태 처리
+     * @param memberId    삭제 대상 게시글번호 (PK)
      */
     void quit(Long memberId);
+
+
+    /**
+     * 탈퇴 회원이 작성한 신고 복구
+     * @param memberId  탈퇴 대상 회원번호
+     */
+    void recoverQuit(Long memberId);
 }
