@@ -27,7 +27,7 @@ public class HttpUtils {
 	 * @param response 			서블릿 응답 객체
 	 * @param json 				JSON 문자열
 	 * @param httpStatus 		HTTP 응답 코드 (200, 400, 500, ...)
-	 * @throws UtilsException 	HTTP 응답으로 JSON 데이터를 전달하지 못한 경우
+	 * @throws InitException 	HTTP 응답으로 JSON 데이터를 전달하지 못한 경우
 	 */
 	public static void writeJSON(HttpServletResponse response, String json, Integer httpStatus) {
 		
@@ -50,7 +50,7 @@ public class HttpUtils {
 	 * HTTP 요청 내 JSON 문자열 추출
 	 * @param request 			서블릿 요청 객체
 	 * @return 					추출된 JSON 문자열 반환
-	 * @throws UtilsException 	문자열 추출에 실패한 경우 
+	 * @throws InitException 	문자열 추출에 실패한 경우 
 	 */
 	public static String getJSONString(HttpServletRequest request) {
 		

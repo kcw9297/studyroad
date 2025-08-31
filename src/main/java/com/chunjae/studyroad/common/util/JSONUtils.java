@@ -1,6 +1,6 @@
 package com.chunjae.studyroad.common.util;
 
-import com.chunjae.studyroad.common.exception.UtilsException;
+import com.chunjae.studyroad.common.exception.InitException;
 import com.fasterxml.jackson.databind.*;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class JSONUtils {
 	 * 데이터 → JSON 변환 지원 메소드
 	 * @param data				JSON 변환대상 데이터 객체
 	 * @return					변환된 JSON 문자열 반환
-	 * @throws UtilsException	데이터 → JSON 변환에 실패 시
+	 * @throws InitException	데이터 → JSON 변환에 실패 시
 	 */
 	public static String toJSON(Object data) {
 		
@@ -30,7 +30,7 @@ public class JSONUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[JSONUtils] 데이터 → JSON 변환에 실패했습니다! 원인 : %s\n", e);
-			throw new UtilsException(e);
+			throw new InitException(e);
 		}
 	}
 
@@ -40,7 +40,7 @@ public class JSONUtils {
 	 * @param json				변환 대상 JSON 문자열
 	 * @param dataClass			변환할 데이터 객체의 원래 타입 클래스
 	 * @return					변환된 데이터 객체 반환 (제네릭 타입)
-	 * @throws UtilsException	JSON → 데이터 변환에 실패 시
+	 * @throws InitException	JSON → 데이터 변환에 실패 시
 	 */
     public static <T> T toData(String json, Class<T> dataClass) {
         
@@ -49,7 +49,7 @@ public class JSONUtils {
             
         } catch (Exception e) {
             System.out.printf("[JSONUtils] JSON → 데이터 변환에 실패했습니다! 원인 : %s\n", e);
-            throw new UtilsException(e);
+            throw new InitException(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class JSONUtils {
 	 * @param json				변환 대상 JSON 문자열
 	 * @param dataClass			변환할 데이터 객체의 원래 타입 클래스
 	 * @return					변환된 데이터 객체 리스트 반환 (제네릭 타입)
-	 * @throws UtilsException	JSON → 데이터 변환에 실패 시
+	 * @throws InitException	JSON → 데이터 변환에 실패 시
 	 */
     public static <T> List<T> toDataList(String json, Class<T> dataClass) {
 
@@ -73,7 +73,7 @@ public class JSONUtils {
             
         } catch (Exception e) {
             System.out.printf("[JSONUtils] JSON → 데이터 변환에 실패했습니다! 원인 : %s\n", e);
-            throw new UtilsException(e);
+            throw new InitException(e);
         }
     }
 	
