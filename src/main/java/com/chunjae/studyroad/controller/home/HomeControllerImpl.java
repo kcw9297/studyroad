@@ -16,9 +16,7 @@ public class HomeControllerImpl implements HomeController {
 	private final MemberService memberService = MemberServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
-	private HomeControllerImpl() {
-		System.out.println("BaseControllerImpl 생성!");
-	}
+	private HomeControllerImpl() {}
 	
 	// 이미 생성한 인스턴스 제공
 	public static HomeControllerImpl getInstance() {

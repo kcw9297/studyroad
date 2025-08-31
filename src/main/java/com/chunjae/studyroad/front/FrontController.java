@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.chunjae.studyroad.common.dto.*;
 import com.chunjae.studyroad.common.util.*;
+import com.chunjae.studyroad.controller.file.*;
 import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.member.*;
 
@@ -27,7 +28,8 @@ import jakarta.servlet.annotation.*;
 public class FrontController extends HttpServlet {
 	
 	// FrontController 내에서 연결할 Controller
-	private final HomeController baseController = HomeControllerImpl.getInstance();
+	private final HomeController homeController = HomeControllerImpl.getInstance();
+	private final FileController fileController = FileControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	
 	
@@ -38,19 +40,21 @@ public class FrontController extends HttpServlet {
         	
         	// [1] 요청 URL 확인
             String path = request.getServletPath();
-            System.out.println("[FrontController] path = " + path);
+            System.out.printf("[FrontController] request path = %s\n", path);
             
             // 만약 잘못된 요청이면 HOME 이동 후 서블릿 요청/응답 종료
             if (Objects.isNull(path)) {
-            	response.sendRedirect("/studyroad");
+            	response.sendRedirect("/");
             	return;
             }
             
             
             // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
             if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
-            else if (Objects.equals(path, "/home.do")) baseController.getHome(request, response);
-            else response.sendRedirect("/studyroad"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
+            else if (Objects.equals(path, "/home.do")) homeController.getHome(request, response);
+            else if (Objects.equals(path, "/file/display.do")) fileController.getDisplayFile(request, response);
+            else if (Objects.equals(path, "/file/download.do")) fileController.getDisplayFile(request, response);
+            else response.sendRedirect("/"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
         	
         	
         	
@@ -73,13 +77,7 @@ public class FrontController extends HttpServlet {
     
     // 실패 응답 발송
     private void sendJSON(HttpServletResponse response) {
-    	
-    	// [1] 응답객체 생성
-    	APIResponse rp = 
-    			APIResponse.error("내부 오류가 발생했습니다.\n잠시 후에 다시 시도해 주세요", "/studyroad", StatusCode.CODE_INTERNAL_ERROR);
-    	
-    	
-    	// [2] JSON 응답 전송
+    	APIResponse rp = APIResponse.error("내부 오류가 발생했습니다.\n잠시 후에 다시 시도해 주세요", "/", StatusCode.CODE_INTERNAL_ERROR);
     	HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
     

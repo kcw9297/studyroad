@@ -13,6 +13,14 @@
     <h1>
 	    MY STUDYROAD PAGE
 	</h1>
+	
+	<!-- 페이지에 바로 보여주기 -->
+	<img src="/file/display.do?fileName=cat.gif&type=BASE"
+     alt="로고 이미지"
+     width="300">
+     
+     
+
     </center>
  </body>
 </html>

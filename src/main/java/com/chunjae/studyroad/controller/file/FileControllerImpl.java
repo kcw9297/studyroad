@@ -9,7 +9,19 @@ import com.chunjae.studyroad.common.util.*;
 
 
 public class FileControllerImpl implements FileController {
+	
+    // 인스턴스
+    private static final FileControllerImpl INSTANCE = new FileControllerImpl();
 
+    // 생성자 접근 제한
+    private FileControllerImpl() {}
+
+    // 인스턴스 제공
+    public static final FileControllerImpl getInstance() {
+        return INSTANCE;
+    }
+	
+	
     @Override
     public void getDownloadFile(HttpServletRequest request, HttpServletResponse response) {
 
@@ -27,8 +39,11 @@ public class FileControllerImpl implements FileController {
             FileUtils.writeFile(file, response);
 
             // 현재 예외 처리는 서버 내에서 로그 출력
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.printf("파일 다운로드 실패! 원인 : %s\n", e);
+            
+        } catch (Exception e) {
+        	System.out.printf("기타 원인으로 파일 다운로드 실패! 원인 : %s\n", e);
         }
     }
 
@@ -49,29 +64,39 @@ public class FileControllerImpl implements FileController {
             FileUtils.writeFile(file, response);
 
             // 현재 예외 처리는 서버 내에서 로그 출력
+        } catch (IOException e) {
+            System.out.printf("파일 출력과정 실패! 원인 : %s\n", e);
+            displayEmptyImage(response);
+            
         } catch (Exception e) {
-            System.out.printf("파일 출력 실패! 원인 : %s\n", e);
-            try {
-                displayEmptyImage(response);
-            } catch (Exception ex) {
-                System.out.printf("Empty 파일 출력 실패! 원인 : %s\n", e);
-            }
+        	System.out.printf("기타 원인으로 파일 출력 실패! 원인 : %s\n", e);
+            displayEmptyImage(response);
         }
     }
 
 
     // 파일 조회 - 파일명 & 파일 디렉토리명 조회 후 파일 생성
     private static File getFile(HttpServletRequest request) {
-        String type = request.getParameter("type");
+    	
+    	// 파일 파라미터
+        String type = request.getParameter("type").toLowerCase();
         String fileName = request.getParameter("fileName");
+    	
+    	// 파일 경로 : webapp/imgs/{type}/{fileName}
+        String realPath = request.getServletContext().getRealPath(String.format("/imgs/%s/%s", type, fileName));
         return FileUtils.getStoredFile(type, fileName);
     }
 
     // 빈 이미지 파일 전시
-    private static void displayEmptyImage(HttpServletResponse response) throws IOException {
-        File emptyFile = FileUtils.getStoredFile(FileUtils.DIR_BASE, FileUtils.EMPTY_IMAGE);
-        response.setContentType("image/png");
-        response.setContentLengthLong(emptyFile.length());
-        FileUtils.writeFile(emptyFile, response);
+    private static void displayEmptyImage(HttpServletResponse response) {
+        
+    	try {
+        	File emptyFile = FileUtils.getStoredFile(FileUtils.DIR_BASE, FileUtils.EMPTY_IMAGE);
+            response.setContentType("image/png");
+            response.setContentLengthLong(emptyFile.length());
+            FileUtils.writeFile(emptyFile, response);
+        } catch (Exception ex) {
+            System.out.printf("Empty 파일 출력 실패! 원인 : %s\n", ex);
+        }
     }
 }
