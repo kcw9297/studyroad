@@ -12,5 +12,5 @@ public interface HomeController {
 	 * @param request	서블릿 요청 객체
 	 * @param response	서블릿 응답 객체
 	 */
-	void getHome(HttpServletRequest request, HttpServletResponse response);
+	void getHomeView(HttpServletRequest request, HttpServletResponse response);
 }

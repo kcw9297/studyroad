@@ -16,9 +16,7 @@ public class HomeControllerImpl implements HomeController {
 	private final MemberService memberService = MemberServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
-	private HomeControllerImpl() {
-		System.out.println("BaseControllerImpl 생성!");
-	}
+	private HomeControllerImpl() {}
 	
 	// 이미 생성한 인스턴스 제공
 	public static HomeControllerImpl getInstance() {
@@ -27,7 +25,7 @@ public class HomeControllerImpl implements HomeController {
 	
 	
 	@Override
-	public void getHome(HttpServletRequest request, HttpServletResponse response) {
+	public void getHomeView(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
 			request.getRequestDispatcher("/WEB-INF/views/home/home.jsp").forward(request, response);

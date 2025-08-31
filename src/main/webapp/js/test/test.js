@@ -21,7 +21,7 @@ $(document).ready(function() {
 		data: formData,
 		processData: false,
 		contentType: false,
-		dataType: "JSON",
+		dataType: "json",
 	
 		success: function(response) {
 		

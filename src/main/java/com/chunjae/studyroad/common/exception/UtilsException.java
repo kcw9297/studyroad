@@ -1,5 +1,8 @@
 package com.chunjae.studyroad.common.exception;
 
+/**
+ * 유틸 함수에 발생한 예외를 감싸는 예외
+ */
 public class UtilsException extends RuntimeException {
 	
     public UtilsException(String message) {

@@ -1,12 +1,12 @@
 package com.chunjae.studyroad.common.util;
 
 import java.util.*;
-
-import com.chunjae.studyroad.common.exception.ServletException;
-
 import java.io.*;
 
 import jakarta.servlet.http.*;
+
+import com.chunjae.studyroad.common.exception.ServletException;
+
 
 /**
  * Controller 내에서 자주 사용하는 기능을 지원하는 유틸 클래스
@@ -16,6 +16,10 @@ public class HttpUtils {
 	// 에러 페이지에서 사용 상수
 	private static final String ALERT_MESSAGE = "alertMessage";
 	private static final String REDIRECT_URL = "redirectUrl";
+	
+	// 메소드 상수
+	public static final String POST = "POST";
+	public static final String GET = "GET";
 	
 	
 	// 생성자 접근 제한
@@ -77,37 +81,40 @@ public class HttpUtils {
 	
 	
 	/**
-	 * 의도한 Http 요청인지 검증 (현재 프로젝트는 GET 아니면 POST 요청만 취급)
+	 * 의도한 Http 요청인지 검증 후, 올바른 요청이 아니면 redirect (현재 프로젝트는 GET 아니면 POST 요청만 취급)
 	 * @param request		서블릿 요청 객체
 	 * @param response		서블릿 응답 객체
 	 * @param targetMethod	개발자가 의도한 메소드명 (GET, POST, ...)
 	 * @return boolean		정상적인 POST 요청이면 true, 그 외의 요청이면 false 반환
 	 */
-	public static boolean requireMethodOrRedirect(HttpServletRequest request, HttpServletResponse response, String targetMethod) {
+	public static boolean requireMethodOrRedirectHome(HttpServletRequest request, HttpServletResponse response, String targetMethod) {
      
 		try {
-			
-			// [1] 요청 메소드 & 동기/비동기 요청 확인
-			String method = request.getMethod();
-			String xRequestedWith = request.getHeader("X-Requested-With");
-			
-			
-			// [2] 메소드 검증 - POST 요청이면 true 반환
-			if (Objects.equals(method, targetMethod)) return true;
-			
-			
-			// [3-1] POST 요청이 아님 - 비동기 요청이면 아무것도 하지 않고 false 반환
-			if (xRequestedWith.equals("XMLHttpRequest")) return false;
-		
-			
-			// [3-2] POST 요청이 아님 - VIEW 요청이면 리다이렉트 수행 후 false 반환
-			response.sendRedirect("/studyroad");
+			// [1] 메소드 검증 - 올바른 요청이면 true 반환
+			if (Objects.equals(request.getMethod(), targetMethod)) return true;
+
+			// [2] 올바른 요청이 아님 - 리다이렉트 수행 후 false 반환
+			response.sendRedirect("/");
 			return false;
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] Redirect 처리에 실패했습니다! : %s\n", e);
 			throw new ServletException(e);
 		}
+    }
+	
+	
+	
+	/**
+	 * 의도한 Http 요청인지 검증 (현재 프로젝트는 GET 아니면 POST 요청만 취급)
+	 * @param request		서블릿 요청 객체
+	 * @param targetMethod	개발자가 의도한 메소드명 (GET, POST, ...)
+	 */
+	public static void checkMethod(HttpServletRequest request, String targetMethod) {
+		if (!Objects.equals(request.getMethod(), targetMethod)) {
+			throw new ServletException();
+		}
+			
     }
 	
 	

@@ -39,6 +39,14 @@ public class APIResponse {
 	
 	/**
 	 *  성공한 사실과 다음의 데이터 전달
+	 *  - 메세지
+	 */
+	public static APIResponse success(String message) {
+	    return success(message, null);
+	}
+	
+	/**
+	 *  성공한 사실과 다음의 데이터 전달
 	 *  - 데이터
 	 */
 	public static APIResponse success(Object data) {
