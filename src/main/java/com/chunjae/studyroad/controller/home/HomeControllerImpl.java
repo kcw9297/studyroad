@@ -25,7 +25,7 @@ public class HomeControllerImpl implements HomeController {
 	
 	
 	@Override
-	public void getHome(HttpServletRequest request, HttpServletResponse response) {
+	public void getHomeView(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
 			request.getRequestDispatcher("/WEB-INF/views/home/home.jsp").forward(request, response);
