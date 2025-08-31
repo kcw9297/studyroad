@@ -117,10 +117,26 @@ public class FileUtils {
         // 확장자 추출
         int idx = originalFileName.lastIndexOf(".");
         String ext = idx > 0 ? originalFileName.substring(idx) : ""; // 확장자가 없으면 공백
+        String fileName = getShortUUID(); // 랜덤 문자열로 파일 생성
 
-        // 파일 존재유무 확인
-        File storeFile = new File(storeDir, getShortUUID()); // 랜덤 문자열로 파일 생성
-        while (storeFile.exists()) storeFile = new File(storeDir, getShortUUID()); // 중복 시 새로운 문자열로 생성
+        // 파일 객체 생성
+        File storeFile = ext.length() == 0 ? 
+        		new File(storeDir, fileName) : // 확장자가 없는 경우
+        		new File(storeDir, String.format("%s.%s", fileName, ext));
+  		
+        // 중복 시 새로운 문자열로 생성		
+        while (storeFile.exists()) {
+        	
+        	// 새로운 랜덤 문자열 생성
+        	fileName = getShortUUID();
+        	
+        	// 새로운 파일 객체 생성
+        	storeFile = ext.length() == 0 ? 
+            		new File(storeDir, fileName) : // 확장자가 없는 경우
+                	new File(storeDir, String.format("%s.%s", fileName, ext));
+        }
+        
+        // 생성된 파일 반환
         return storeFile;
     }
 

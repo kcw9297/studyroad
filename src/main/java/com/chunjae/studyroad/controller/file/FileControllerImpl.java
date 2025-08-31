@@ -30,7 +30,7 @@ public class FileControllerImpl implements FileController {
             File file = getFile(request);
 
             // [2] 응답 설정
-            String encodedFileName = FileUtils.encodeToUTF8(file.getName());    // 한글 깨짐 방지
+            String encodedFileName = FileUtils.encodeToUTF8(request.getParameter("fileName"));
             response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", encodedFileName));
             response.setContentType("application/octet-stream");
             response.setContentLengthLong(file.length());
@@ -81,20 +81,24 @@ public class FileControllerImpl implements FileController {
     	// 파일 파라미터
         String type = request.getParameter("type").toLowerCase();
         String fileName = request.getParameter("fileName");
-    	
-    	// 파일 경로 : webapp/imgs/{type}/{fileName}
-        String realPath = request.getServletContext().getRealPath(String.format("/imgs/%s/%s", type, fileName));
+        
+        // 파일 객체 생성 및 반환
         return FileUtils.getStoredFile(type, fileName);
     }
 
+    
     // 빈 이미지 파일 전시
     private static void displayEmptyImage(HttpServletResponse response) {
         
     	try {
+    		// 빈 이미지를 담은 객체 생성
         	File emptyFile = FileUtils.getStoredFile(FileUtils.DIR_BASE, FileUtils.EMPTY_IMAGE);
+        	
+        	// 응답 타입 - 이미지 (빈 이미지 출력)
             response.setContentType("image/png");
             response.setContentLengthLong(emptyFile.length());
             FileUtils.writeFile(emptyFile, response);
+            
         } catch (Exception ex) {
             System.out.printf("Empty 파일 출력 실패! 원인 : %s\n", ex);
         }

@@ -53,7 +53,7 @@ public class FrontController extends HttpServlet {
             if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
             else if (Objects.equals(path, "/home.do")) homeController.getHome(request, response);
             else if (Objects.equals(path, "/file/display.do")) fileController.getDisplayFile(request, response);
-            else if (Objects.equals(path, "/file/download.do")) fileController.getDisplayFile(request, response);
+            else if (Objects.equals(path, "/file/download.do")) fileController.getDownloadFile(request, response);
             else response.sendRedirect("/"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
         	
         	
