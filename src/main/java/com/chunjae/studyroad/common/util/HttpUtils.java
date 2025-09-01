@@ -5,6 +5,7 @@ import java.io.*;
 
 import jakarta.servlet.http.*;
 
+import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.exception.ServletException;
 
 
@@ -22,7 +23,8 @@ public class HttpUtils {
 	public static final String GET = "GET";
 	
 	// 프레임 JSP
-	public static final String JSP_FRAME = "/WEB-INF/views/base/frame.jsp";
+	private static final String JSP_FRAME = "/WEB-INF/views/base/frame.jsp";
+	private static final String BODY = "body";
 	
 	
 	// 생성자 접근 제한
@@ -146,7 +148,7 @@ public class HttpUtils {
 			
 			
 			// [2] 기본 리다이렉트 주소 (/studyroad) 설정 후, 에러페이지 이동
-			request.setAttribute(REDIRECT_URL, "/studyroad");
+			request.setAttribute(REDIRECT_URL, "/");
 			request.getRequestDispatcher("/WEB-INF/views/error/error.jsp").forward(request, response);
 			
 			
@@ -196,6 +198,23 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	/**
+	 * frame.jsp 내 ${body} 내 삽입할 jsp 파일 주소 값 삽입
+	 * @param request	서블릿 요청 객체
+	 * @param jspPath	${body} 내 삽입할 jsp 파일 주소
+	 */
+	public static void setBodyAttribute(HttpServletRequest request, String jspPath) {
+		
+		try {
+			request.setAttribute(BODY, jspPath);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
 			throw new ServletException(e);
 		}
 	}

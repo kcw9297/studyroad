@@ -1,4 +1,4 @@
-package com.chunjae.studyroad.controller.file;
+package com.chunjae.studyroad.controller.base;
 
 import jakarta.servlet.http.*;
 
@@ -8,16 +8,16 @@ import java.util.*;
 import com.chunjae.studyroad.common.util.*;
 
 
-public class FileControllerImpl implements FileController {
+public class BaseControllerImpl implements BaseController {
 	
     // 인스턴스
-    private static final FileControllerImpl INSTANCE = new FileControllerImpl();
+    private static final BaseControllerImpl INSTANCE = new BaseControllerImpl();
 
     // 생성자 접근 제한
-    private FileControllerImpl() {}
+    private BaseControllerImpl() {}
 
     // 인스턴스 제공
-    public static final FileControllerImpl getInstance() {
+    public static final BaseControllerImpl getInstance() {
         return INSTANCE;
     }
 	
@@ -85,8 +85,21 @@ public class FileControllerImpl implements FileController {
         // 파일 객체 생성 및 반환
         return FileUtils.getStoredFile(type, fileName);
     }
-
     
+    
+	@Override
+	public void getEditorView(HttpServletRequest request, HttpServletResponse response) {
+		
+		try {
+			request.getRequestDispatcher("/WEB-INF/views/base/editor.jsp").forward(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("editor view forward 실패! 원인 : %s\n", e);
+			displayEmptyImage(response);
+		}
+	}
+	
+	
     // 빈 이미지 파일 전시
     private static void displayEmptyImage(HttpServletResponse response) {
         

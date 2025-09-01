@@ -3,9 +3,10 @@ package com.chunjae.studyroad.front;
 import java.io.*;
 import java.util.*;
 
+import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.*;
 import com.chunjae.studyroad.common.util.*;
-import com.chunjae.studyroad.controller.file.*;
+import com.chunjae.studyroad.controller.base.*;
 import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.login.*;
 import com.chunjae.studyroad.controller.mail.*;
@@ -31,7 +32,7 @@ public class FrontController extends HttpServlet {
 	
 	// FrontController 내에서 연결할 Controller
 	private final HomeController homeController = HomeControllerImpl.getInstance();
-	private final FileController fileController = FileControllerImpl.getInstance();
+	private final BaseController baseController = BaseControllerImpl.getInstance();
 	private final MailController mailController = MailControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	private final LoginController loginController = LoginControllerImpl.getInstance();
@@ -54,12 +55,14 @@ public class FrontController extends HttpServlet {
             
             // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
             if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
+            else if (Objects.equals(path, "/member/join.do")) memberController.getJoinView(request, response);
             else if (Objects.equals(path, "/home.do")) homeController.getHomeView(request, response);
             else if (Objects.equals(path, "/login.do")) loginController.getLoginView(request, response);
             else if (Objects.equals(path, "/api/login.do")) loginController.postLoginAPI(request, response);
             else if (Objects.equals(path, "/api/logout.do")) loginController.postLogoutAPI(request, response);
-            else if (Objects.equals(path, "/file/display.do")) fileController.getDisplayFile(request, response);
-            else if (Objects.equals(path, "/file/download.do")) fileController.getDownloadFile(request, response);
+            else if (Objects.equals(path, "/file/display.do")) baseController.getDisplayFile(request, response);
+            else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
+            else if (Objects.equals(path, "/editor.do")) baseController.getEditorView(request, response);
             else if (Objects.equals(path, "/api/mail/send.do")) mailController.postSendAPI(request, response);
             else if (Objects.equals(path, "/test.do")) request.getRequestDispatcher("/WEB-INF/views/test/test.jsp").forward(request, response);
             else response.sendRedirect("/"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
@@ -89,13 +92,7 @@ public class FrontController extends HttpServlet {
     }
     
     
-    
-    /*
-     
-     
-     
-     
-     */
+
     
 
 }

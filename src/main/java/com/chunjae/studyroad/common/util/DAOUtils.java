@@ -11,10 +11,6 @@ import com.chunjae.studyroad.common.exception.InitException;
 /*
  * DAO 내에서 자주 사용하는 기능 및 상수 저장
  */
-
-/*
- * DAO 내에서 자주 사용하는 기능 및 상수 저장
- */
 public class DAOUtils {
 
     // 사용 SQL
@@ -22,7 +18,6 @@ public class DAOUtils {
     public static final String SQL_MEMBER_FIND_BY_EMAIL = "SELECT * FROM member WHERE email = ?";
     public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name, size, ext) VALUES (?, ?, ?, ?, ?)";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
-
 
     // DAO 예외 메세지
     public static final String MESSAGE_SQL_EX = "SQL 처리 실패! 오류 원인 = %s\n";
