@@ -2,6 +2,8 @@ package com.chunjae.studyroad.domain.member.model;
 
 import java.util.Objects;
 
+import com.chunjae.studyroad.common.dto.LoginMember;
+import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO.*;
 
@@ -27,6 +29,21 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public MemberDTO.Info getInfo(Long mId) {
 		return memberDAO.findById(mId).orElse(null);		
+	}
+	
+	@Override
+	public LoginMember login(String email, String password) {
+		
+		MemberDTO.Info memberInfo = 
+				memberDAO.findByEmail(email).orElseThrow(() -> new ServiceException("가입한 이메일이 존재하지 않습니다"));
+		
+		if(!password.equals(memberInfo.getPassword())) throw new ServiceException("비밀번호가 맞지 않습니다");
+		
+		
+		LoginMember loginMember = new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus());
+		
+		
+		return loginMember;		
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.member.model;
 
+import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 /**
@@ -7,12 +8,21 @@ import com.chunjae.studyroad.domain.member.dto.MemberDTO;
  */
 public interface MemberService {
 
-    /**
+	/**
      * 회원정보 조회
      * @param memberId  대상 회원번호 (PK)
      * @return Info     조회된 회원정보 DTO 반환
      */
     MemberDTO.Info getInfo(Long memberId);
+
+
+    /**
+     * 로그인
+     * @param email  대상 아이디
+     * @param password  대상 비밀번호
+     * @return LoginMember   
+     */
+    LoginMember login(String email, String password);
 
 
     /**

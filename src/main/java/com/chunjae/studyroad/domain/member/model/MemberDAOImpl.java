@@ -50,6 +50,29 @@ class MemberDAOImpl implements MemberDAO {
 	}
 	
 	
+	@Override
+    public Optional<MemberDTO.Info> findByEmail(String email) {
+		
+		try (Connection connection = dataSource.getConnection();
+			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_EMAIL)) {
+			
+			// [1] 파라미터 세팅
+			statement.setString(1, email);
+			
+			// [2] SQL 수행 + 결과 DTO 생성 후 반환
+			return Optional.ofNullable(mapToInfo(statement));
+			
+		} catch (SQLException e) {
+			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			return Optional.empty();
+			
+		} catch (Exception e) {
+			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			return Optional.empty();
+		}
+	}
+	
+	
 	private MemberDTO.Info mapToInfo(PreparedStatement statement) throws SQLException {
 		
 		try (ResultSet resultSet = statement.executeQuery()) {
