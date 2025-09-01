@@ -8,25 +8,29 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Studyroad</title>
 	
-	<!-- JQuery -->
+	<%-- JQuery --%>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	
+	<%-- 공용 스크립트 --%>
+	<script src="<c:url value='/js/base/ajax.js'/>"></script>
+	<script src="<c:url value='/js/base/validation.js'/>"></script>
     	
-	<!-- 공용 CSS -->
+	<%-- 공용 CSS --%>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
 	
 </head>
 
 	<body>
-		<!-- 공용 헤더 불러오기 -->
-		<jsp:include page="/WEB-INF/views/base/header.jsp" />
+		<%-- 공용 헤더 불러오기 --%>
+		<jsp:include page="/WEB-INF/views/base/page/header.jsp" />
 		
-		<!-- 메인 콘텐츠 영역 -->
+		<%-- 메인 콘텐츠 영역 --%>
 		<main class="main">
 		    <jsp:include page="${body}" />
 		</main>
 		
-		<!-- 공용 푸터 불러오기 -->
-		<jsp:include page="/WEB-INF/views/base/footer.jsp" />
+		<%-- 공용 푸터 불러오기 --%>
+		<jsp:include page="/WEB-INF/views/base/page/footer.jsp" />
 
 	</body>
 

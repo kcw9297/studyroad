@@ -31,7 +31,7 @@ public class HomeControllerImpl implements HomeController {
 		
 		try {
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/home/home.jsp");
-			HttpUtils.forwardFrame(request, response);
+			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
 			System.out.printf("editor view forward 실패! 원인 : %s\n", e);
