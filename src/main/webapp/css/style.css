@@ -1,0 +1,52 @@
+
+/* 공용 */
+html, body {margin: 0; padding: 0; height: 100%;}
+body {display: flex; flex-direction: column; min-height: 100vh;}
+main, .main {flex: 1;}
+
+a{color:inherit; text-decoration:none}
+.container{max-width:1300px; margin:0 auto; padding:0px 10px;}
+.text{font-size:14px; color:#555; margin-top:4px;}
+
+/* 헤더, 푸터 */
+.header-top{background:#6A4AE0; color:#FFFFFF; font-size:16px; padding:7px 0;}
+.header-topin{display:flex; align-items:center; justify-content:space-between;}
+.header-sns{display:flex; align-items:center; gap:10px;}
+.header-user{margin-left:12px;}
+.header-user a:hover{text-decoration:underline}
+
+.header-main{border-bottom:1px solid #CCCCCC; background:#FFFFFF; padding:20px 0;}
+.header-mainin{display:flex; align-items:center; justify-content:space-between;}
+.header-logo{display:flex; align-items:center;}
+.header-menu {display:flex; gap:30px; font-size:26px; font-weight:700;}
+.header-menu a:hover{color:#6A4AE0;}
+
+.footer{border-top:1px solid #CCCCCC; background:#FFFFFF;}
+.footer-inner{display:grid; grid-template-columns:auto 1fr; gap:53px; align-items:center; padding:20px 0px;}
+.footer-logo{display:flex; align-items:center;}
+.footer-account{font-size:14px; color:#828282;}
+
+/* 반응형 */
+@media(max-width: 720px){
+.header-menu{gap:10px; font-size:18px;}
+.footer-inner{grid-template-columns:1fr; justify-items:start; gap:0px}
+}
+
+/* 로그인, 회원가입 */
+.main{padding:112px 0;}
+.main-inner{display:flex; justify-content:center;}
+.card{width:100%; max-width:500px; background:#ffffff; border:1px solid #000000; border-radius:16px; padding:50px 100px 90px;}
+.card h1{text-align:center; margin-bottom:30px; font-size:38px; color:#6A4AE0; font-weight:700;}
+
+.field{margin-bottom:10px}
+.input{width:100%; padding:10px; font-size:14px; border:1px solid #000000; border-radius:10px; outline:none; background:#ffffff; box-sizing: border-box;}
+
+.flex{display:flex; gap:5px; align-items:center;}
+.check{padding:10px; font-size:14px; background:#ffffff; color:#6A4AE0; border:1px solid #6A4AE0; border-radius:10px; cursor:pointer; white-space:nowrap;}
+.check:hover{background:#6A4AE0; color:#fff;}
+
+.button{width:100%; margin-top:30px; padding:14px 16px; border:none; border-radius:10px; background:#6A4AE0; color:#ffffff; font-size:18px;}
+.button:hover{background:#584AAF;}
+
+.help{display:flex; justify-content:center; gap:10px; margin-top:10px; font-size:14px; color:#676767;}
+.help a:hover{color:#6A4AE0;}
