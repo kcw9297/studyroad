@@ -2,6 +2,7 @@ package com.chunjae.studyroad.controller.member;
 
 import java.util.*;
 
+import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.util.*;
@@ -31,6 +32,14 @@ public class MemberControllerImpl implements MemberController {
 	@Override
 	public void getJoinView(HttpServletRequest request, HttpServletResponse response) {
 		
+		try {
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/join.jsp");
+			HttpUtils.forwardFrame(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("editor view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+		}
 	}
 
 	

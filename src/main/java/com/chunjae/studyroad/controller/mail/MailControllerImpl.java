@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.controller.mail;
 
+import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.mail.MailSender;
 import com.chunjae.studyroad.common.util.*;

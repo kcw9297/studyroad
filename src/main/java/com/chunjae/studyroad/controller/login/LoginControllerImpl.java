@@ -2,13 +2,13 @@ package com.chunjae.studyroad.controller.login;
 
 import java.util.Objects;
 
+import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
-import com.chunjae.studyroad.common.util.StatusCode;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.MemberService;
 import com.chunjae.studyroad.domain.member.model.MemberServiceImpl;
@@ -44,7 +44,9 @@ public class LoginControllerImpl implements LoginController {
             } else {
                 System.out.println("세션에 로그인 정보 없음");
             }
-			request.getRequestDispatcher("/WEB-INF/views/test/login.jsp").forward(request, response);
+			
+			request.setAttribute("body", "/WEB-INF/views/login/login.jsp");
+			HttpUtils.forwardFrame(request, response);
 			
 		} catch (Exception e) {
 			
@@ -78,6 +80,7 @@ public class LoginControllerImpl implements LoginController {
 		} catch (ServiceException e) {
 			APIResponse rp =  APIResponse.error(e.getMessage(), "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		
 		} catch (Exception e) {
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
