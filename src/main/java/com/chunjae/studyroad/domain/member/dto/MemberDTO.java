@@ -73,9 +73,10 @@ public class MemberDTO {
          private String address;
          private Date joinedAt;
          private Date quitedAt;
+         private Date banEndAt;
          private String status;
 
-         public Info(Long memberId, String name, String nickname, String email, String password, String zipcode, String address, Date joinedAt, Date quitedAt, String status) {
+         public Info(Long memberId, String name, String nickname, String email, String password, String zipcode, String address, Date joinedAt, Date quitedAt, Date banEndAt, String status) {
              this.memberId = memberId;
              this.name = name;
              this.nickname = nickname;
@@ -85,6 +86,7 @@ public class MemberDTO {
              this.address = address;
              this.joinedAt = joinedAt;
              this.quitedAt = quitedAt;
+             this.banEndAt = banEndAt;
              this.status = status;
          }
          
@@ -130,6 +132,10 @@ public class MemberDTO {
 
          public Date getQuitedAt() {
              return quitedAt;
+         }
+
+         public Date getBanEndAt() {
+             return banEndAt;
          }
 
          public String getStatus() {

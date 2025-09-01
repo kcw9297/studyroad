@@ -57,15 +57,20 @@ public class MemberControllerImpl implements MemberController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			if (!HttpUtils.requireMethodOrRedirectHome(request, response, "POST")) return;
+			HttpUtils.checkMethod(request, "POST");
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			long id = Long.parseLong(request.getParameter("id"));
-			
+			String name = request.getParameter("name");
+	        String nickname = request.getParameter("nickname");
+	        String email = request.getParameter("email");
+	        String password = request.getParameter("password");
+	        String zipcode = request.getParameter("zipcode");
+	        String address = request.getParameter("address");
+	        MemberDTO.Join join = new MemberDTO.Join(name, nickname, email, password, zipcode, address);
 			
 			// [3] service 조회
-			MemberDTO.Info memberInfo = memberService.getInfo(id); // 반드시 고쳐야 함
+	        MemberDTO.Info memberInfo = memberService.join(join); 
 			
 			
 			// [4] JSON 응답 반환

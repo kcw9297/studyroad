@@ -18,8 +18,9 @@ import com.chunjae.studyroad.common.exception.InitException;
 public class DAOUtils {
 
     // 사용 SQL
-    public static final String SQL_MEMBER_FIND_BY_ID = "SELECT * FROM member WHERE id = ?";
+    public static final String SQL_MEMBER_FIND_BY_ID = "SELECT * FROM member WHERE member_id = ?";
     public static final String SQL_MEMBER_FIND_BY_EMAIL = "SELECT * FROM member WHERE email = ?";
+    public static final String SQL_MEMBER_SAVE = "INSERT INTO member(name, nickname, email, password, zipcode, detail_address, joined_at, status) VALUES (?, ?, ?, ?, ?, ?, now(), 'ACTIVE')";
     public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name, size, ext) VALUES (?, ?, ?, ?, ?)";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
 

@@ -1,10 +1,13 @@
 package com.chunjae.studyroad.domain.member.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.sql.*;
 import java.sql.*;
 
+import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO.Edit;
@@ -79,26 +82,58 @@ class MemberDAOImpl implements MemberDAO {
 			
 			return resultSet.next() ? 
 					new MemberDTO.Info(
-							resultSet.getLong(1),
-							resultSet.getString(2),
-							resultSet.getString(3),
-							resultSet.getString(4),
-							resultSet.getString(5),
-							resultSet.getString(6),
-							resultSet.getString(7),
-							resultSet.getDate(8),
-							resultSet.getDate(9),
-							resultSet.getString(10)
+							resultSet.getLong("member_id"),
+							resultSet.getString("email"),
+							resultSet.getString("nickname"),
+							resultSet.getString("name"),
+							resultSet.getString("password"),
+							resultSet.getString("zipcode"),
+							resultSet.getString("detail_address"),
+							resultSet.getDate("joined_at"),
+							resultSet.getDate("quited_at"),
+							resultSet.getDate("ban_end_at"),
+							resultSet.getString("status")
 				    ) : null;
 		}
 	}
 
 	@Override
-	public Long save(Join request) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long save(MemberDTO.Join request) {
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				
+				// [1] 파라미터 세팅
+				statement.setString(1, request.getName());
+				statement.setString(2, request.getNickname());
+				statement.setString(3, request.getEmail());
+				statement.setString(4, request.getPassword());
+				statement.setString(5, request.getZipcode());
+				statement.setString(6, request.getAddress());
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				return executeAndGetGeneratedKeys(statement);
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
+	private Long executeAndGetGeneratedKeys(PreparedStatement pstmt) throws SQLException { 
+
+		pstmt.executeUpdate();
+
+		// 자동 생성된 PK값 조회 및 반환
+		try	(ResultSet rs = pstmt.getGeneratedKeys()) {
+			if (rs.next()) return rs.getLong(1);
+			return null;
+		}
+	}
 	@Override
 	public Integer updateName(Edit request) {
 		// TODO Auto-generated method stub

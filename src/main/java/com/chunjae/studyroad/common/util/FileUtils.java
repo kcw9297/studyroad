@@ -15,7 +15,7 @@ import java.util.*;
 public class FileUtils {
 
     // 파일 상수
-    private static final String FILE_PATH = "D:/KSW/project/pro_1_imgs";	// 파일이 저장된 기본 주소
+    private static final String FILE_PATH = "C:/KCW/project/pro_1_imgs";	// 파일이 저장된 기본 주소
     public static final String DIR_BASE = "base";          // 기본 파일이 저장된 디렉토리명
     public static final String DIR_POST = "post";          // 게시글 파일이 저장된 디렉토리명
     public static final String EMPTY_IMAGE = "empty.png";  // 현재 이미지가 존재하지 않을 때 출력

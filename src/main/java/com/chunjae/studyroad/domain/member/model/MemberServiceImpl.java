@@ -48,8 +48,8 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public Info join(Join request) {
-		// TODO Auto-generated method stub
-		return null;
+		Long memberId = memberDAO.save(request);
+		return getInfo(memberId);
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.controller.login;
 
+import java.util.Objects;
+
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ServiceException;
@@ -37,7 +39,7 @@ public class LoginControllerImpl implements LoginController {
     public void getLoginView(HttpServletRequest request, HttpServletResponse response) {
     	try {
     		LoginMember loginMember = SessionUtils.getLoginMember(request);
-            if(loginMember != null){
+            if(Objects.nonNull(loginMember)){
                 System.out.println("로그인 멤버: " + loginMember.getNickname());
             } else {
                 System.out.println("세션에 로그인 정보 없음");
