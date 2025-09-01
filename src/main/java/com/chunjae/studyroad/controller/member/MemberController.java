@@ -32,25 +32,25 @@ public interface MemberController {
 
 
     /**
-     * [POST] /member/join.do
+     * [POST] /api/member/join.do
      */
     void postJoinAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /member/edit.do
+     * [POST] /api/member/edit.do
      */
     void postEditAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /member/quit.do
+     * [POST] /api/member/quit.do
      */
     void postQuitAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /member/recover-quit.do
+     * [POST] /api/member/recover-quit.do
      */
     void postRecoverQuitAPI(HttpServletRequest request, HttpServletResponse response);
 }

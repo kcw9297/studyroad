@@ -7,6 +7,7 @@ import com.chunjae.studyroad.common.dto.*;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.controller.file.*;
 import com.chunjae.studyroad.controller.home.*;
+import com.chunjae.studyroad.controller.login.*;
 import com.chunjae.studyroad.controller.mail.*;
 import com.chunjae.studyroad.controller.member.*;
 
@@ -33,6 +34,7 @@ public class FrontController extends HttpServlet {
 	private final FileController fileController = FileControllerImpl.getInstance();
 	private final MailController mailController = MailControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
+	private final LoginController loginController = LoginControllerImpl.getInstance();
 	
 	
     @Override
@@ -53,6 +55,8 @@ public class FrontController extends HttpServlet {
             // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
             if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
             else if (Objects.equals(path, "/home.do")) homeController.getHomeView(request, response);
+            else if (Objects.equals(path, "/login.do")) loginController.getLoginView(request, response);
+            else if (Objects.equals(path, "/api/login.do")) loginController.postLoginAPI(request, response);
             else if (Objects.equals(path, "/file/display.do")) fileController.getDisplayFile(request, response);
             else if (Objects.equals(path, "/file/download.do")) fileController.getDownloadFile(request, response);
             else if (Objects.equals(path, "/api/mail/send.do")) mailController.postSendAPI(request, response);
