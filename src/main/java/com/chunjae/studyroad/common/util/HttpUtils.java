@@ -5,6 +5,7 @@ import java.io.*;
 
 import jakarta.servlet.http.*;
 
+import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.exception.ServletException;
 
 
@@ -20,6 +21,10 @@ public class HttpUtils {
 	// 메소드 상수
 	public static final String POST = "POST";
 	public static final String GET = "GET";
+	
+	// 프레임 JSP
+	private static final String JSP_FRAME = "/WEB-INF/views/base/frame.jsp";
+	private static final String BODY = "body";
 	
 	
 	// 생성자 접근 제한
@@ -143,7 +148,7 @@ public class HttpUtils {
 			
 			
 			// [2] 기본 리다이렉트 주소 (/studyroad) 설정 후, 에러페이지 이동
-			request.setAttribute(REDIRECT_URL, "/studyroad");
+			request.setAttribute(REDIRECT_URL, "/");
 			request.getRequestDispatcher("/WEB-INF/views/error/error.jsp").forward(request, response);
 			
 			
@@ -157,8 +162,8 @@ public class HttpUtils {
 	
 	/**
 	 * 로그인 페이지로 리다이렉트 수행
-	 * @param request		서블릿 요청 객체
-	 * @param response		서블릿 응답 객체
+	 * @param request	서블릿 요청 객체
+	 * @param response	서블릿 응답 객체
 	 */
 	public static void sendLoginPage(HttpServletRequest request, HttpServletResponse response) {
 		
@@ -171,11 +176,60 @@ public class HttpUtils {
 			
 			
 			// [2] 로그인 페이지에 리다이렉트
-			response.sendRedirect(String.format("/studyroad/login?returnUrl=%s", fullUri));
+			response.sendRedirect(String.format("/login?returnUrl=%s", fullUri));
 			
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] 로그인 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	/**
+	 * 뼈대가 되는 frame.jsp forward 수행
+	 * @param request	서블릿 요청 객체
+	 * @param response	서블릿 응답 객체
+	 */
+	public static void forwardFrame(HttpServletRequest request, HttpServletResponse response) {
+		
+		try {
+			request.getRequestDispatcher(JSP_FRAME).forward(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	/**
+	 * frame.jsp 내 ${body} 내 삽입할 jsp 파일 주소 값 삽입
+	 * @param request	서블릿 요청 객체
+	 * @param jspPath	${body} 내 삽입할 jsp 파일 주소
+	 */
+	public static void setBodyAttribute(HttpServletRequest request, String jspPath) {
+		
+		try {
+			request.setAttribute(BODY, jspPath);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	/**
+	 * 홈(Index) 페이지로 redirect 수행
+	 * @param response
+	 */
+	public static void redirectHome(HttpServletResponse response) {
+		try {
+			response.sendRedirect("/");
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] HOME reditect 수행에 실패했습니다! : %s\n", e);
 			throw new ServletException(e);
 		}
 	}

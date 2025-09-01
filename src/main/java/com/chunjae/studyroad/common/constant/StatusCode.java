@@ -1,4 +1,4 @@
-package com.chunjae.studyroad.common.util;
+package com.chunjae.studyroad.common.constant;
 
 public class StatusCode {
 
