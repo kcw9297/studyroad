@@ -5,6 +5,7 @@ import java.io.*;
 
 import jakarta.servlet.http.*;
 
+import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.exception.ServletException;
 
@@ -50,7 +51,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 	
@@ -79,7 +80,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] HTTP 요청 내 JSON 문자열 추출에 실패했습니다! 원인 : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 	
@@ -104,7 +105,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
     }
 	
@@ -117,7 +118,7 @@ public class HttpUtils {
 	 */
 	public static void checkMethod(HttpServletRequest request, String targetMethod) {
 		if (!Objects.equals(request.getMethod(), targetMethod)) {
-			throw new ServletException();
+			throw new ControllerException();
 		}
 			
     }
@@ -154,7 +155,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] 에러 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 
@@ -181,7 +182,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] 로그인 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 	
