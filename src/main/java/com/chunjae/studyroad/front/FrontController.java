@@ -61,8 +61,8 @@ public class FrontController extends HttpServlet {
             else if (Objects.equals(path, "/login.do")) loginController.getLoginView(request, response);
             else if (Objects.equals(path, "/api/login.do")) loginController.postLoginAPI(request, response);
             else if (Objects.equals(path, "/api/logout.do")) loginController.postLogoutAPI(request, response);
-            else if (Objects.equals(path, "/file/display.do")) fileController.getDisplayFile(request, response);
-            else if (Objects.equals(path, "/file/download.do")) fileController.getDownloadFile(request, response);
+            else if (Objects.equals(path, "/file/display.do")) baseController.getDisplayFile(request, response);
+            else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
             else if (Objects.equals(path, "/file/display.do")) baseController.getDisplayFile(request, response);
             else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
             else if (Objects.equals(path, "/editor.do")) baseController.getEditorView(request, response);

@@ -199,7 +199,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 	
@@ -216,7 +216,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 	
@@ -231,7 +231,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] HOME reditect 수행에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
+			throw new ControllerException(e);
 		}
 	}
 	
