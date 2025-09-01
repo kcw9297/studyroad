@@ -45,7 +45,8 @@ public class FrontController extends HttpServlet {
         	
         	// [1] 요청 URL 확인
             String path = request.getServletPath();
-            System.out.printf("[FrontController] request path = %s\n", path);
+            if (!path.startsWith("/file/display.do"))
+            	System.out.printf("[FrontController] request path = %s\n", path);
             
             // 만약 잘못된 요청이면 HOME 이동 후 서블릿 요청/응답 종료
             if (Objects.isNull(path)) {
@@ -53,7 +54,12 @@ public class FrontController extends HttpServlet {
             	return;
             }
             
-            // [2] 요청한 URL에 따라 적절한 컨트롤러에 연결
+            
+            // [2] 파라미터에 상수 삽입
+            setConstantAttribute(request);
+            
+            
+            // [3] 요청한 URL에 따라 적절한 컨트롤러에 연결
             if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
             else if (Objects.equals(path, "/member/join.do")) memberController.getJoinView(request, response);
             else if (Objects.equals(path, "/api/member/join.do")) memberController.postJoinAPI(request, response);
@@ -70,8 +76,8 @@ public class FrontController extends HttpServlet {
             else if (Objects.equals(path, "/home.do")) homeController.getHomeView(request, response);
             else if (Objects.equals(path, "/test.do")) request.getRequestDispatcher("/WEB-INF/views/test/test.jsp").forward(request, response);
             else response.sendRedirect("/"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
-        	
-        	
+
+            
             // 컨트롤러에서 처리하지 못한 오류가 발생한 경우 범용적 처리 수행
         } catch (Exception e) {
         	
@@ -88,8 +94,20 @@ public class FrontController extends HttpServlet {
     }
     
     
-    
-    // 실패 응답 발송
+    // 상수 파라미터 삽입
+    private void setConstantAttribute(HttpServletRequest request) {
+    	request.setAttribute("patternEmail", ValidationUtils.PATTERN_EMAIL);
+    	request.setAttribute("patternPassword", ValidationUtils.PATTERN_PASSWORD);
+    	
+    	request.setAttribute("minLengthEmail", ValidationUtils.MIN_LANGTH_EMAIL);
+    	request.setAttribute("maxLengthEmail", ValidationUtils.MAX_LANGTH_EMAIL);
+    	request.setAttribute("minLengthPassword", ValidationUtils.MIN_LANGTH_PASSWORD);
+    	request.setAttribute("maxLengthPassword", ValidationUtils.MAX_LANGTH_PASSWORD);
+	}
+
+
+
+	// 실패 응답 발송
     private void sendJSON(HttpServletResponse response) {
     	APIResponse rp = APIResponse.error("내부 오류가 발생했습니다.\n잠시 후에 다시 시도해 주세요", "/", StatusCode.CODE_INTERNAL_ERROR);
     	HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

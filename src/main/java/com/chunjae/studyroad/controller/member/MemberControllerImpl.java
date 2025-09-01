@@ -34,10 +34,10 @@ public class MemberControllerImpl implements MemberController {
 		
 		try {
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/join.jsp");
-			HttpUtils.forwardFrame(request, response);
+			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
-			System.out.printf("editor view forward 실패! 원인 : %s\n", e);
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}

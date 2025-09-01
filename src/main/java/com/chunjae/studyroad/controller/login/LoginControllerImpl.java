@@ -33,7 +33,7 @@ public class LoginControllerImpl implements LoginController {
     public static LoginControllerImpl getInstance() {
         return INSTANCE;
     }
-
+ 
 
     @Override
     public void getLoginView(HttpServletRequest request, HttpServletResponse response) {
@@ -45,11 +45,12 @@ public class LoginControllerImpl implements LoginController {
                 System.out.println("세션에 로그인 정보 없음");
             }
 			
-			request.setAttribute("body", "/WEB-INF/views/login/login.jsp");
-			HttpUtils.forwardFrame(request, response);
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/login/login.jsp");
+			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
-			
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
     }
 
@@ -64,25 +65,25 @@ public class LoginControllerImpl implements LoginController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			String email = request.getParameter("email");
 			String password = request.getParameter("password");
+			System.out.printf("email = %s, password = %s\n", email, password);
 			
 			
 			// [3] service 조회
 			LoginMember loginMember = memberService.login(email, password);
-			
 			SessionUtils.setLoginMember(request, loginMember);
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!", "/");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
-			// [예외 발생] 오류 응답 반환
+			// 오류 응답 반환
 		} catch (ServiceException e) {
-			APIResponse rp =  APIResponse.error(e.getMessage(), "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			APIResponse rp =  APIResponse.error(e.getMessage(), StatusCode.CODE_INPUT_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);
 		
 		} catch (Exception e) {
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			APIResponse rp =  APIResponse.error("오류가 발생했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
     	
