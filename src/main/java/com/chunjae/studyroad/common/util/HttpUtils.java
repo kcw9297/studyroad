@@ -7,7 +7,6 @@ import jakarta.servlet.http.*;
 
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.constant.StatusCode;
-import com.chunjae.studyroad.common.exception.ServletException;
 
 
 /**

@@ -134,6 +134,7 @@ class MemberDAOImpl implements MemberDAO {
 			return null;
 		}
 	}
+	
 	@Override
 	public Integer updateName(Edit request) {
 		try (Connection connection = dataSource.getConnection();

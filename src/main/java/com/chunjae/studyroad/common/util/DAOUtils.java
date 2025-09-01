@@ -24,7 +24,12 @@ public class DAOUtils {
     public static final String SQL_MEMBER_UPDATE_STATUS = "UPDATE member SET status = ? WHERE member_id = ?";
     public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name, size, ext) VALUES (?, ?, ?, ?, ?)";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
-
+    public static final String SQL_POST_FIND_BY_ID = "SELECT p.post_id, p.title, p.board_type, p.category, p.grade, p.content, p.written_at, p.edited_at, p.views, p.status AS post_status, p.is_notice, p.like_count,"
+    													+ " m.member_id, m.name, m.nickname, m.email, m.password, m.zipcode, m.detail_address, m.joined_at, m.quited_at, m.ban_end_at, m.status AS member_status FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.post_id = ?";
+    public static final String SQL_POST_SAVE = "INSERT INTO post(member_id, title, board_type, category, grade, content, is_notice) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static final String SQL_POST_UPDATE = "UPDATE post SET title = ?, category = ?, grade = ?, content = ? WHERE post_id = ? AND member_id = ?";
+    public static final String SQL_POST_UPDATE_STATUS = "UPDATE post SET status = ? WHERE post_id = ?";
+    
     // DAO 예외 메세지
     public static final String MESSAGE_SQL_EX = "SQL 처리 실패! 오류 원인 = %s\n";
     public static final String MESSAGE_EX = "기타 오류로 DAO 오류 발생! 오류 원인 = %s\n";

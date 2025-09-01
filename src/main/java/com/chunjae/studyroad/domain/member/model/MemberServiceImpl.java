@@ -54,7 +54,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void editName(Edit request) {
-		if (memberDAO.updateName(request) == 1) {
+		if (Objects.equals(memberDAO.updateName(request), 1)) {
 	        System.out.println("이름 수정 성공");
 	    } else {
 	        System.out.println("이름 수정 실패");
@@ -63,7 +63,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void editNickname(Edit request) {
-		if (memberDAO.updateNickname(request) == 1) {
+		if (Objects.equals(memberDAO.updateNickname(request), 1)) {
 	        System.out.println("닉네임 수정 성공");
 	    } else {
 	        System.out.println("닉네임 수정 실패");
@@ -72,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void editPassword(Edit request) {
-		if (memberDAO.updatePassword(request) == 1) {
+		if (Objects.equals(memberDAO.updatePassword(request), 1)) {
 	        System.out.println("비밀번호 수정 성공");
 	    } else {
 	        System.out.println("비밀번호 수정 실패");
@@ -81,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void editAddress(Edit request) {
-		if (memberDAO.updateAddress(request) == 1) {
+		if (Objects.equals(memberDAO.updateAddress(request), 1)) {
 	        System.out.println("주소 수정 성공");
 	    } else {
 	        System.out.println("주소 수정 실패");
