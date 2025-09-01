@@ -11,6 +11,7 @@ import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.login.*;
 import com.chunjae.studyroad.controller.mail.*;
 import com.chunjae.studyroad.controller.member.*;
+import com.chunjae.studyroad.controller.post.*;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -35,6 +36,7 @@ public class FrontController extends HttpServlet {
 	private final BaseController baseController = BaseControllerImpl.getInstance();
 	private final MailController mailController = MailControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
+	private final PostController postController = PostControllerImpl.getInstance();
 	private final LoginController loginController = LoginControllerImpl.getInstance();
 	
 	
@@ -71,6 +73,9 @@ public class FrontController extends HttpServlet {
             else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
             else if (Objects.equals(path, "/file/display.do")) baseController.getDisplayFile(request, response);
             else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
+            else if (Objects.equals(path, "/api/post/write.do")) postController.postWriteAPI(request, response);
+            else if (Objects.equals(path, "/api/post/edit.do")) postController.postEditAPI(request, response);
+            else if (Objects.equals(path, "/api/post/remove.do")) postController.postRemoveAPI(request, response);
             else if (Objects.equals(path, "/editor.do")) baseController.getEditorView(request, response);
             else if (Objects.equals(path, "/api/mail/send.do")) mailController.postSendAPI(request, response);
             else if (Objects.equals(path, "/home.do")) homeController.getHomeView(request, response);

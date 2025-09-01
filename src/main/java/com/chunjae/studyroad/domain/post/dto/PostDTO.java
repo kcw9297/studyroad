@@ -16,7 +16,7 @@ public class PostDTO {
      */
     public static class Info {
 
-        private String postId;
+        private Long postId;
         private String title;
         private String boardType;
         private String category;
@@ -31,7 +31,7 @@ public class PostDTO {
         private MemberDTO.Info member;  	// 게시글 작성회원 정보
         private List<FileDTO.Info> files;	// 게시글 내 업로드된 파일 정보
 
-        public Info(String postId, String title, String boardType, String category, String grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, MemberDTO.Info member) {
+        public Info(Long postId, String title, String boardType, String category, String grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, MemberDTO.Info member) {
             this.postId = postId;
             this.title = title;
             this.boardType = boardType;
@@ -56,7 +56,7 @@ public class PostDTO {
             this.files = files;
         }
 
-        public String getPostId() {
+        public Long getPostId() {
             return postId;
         }
 

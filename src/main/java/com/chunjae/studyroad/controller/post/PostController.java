@@ -32,19 +32,19 @@ public interface PostController {
 
 
     /**
-     * [POST] /post/write.do
+     * [POST] /api/post/write.do
      */
     void postWriteAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /post/edit.do
+     * [POST] /api/post/edit.do
      */
     void postEditAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /post/remove.do
+     * [POST] /api/post/remove.do
      */
     void postRemoveAPI(HttpServletRequest request, HttpServletResponse response);
 }
