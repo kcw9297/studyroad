@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.controller.home;
 
+import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.domain.member.model.*;
 
 import jakarta.servlet.http.*;
@@ -28,10 +29,12 @@ public class HomeControllerImpl implements HomeController {
 	public void getHomeView(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
-			request.getRequestDispatcher("/WEB-INF/views/home/home.jsp").forward(request, response);
+			request.setAttribute("body", "/WEB-INF/views/home/home.jsp");
+			HttpUtils.forwardFrame(request, response);
 			
 		} catch (Exception e) {
-			
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectHome(response);
 		}
 		
 	}

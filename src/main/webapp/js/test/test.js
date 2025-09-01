@@ -16,7 +16,7 @@ $(document).ready(function() {
 	
 	// [3] AJAX 요청
   	$.ajax({
-	    url: "/studyroad/api/member/info.do",
+	    url: "/api/member/info.do",
 	    type: "POST",
 		data: formData,
 		processData: false,
