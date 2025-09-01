@@ -136,32 +136,103 @@ class MemberDAOImpl implements MemberDAO {
 	}
 	@Override
 	public Integer updateName(Edit request) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NAME)) {
+				
+				statement.setString(1, request.getName());
+				statement.setLong(2, request.getMemberId());
+
+				return statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
 	@Override
 	public Integer updateNickname(Edit request) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NICKNAME)) {
+				
+				statement.setString(1, request.getNickname());
+				statement.setLong(2, request.getMemberId());
+
+				return statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
 	@Override
 	public Integer updatePassword(Edit request) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD)) {
+				
+				statement.setString(1, request.getPassword());
+				statement.setLong(2, request.getMemberId());
+
+				return statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
 	@Override
 	public Integer updateAddress(Edit request) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_ADDRESS)) {
+				
+				statement.setString(1, request.getZipcode());
+				statement.setString(2, request.getAddress());
+				statement.setLong(3, request.getMemberId());
+
+				return statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
 	@Override
 	public Integer updateStatus(Long memberId, String status) {
-		// TODO Auto-generated method stub
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_STATUS)) {
+				
+				statement.setString(1, status);
+				statement.setLong(2, memberId);
+
+				return statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 	
 	
