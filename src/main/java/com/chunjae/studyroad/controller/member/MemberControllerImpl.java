@@ -141,9 +141,6 @@ public class MemberControllerImpl implements MemberController {
 					new ControllerException("수정할 컬럼명이 없습니다");
 			}
 			
-	      
-			
-			
 			// [3] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);

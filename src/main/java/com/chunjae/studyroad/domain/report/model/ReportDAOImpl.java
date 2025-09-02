@@ -41,18 +41,18 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public Long save(ReportDTO.Submit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_REPORT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setLong(1, request.getMemberId());
-				statement.setLong(2, request.getTargetId());
-				statement.setString(3, request.getTargetType());
-				statement.setString(4, request.getReason());
-				
+				pstmt.setLong(1, request.getMemberId());
+				pstmt.setLong(2, request.getTargetId());
+				pstmt.setString(3, request.getTargetType());
+				pstmt.setString(4, request.getReason());
+					
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return executeAndGetGeneratedKeys(statement);
+				return executeAndGetGeneratedKeys(pstmt);
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -78,24 +78,42 @@ class ReportDAOImpl implements ReportDAO {
 
 	@Override
 	public Integer updateStatus(Long reportId, String status) {
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_UPDATE_STATUS)) {
+				
+				// [1] 파라미터 세팅
+				pstmt.setString(1, status);
+				pstmt.setLong(2, reportId);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				return pstmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
 
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setString(1, afterStatus);
-				statement.setLong(2, memberId);
-				statement.setString(3, beforeStatus);
+				pstmt.setString(1, afterStatus);
+				pstmt.setLong(2, memberId);
+				pstmt.setString(3, beforeStatus);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				statement.executeUpdate();
+				pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);

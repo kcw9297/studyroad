@@ -42,8 +42,22 @@ public class ReportServiceImpl implements ReportService {
 
 
 	@Override
-	public void execute(Long postId, String status) {
-		
+	public void accept(Long reportId) {
+		if (Objects.equals(reportDAO.updateStatus(reportId, "ACCEPT"), 1)) {
+	        System.out.println("게시글 추천 성공");
+	    } else {
+	        System.out.println("게시글 추천 실패");
+	    }	
+	}
+
+
+	@Override
+	public void reject(Long reportId) {
+		if (Objects.equals(reportDAO.updateStatus(reportId, "REJECT"), 1)) {
+	        System.out.println("게시글 추천 성공");
+	    } else {
+	        System.out.println("게시글 추천 실패");
+	    }	
 	}
 
 

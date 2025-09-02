@@ -24,11 +24,17 @@ public interface ReportService {
 
 
     /**
-     * 신고 처리
-     * @param postId    삭제 대상 게시글번호 (PK)
-     * @param status    처리할 상태 (승인, 반려)
+     * 신고 승인 처리
+     * @param reportId    신고번호 (PK)
      */
-    void execute(Long postId, String status);
+    void accept(Long reportId);
+
+
+    /**
+     * 신고 반려 처리
+     * @param reportId    신고번호 (PK)
+     */
+    void reject(Long reportId);
 
 
     /**

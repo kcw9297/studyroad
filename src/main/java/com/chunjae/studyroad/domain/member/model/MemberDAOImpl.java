@@ -32,13 +32,13 @@ class MemberDAOImpl implements MemberDAO {
     public Optional<MemberDTO.Info> findById(Long mId) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_ID)) {
+			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_ID)) {
 			
 			// [1] 파라미터 세팅
-			statement.setLong(1, mId);
+			pstmt.setLong(1, mId);
 			
 			// [2] SQL 수행 + 결과 DTO 생성 후 반환
-			return Optional.ofNullable(mapToInfo(statement));
+			return Optional.ofNullable(mapToInfo(pstmt));
 			
 		} catch (SQLException e) {
 			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -55,13 +55,13 @@ class MemberDAOImpl implements MemberDAO {
     public Optional<MemberDTO.Info> findByEmail(String email) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_EMAIL)) {
+			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_EMAIL)) {
 			
 			// [1] 파라미터 세팅
-			statement.setString(1, email);
+			pstmt.setString(1, email);
 			
 			// [2] SQL 수행 + 결과 DTO 생성 후 반환
-			return Optional.ofNullable(mapToInfo(statement));
+			return Optional.ofNullable(mapToInfo(pstmt));
 			
 		} catch (SQLException e) {
 			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -78,13 +78,13 @@ class MemberDAOImpl implements MemberDAO {
 	public Optional<MemberDTO.Info> findByNickname(String nickname) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_NICKNAME)) {
+			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_NICKNAME)) {
 				
 				// [1] 파라미터 세팅
-				statement.setString(1, nickname);
+			pstmt.setString(1, nickname);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
-				return Optional.ofNullable(mapToInfo(statement));
+				return Optional.ofNullable(mapToInfo(pstmt));
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -97,22 +97,22 @@ class MemberDAOImpl implements MemberDAO {
 	}
 	
 	
-	private MemberDTO.Info mapToInfo(PreparedStatement statement) throws SQLException {
+	private MemberDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
 		
-		try (ResultSet resultSet = statement.executeQuery()) {
+		try (ResultSet resultSet = pstmt.executeQuery()) {
 			
 			return resultSet.next() ? 
 					new MemberDTO.Info(
 							resultSet.getLong("member_id"),
-							resultSet.getString("email"),
-							resultSet.getString("nickname"),
 							resultSet.getString("name"),
+							resultSet.getString("nickname"),
+							resultSet.getString("email"),
 							resultSet.getString("password"),
 							resultSet.getString("zipcode"),
 							resultSet.getString("address"),
-							resultSet.getDate("joined_at"),
-							resultSet.getDate("quited_at"),
-							resultSet.getDate("ban_end_at"),
+							resultSet.getTimestamp("joined_at"),
+							resultSet.getTimestamp("quited_at"),
+							resultSet.getTimestamp("ban_end_at"),
 							resultSet.getString("status")
 				    ) : null;
 		}
@@ -121,19 +121,19 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Long save(MemberDTO.Join request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
-				statement.setString(1, request.getName());
-				statement.setString(2, request.getNickname());
-				statement.setString(3, request.getEmail());
-				statement.setString(4, request.getPassword());
-				statement.setString(5, request.getZipcode());
-				statement.setString(6, request.getAddress());
+				pstmt.setString(1, request.getName());
+				pstmt.setString(2, request.getNickname());
+				pstmt.setString(3, request.getEmail());
+				pstmt.setString(4, request.getPassword());
+				pstmt.setString(5, request.getZipcode());
+				pstmt.setString(6, request.getAddress());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return executeAndGetGeneratedKeys(statement);
+				return executeAndGetGeneratedKeys(pstmt);
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -159,12 +159,12 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateName(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NAME)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NAME)) {
 				
-				statement.setString(1, request.getName());
-				statement.setLong(2, request.getMemberId());
+				pstmt.setString(1, request.getName());
+				pstmt.setLong(2, request.getMemberId());
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -179,12 +179,12 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateNickname(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NICKNAME)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NICKNAME)) {
 				
-				statement.setString(1, request.getNickname());
-				statement.setLong(2, request.getMemberId());
+				pstmt.setString(1, request.getNickname());
+				pstmt.setLong(2, request.getMemberId());
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -199,12 +199,12 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updatePassword(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD)) {
 				
-				statement.setString(1, request.getPassword());
-				statement.setLong(2, request.getMemberId());
+				pstmt.setString(1, request.getPassword());
+				pstmt.setLong(2, request.getMemberId());
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -219,13 +219,13 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateAddress(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_ADDRESS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_ADDRESS)) {
 				
-				statement.setString(1, request.getZipcode());
-				statement.setString(2, request.getAddress());
-				statement.setLong(3, request.getMemberId());
+				pstmt.setString(1, request.getZipcode());
+				pstmt.setString(2, request.getAddress());
+				pstmt.setLong(3, request.getMemberId());
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -240,13 +240,13 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateStatus(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_STATUS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_STATUS)) {
 				
-				statement.setString(1, afterStatus);
-				statement.setLong(2, memberId);
-				statement.setString(3, beforeStatus);
+				pstmt.setString(1, afterStatus);
+				pstmt.setLong(2, memberId);
+				pstmt.setString(3, beforeStatus);
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);

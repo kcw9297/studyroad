@@ -31,13 +31,15 @@ public class DAOUtils {
     public static final String SQL_POST_UPDATE = "UPDATE post SET title = ?, category = ?, grade = ?, content = ? WHERE post_id = ? AND member_id = ?";
     public static final String SQL_POST_UPDATE_STATUS = "UPDATE post SET status = ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_STATUS_BY_MEMBERID = "UPDATE post SET status = ? WHERE member_id = ? AND status = ?";
-     public static final String SQL_POST_UPDATE_LIKECOUNT = "UPDATE post SET likeCount = likeCount + ? WHERE post_id = ?";
+    public static final String SQL_POST_UPDATE_LIKECOUNT = "UPDATE post SET likeCount = likeCount + ? WHERE post_id = ?";
     public static final String SQL_COMMENT_SAVE = "INSERT INTO comment(post_id, member_id, parent_id, mention_id, content) VALUES (?, ?, ?, ?, ?)";
     public static final String SQL_COMMENT_UPDATE = "UPDATE comment SET mention_id = ?, content = ? WHERE comment_id = ?";
     public static final String SQL_COMMENT_UPDATE_STATUS = "UPDATE comment SET status = ? WHERE comment_id = ?";
     public static final String SQL_COMMENT_UPDATE_STATUS_BY_MEMBERID = "UPDATE comment SET status = ? WHERE member_id = ? AND status = ?";
+    public static final String SQL_COMMENT_UPDATE_LIKECOUNT = "UPDATE comment SET likeCount = likeCount + ? WHERE comment_id = ?";
     public static final String SQL_REPORT_SAVE = "INSERT INTO report(member_id, target_id, target_type, reason) VALUES (?, ?, ?, ?)";
-    public static final String SQL_REPORT_UPDATE_STATUS_BY_MEMBERID = "UPDATE likes SET status = ? WHERE member_id = ? AND status = ?";
+    public static final String SQL_REPORT_UPDATE_STATUS = "UPDATE report SET status = ? WHERE report_id = ?";
+    public static final String SQL_REPORT_UPDATE_STATUS_BY_MEMBERID = "UPDATE report SET status = ? WHERE member_id = ? AND status = ?";
     
     public static final String SQL_LIKE_EXISTS = "SELECT like_id FROM likes WHERE member_id = ? AND target_id = ? AND target_type = ?";
     public static final String SQL_LIKE_SAVE = "INSERT INTO likes(member_id, target_id, target_type) VALUES (?, ?, ?)";

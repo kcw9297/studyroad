@@ -53,13 +53,21 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public void like(Long commentId) {
-		
+		if (Objects.equals(commentDAO.updateLikeCount(commentId, 1L), 1)) {
+	        System.out.println("댓글 추천 성공");
+	    } else {
+	        System.out.println("댓글 추천 실패");
+	    }
 	}
 
 
 	@Override
 	public void unlike(Long commentId) {
-		
+		if (Objects.equals(commentDAO.updateLikeCount(commentId, -1L), 1)) {
+	        System.out.println("댓글 추천 취소 성공");
+	    } else {
+	        System.out.println("댓글 추천 취소 실패");
+	    }
 	}
 
 

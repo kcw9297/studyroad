@@ -34,17 +34,17 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Boolean exists(Long memberId, Long targetId, String targetType) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_EXISTS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_EXISTS)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setLong(1, memberId);
-				statement.setLong(2, targetId);
-				statement.setString(3, targetType);
+				pstmt.setLong(1, memberId);
+				pstmt.setLong(2, targetId);
+				pstmt.setString(3, targetType);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				try (ResultSet resultSet = statement.executeQuery()) {
+				try (ResultSet resultSet = pstmt.executeQuery()) {
 		            return resultSet.next();
 		        }
 				
@@ -62,17 +62,17 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Long save(LikeDTO.Like request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setLong(1, request.getMemberId());
-				statement.setLong(2, request.getTargetId());
-				statement.setString(3, request.getTargetType());
+				pstmt.setLong(1, request.getMemberId());
+				pstmt.setLong(2, request.getTargetId());
+				pstmt.setString(3, request.getTargetType());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return executeAndGetGeneratedKeys(statement);
+				return executeAndGetGeneratedKeys(pstmt);
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -105,17 +105,17 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setString(1, afterStatus);
-				statement.setLong(2, memberId);
-				statement.setString(3, beforeStatus);
+				pstmt.setString(1, afterStatus);
+				pstmt.setLong(2, memberId);
+				pstmt.setString(3, beforeStatus);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				statement.executeUpdate();
+				pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -131,15 +131,15 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Integer deleteById(Long likeId) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_DELETE)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_DELETE)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setLong(1, likeId);
+				pstmt.setLong(1, likeId);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);

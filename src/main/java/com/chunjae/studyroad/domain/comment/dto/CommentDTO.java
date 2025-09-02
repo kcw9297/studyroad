@@ -102,10 +102,16 @@ public class CommentDTO {
      */
     public static class Search {
 
-        private String order;
+    	private Long postId;
+        private String order; // "LATEST", "OLDEST", "LIKE"
 
-        public Search(String order) {
+        public Search(Long postId, String order) {
+        	this.postId = postId;
             this.order = order;
+        }
+        
+        public Long getPostId() {
+            return postId;
         }
 
         public String getOrder() {
