@@ -48,13 +48,15 @@ public class Page {
      */
     public static class Response<T> {
 
-        // Service 에서 직접 넣어주는 값
-        private List<T> data;        // 현재 페이지 데이터
-        private int currentPage;     // 현재 페이지
-        private int totalPage;       // 총 페이지 수
-        private int groupSize;       // 그룹당 페이지 개수
+        // DAO 에서 직접 넣어주는 값
+        private List<T> data;       // 현재 페이지 데이터
+        private int currentPage;    // 현재 페이지
+        private int groupSize;      // 그룹당 페이지 개수
+        private int pageSize;		// 한 페이지 당 가져올 행 개수
+        private int dataCount;      // 데이터의 총 개수 (같은 조건으로 조회된 총 데이터의 수)
 
         // DTO 내부에서 계산되는 값
+        private int totalPage;       		// 총 페이지 수
         private int currentGroup;           // 현재 그룹 번호
         private boolean hasNextGroup;       // 다음 그룹 존재 여부
         private boolean hasPreviousGroup;   // 이전 그룹 존재 여부
@@ -63,19 +65,23 @@ public class Page {
         private boolean isStartPage;        // 첫 페이지 여부
         private boolean isEndPage;          // 마지막 페이지 여부
 
-        public Response(List<T> data, int currentPage, int totalPage, int groupSize) {
+        public Response(List<T> data, int currentPage, int groupSize, int pageSize, int dataCount) {
             this.data = data;
             this.currentPage = currentPage;
-            this.totalPage = totalPage;
             this.groupSize = groupSize;
-            calculateGroup();
+            this.pageSize = pageSize;
+            this.dataCount = dataCount;
         }
-
+ 
+        
         /**
          * 현재 페이지 기준, 페이지 그룹 계산
          * 페이지와 그룹은 1부터 시작
          */
-        private void calculateGroup() {
+        public void calculateGroup() {
+        	// 총 페이지 계산
+        	this.totalPage = (int) Math.ceil((double) dataCount / pageSize);
+        	
             // 현재 그룹 계산
             this.currentGroup = (int) Math.ceil((double) currentPage / groupSize);
 

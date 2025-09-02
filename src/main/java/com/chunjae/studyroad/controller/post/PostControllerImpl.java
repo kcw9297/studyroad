@@ -56,7 +56,6 @@ public class PostControllerImpl implements PostController {
 	@Override
 	public void postWriteAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 
@@ -93,7 +92,6 @@ public class PostControllerImpl implements PostController {
 	@Override
 	public void postEditAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 
@@ -128,7 +126,6 @@ public class PostControllerImpl implements PostController {
 	@Override
 	public void postRemoveAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 

@@ -35,13 +35,13 @@ class PostDAOImpl implements PostDAO {
     @Override
     public Optional<PostDTO.Info> findById(Long postId) {
     	try (Connection connection = dataSource.getConnection();
-   			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_FIND_BY_ID)) {
+   			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_FIND_BY_ID)) {
    			
    			// [1] 파라미터 세팅
-   			statement.setLong(1, postId);
+    		pstmt.setLong(1, postId);
    			
    			// [2] SQL 수행 + 결과 DTO 생성 후 반환
-   			return Optional.ofNullable(mapToInfo(statement));
+   			return Optional.ofNullable(mapToInfo(pstmt));
    			
    		} catch (SQLException e) {
    			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -53,9 +53,9 @@ class PostDAOImpl implements PostDAO {
    		}
     }
 
-    private PostDTO.Info mapToInfo(PreparedStatement statement) throws SQLException {
+    private PostDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
 		
-		try (ResultSet resultSet = statement.executeQuery()) {
+		try (ResultSet resultSet = pstmt.executeQuery()) {
 			
 			return resultSet.next() ? 
 					new PostDTO.Info(
@@ -65,13 +65,13 @@ class PostDAOImpl implements PostDAO {
 							resultSet.getString("category"),
 							resultSet.getString("grade"),
 							resultSet.getString("content"),
-							resultSet.getDate("written_at"),
-							resultSet.getDate("edited_at"),
+							resultSet.getTimestamp("written_at"),
+							resultSet.getTimestamp("edited_at"),
 							resultSet.getLong("views"),
 							resultSet.getString("post_status"),
 							resultSet.getBoolean("is_notice"),
 							resultSet.getLong("likeCount"),
-							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getDate("joined_at"),	resultSet.getDate("quited_at"),	resultSet.getDate("ban_end_at"), resultSet.getString("member_status"))
+							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getTimestamp("joined_at"),	resultSet.getTimestamp("quited_at"),	resultSet.getTimestamp("ban_end_at"), resultSet.getString("member_status"))
 				    ) : null;
 		}
 	}
@@ -85,20 +85,20 @@ class PostDAOImpl implements PostDAO {
     @Override
     public Long save(PostDTO.Write request) {
     	try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
-				statement.setLong(1, request.getMemberId());
-				statement.setString(2, request.getTitle());
-				statement.setString(3, request.getBoardType());
-				statement.setString(4, request.getCategory());
-				statement.setString(5, request.getGrade());
-				statement.setString(6, request.getContent());
-				statement.setBoolean(7, request.getNotice());
+	    		pstmt.setLong(1, request.getMemberId());
+	    		pstmt.setString(2, request.getTitle());
+	    		pstmt.setString(3, request.getBoardType());
+	    		pstmt.setString(4, request.getCategory());
+	    		pstmt.setString(5, request.getGrade());
+	    		pstmt.setString(6, request.getContent());
+	    		pstmt.setBoolean(7, request.getNotice());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return executeAndGetGeneratedKeys(statement);
+				return executeAndGetGeneratedKeys(pstmt);
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -124,19 +124,19 @@ class PostDAOImpl implements PostDAO {
     @Override
     public Integer update(PostDTO.Edit request) {
     	try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE)) {
 				
 				// [1] 파라미터 세팅
-				statement.setString(1, request.getTitle());
-				statement.setString(2, request.getCategory());
-				statement.setString(3, request.getGrade());
-				statement.setString(4, request.getContent());
-				statement.setLong(5, request.getPostId());
-				statement.setLong(6, request.getMemberId());
+	    		pstmt.setString(1, request.getTitle());
+	    		pstmt.setString(2, request.getCategory());
+	    		pstmt.setString(3, request.getGrade());
+	    		pstmt.setString(4, request.getContent());
+	    		pstmt.setLong(5, request.getPostId());
+	    		pstmt.setLong(6, request.getMemberId());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -152,15 +152,15 @@ class PostDAOImpl implements PostDAO {
     @Override
     public Integer updateLikeCount(Long postId, Long amount) {
     	try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_LIKECOUNT)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_LIKECOUNT)) {
 				
 				// [1] 파라미터 세팅
-				statement.setLong(1, amount);
-				statement.setLong(2, postId);
-				
+	    		pstmt.setLong(1, amount);
+	    		pstmt.setLong(2, postId);
+					
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -176,15 +176,15 @@ class PostDAOImpl implements PostDAO {
     @Override
     public Integer updateStatus(Long postId, String status) {
     	try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS)) {
 				
 				// [1] 파라미터 세팅
-				statement.setString(1, status);
-				statement.setLong(2, postId);
+	    		pstmt.setString(1, status);
+	    		pstmt.setLong(2, postId);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				return statement.executeUpdate();
+				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
@@ -200,17 +200,17 @@ class PostDAOImpl implements PostDAO {
     @Override
     public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 
-				statement.setString(1, afterStatus);
-				statement.setLong(2, memberId);
-				statement.setString(3, beforeStatus);
+				pstmt.setString(1, afterStatus);
+				pstmt.setLong(2, memberId);
+				pstmt.setString(3, beforeStatus);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				statement.executeUpdate();
+				pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);

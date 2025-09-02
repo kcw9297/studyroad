@@ -76,6 +76,12 @@ public class MemberDTO {
          private Date banEndAt;
          private String status;
 
+         public Info(Long memberId, String nickname, String email) {
+             this.memberId = memberId;
+             this.nickname = nickname;
+             this.email = email;
+         }
+         
          public Info(Long memberId, String name, String nickname, String email, String password, String zipcode, String address, Date joinedAt, Date quitedAt, Date banEndAt, String status) {
              this.memberId = memberId;
              this.name = name;
@@ -89,6 +95,8 @@ public class MemberDTO {
              this.banEndAt = banEndAt;
              this.status = status;
          }
+         
+         
          
          
          /**
