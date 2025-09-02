@@ -22,9 +22,8 @@ public class HttpUtils {
 	public static final String POST = "POST";
 	public static final String GET = "GET";
 	
-	// 프레임 JSP
-	private static final String JSP_FRAME = "/WEB-INF/views/base/frame.jsp";
-	private static final String BODY = "body";
+	// 파라미터 상수
+	public static final String BODY = "body";
 	
 	
 	// 생성자 접근 제한
@@ -158,32 +157,7 @@ public class HttpUtils {
 		}
 	}
 
-	
-	
-	/**
-	 * 로그인 페이지로 리다이렉트 수행
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	public static void sendLoginPage(HttpServletRequest request, HttpServletResponse response) {
-		
-		try {
-			
-			// [1] 접근 주소정보 확인
-			String uri = request.getRequestURI();		// /studyroad/member/info.do
-			String query = request.getQueryString();    // id=10&name=kochang
-			String fullUri = (Objects.isNull(query)) ? uri : String.format("%s?%s", uri, query);
-			
-			
-			// [2] 로그인 페이지에 리다이렉트
-			response.sendRedirect(String.format("/login?returnUrl=%s", fullUri));
-			
-			
-		} catch (Exception e) {
-			System.out.printf("[HttpUtils] 로그인 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
-		}
-	}
+
 	
 	
 	/**
@@ -194,7 +168,7 @@ public class HttpUtils {
 	public static void forwardPageFrame(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
-			request.getRequestDispatcher(JSP_FRAME).forward(request, response);
+			request.getRequestDispatcher("/WEB-INF/views/base/frame.jsp").forward(request, response);
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
@@ -230,6 +204,32 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] HOME reditect 수행에 실패했습니다! : %s\n", e);
+			throw new ControllerException(e);
+		}
+	}
+	
+	
+	/**
+	 * 로그인 페이지로 리다이렉트 수행
+	 * @param request	서블릿 요청 객체
+	 * @param response	서블릿 응답 객체
+	 */
+	public static void redirectLogin(HttpServletRequest request, HttpServletResponse response) {
+		
+		try {
+			
+			// [1] 접근 주소정보 확인
+			String uri = request.getRequestURI();		// /member/info.do
+			String query = request.getQueryString();    // page=1&order=NEWEST
+			String fullURL = (Objects.isNull(query)) ? uri : String.format("%s?%s", uri, query);
+			
+			
+			// [2] 로그인 페이지에 리다이렉트
+			response.sendRedirect(String.format("/login.do?returnURL=%s", fullURL));
+			
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] 로그인 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
 			throw new ControllerException(e);
 		}
 	}

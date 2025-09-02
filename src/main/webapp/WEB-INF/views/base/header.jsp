@@ -12,8 +12,21 @@
             <a href="#" class="link">인스타그램</a>
         </div>
         <div class="header-user">
-            <a class="link" href="#">로그인</a> |
-            <a class="link" href="#">회원가입</a>
+        	<c:if test="${not empty loginMember}">
+			    <a class="link" href="#" onclick="return false;" id="logout" >로그아웃</a> |
+			</c:if>
+			
+			<c:if test="${empty loginMember}">
+			    <a class="link" href="/login.do" >로그인</a> |
+			</c:if>
+
+        	<c:if test="${not empty loginMember}">
+			    <a class="link" href="/member/info.do">마이페이지</a>
+			</c:if>
+			
+			<c:if test="${empty loginMember}">
+			     <a class="link" href="/member/join.do">회원가입</a>
+			</c:if>
         </div>
     </div>
 </div>

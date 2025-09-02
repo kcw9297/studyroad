@@ -49,10 +49,12 @@ public class MemberServiceImpl implements MemberService {
 		MemberDTO.Info memberInfo = 
 				memberDAO.findByEmail(email).orElseThrow(() -> new ServiceException("가입한 이메일이 존재하지 않습니다"));
 		
-		if(!password.equals(memberInfo.getPassword())) throw new ServiceException("비밀번호가 맞지 않습니다");
+		if(!password.equals(memberInfo.getPassword())) 
+			throw new ServiceException("비밀번호가 일치하지 않습니다");
 		
 		
-		LoginMember loginMember = new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus());
+		LoginMember loginMember = 
+				new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus());
 		
 		
 		return loginMember;		

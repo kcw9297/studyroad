@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
@@ -33,6 +34,14 @@ public class MemberControllerImpl implements MemberController {
 	public void getJoinView(HttpServletRequest request, HttpServletResponse response) {
 		
 		try {
+			
+			// [1] 세션 검증
+			if (Objects.nonNull(SessionUtils.getLoginMember(request))) {
+				HttpUtils.redirectHome(response);
+				return;
+			}
+			
+			// [2] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/join.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 			
@@ -46,6 +55,30 @@ public class MemberControllerImpl implements MemberController {
 	@Override
 	public void getInfoView(HttpServletRequest request, HttpServletResponse response) {
 		
+		try {
+			
+			// [1] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.redirectLogin(request, response);
+				return;
+			}
+			
+			// [2] service 조회
+			MemberDTO.Info memberInfo = memberService.getInfo(loginMember.getMemberId());
+			
+			// [3] 파라미터 삽입
+			request.setAttribute("data", memberInfo);
+			
+			// [4] view 출력
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/info.jsp");
+			HttpUtils.forwardPageFrame(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+		}
 	}
 
 	
@@ -66,7 +99,7 @@ public class MemberControllerImpl implements MemberController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
@@ -109,7 +142,7 @@ public class MemberControllerImpl implements MemberController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
@@ -163,7 +196,7 @@ public class MemberControllerImpl implements MemberController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
@@ -192,7 +225,7 @@ public class MemberControllerImpl implements MemberController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성

@@ -58,7 +58,7 @@ public class PostControllerImpl implements PostController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
@@ -95,7 +95,7 @@ public class PostControllerImpl implements PostController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
@@ -130,7 +130,7 @@ public class PostControllerImpl implements PostController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성

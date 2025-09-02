@@ -4,7 +4,6 @@
 
 // 확인 모달
 function showAlertModal(alertMessage, onClick) {
-
     const modalHtml = `
 		<div class="modal-overlay" id="alertModal">
 		  <div class="modal-content">
@@ -25,12 +24,24 @@ function showAlertModal(alertMessage, onClick) {
     // body에 추가
     $("body").append(modalHtml);
 
+	// 모달이 떠 있을 때는 Enter → 폼 제출 막기
+    $(document).on("keydown.modalBlock", function(e) {
+        if ($("#alertModal").length > 0 && e.key === "Enter") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $("#modalOKBtn").trigger("click"); 
+            return false;
+        }
+    });
+
     // 버튼 이벤트 등록
-	$("#modalOKBtn, #modalXBtn").on("click", function() {
-	    if (onClick) onClick();
-		$("#alertModal").remove();
-	});
-	
+    $("#modalOKBtn, #modalXBtn").on("click", function() {
+        if (onClick) onClick();
+        $("#alertModal").remove();
+
+        // 이벤트 해제
+        $(document).off("keydown.modalBlock");
+    });
 }
 
 
@@ -56,18 +67,34 @@ function showConfirmModal(alertMessage, onConfirm, onCancel) {
         </div>
       </div>
     `;
+	
+	// body에 추가
+	$("body").append(modalHtml);
 
-    $("body").append(modalHtml);
+	// 모달이 떠 있을 때는 Enter → 폼 제출 막기
+	$(document).on("keydown.modalBlock", function(e) {
+       if ($("#confirmModal").length > 0 && e.key === "Enter") {
+           e.preventDefault();
+           e.stopImmediatePropagation();
+           return false;
+       }
+    });
 
+   // 버튼 이벤트 등록
     $("#modalOKBtn").on("click", function() {
         if (onConfirm) onConfirm();
-        $("#confirmModal").remove();
+        closeConfirmModal();
     });
-	
-	$("#modalCancelBtn, #modalXBtn").on("click", function() {
-	    if (onCancel) onCancel();
-		$("#confirmModal").remove();
-	});
+
+    $("#modalCancelBtn, #modalXBtn").on("click", function() {
+        if (onCancel) onCancel();
+        closeConfirmModal();
+    });
+
+    function closeConfirmModal() {
+        $("#confirmModal").remove();
+        $(document).off("keydown.modalBlock"); // 이벤트 해제
+    }
 }
 
 

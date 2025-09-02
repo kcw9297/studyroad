@@ -1,14 +1,31 @@
 /**
- * login.jsp 스크립트
+ * homs.jsp 스크립트
  */
 
 
 $(document).ready(function() {
     
+	// 배너 초기화
+	const banner = initBannerSlider('.slides', 3000);
+	
+	// 이전 배너
+	$(".prev").on("click", function () {
+	  banner.prev();
+	});
+	
+	  // 다음 배너
+	$(".next").on("click", function () {
+	  banner.next();
+	});
+
+	
+	
+	/*
 	$("#loginForm").on("submit", function(e) {
 		
 		// form submit 방지
 	    e.preventDefault();
+
 		
 		// 검증 - 아이디
 		let errorMessage = checkNullOrEmpty("이메일을", $("#email").val());
@@ -25,7 +42,7 @@ $(document).ready(function() {
 		}
 
 	    // AJAX 비동기 요청 수행
-		sendRequest("/api/login.do?returnURL=" + returnURL, "post", new FormData(this))
+		sendRequest("/api/login.do", "post", new FormData(this))
 		    .then(response => {
 				
 				// 응답 JSON 보기
@@ -50,6 +67,7 @@ $(document).ready(function() {
 				insertLoginErrorMessage("login-error", msg);
 		    });
 	});
+	*/
 	
 });
 	

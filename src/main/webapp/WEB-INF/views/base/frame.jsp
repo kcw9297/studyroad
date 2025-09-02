@@ -16,6 +16,7 @@
 	<script src="<c:url value='/js/base/modal.js'/>"></script>
 	<script src="<c:url value='/js/base/validation.js'/>"></script>
 	<script src="<c:url value='/js/base/kakao_address.js'/>"></script>
+	<script src="<c:url value='/js/base/header.js'/>"></script>
     	
 	<%-- 공용 CSS --%>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">

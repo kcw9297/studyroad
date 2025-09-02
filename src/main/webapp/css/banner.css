@@ -1,0 +1,27 @@
+.slides {
+  display: flex;
+  transition: transform 0.6s ease;
+  height: 100%;
+}
+
+.slides img {
+  flex: 0 0 100%;   /* 각 이미지가 컨테이너 전체 너비를 차지 */
+  height: 100%;
+  object-fit: cover;
+}
+
+.container.banner button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  color: white;
+  border: none;
+  font-size: 24px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+}
+.container.banner .prev { left: 10px; }
+.container.banner .next { right: 10px; }

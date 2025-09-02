@@ -12,7 +12,7 @@ import jakarta.servlet.http.*;
 public class SessionUtils {
 	
 	// 세션에 저장할 회원객체 session name
-	private static final String SESSION_LOGIN_MEMBER = "LoginMember";
+	private static final String SESSION_LOGIN_MEMBER = "loginMember";
 
     // 생성자 접근 제한
     private SessionUtils() {}
