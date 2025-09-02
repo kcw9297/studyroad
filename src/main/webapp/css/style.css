@@ -27,14 +27,15 @@ main, .main {flex:1;}
 /* 로그인, 회원가입, 마이페이지 */
 .main-inner{padding:80px 0; display:flex; justify-content:center;}
 .card{width:100%; max-width:500px; background:#ffffff; border:1px solid #000000; border-radius:16px; padding:30px 100px 80px;}
-.card h1{text-align:center; margin-bottom:30px; font-size:38px; color:#6A4AE0; font-weight:700;}
+.card h1{text-align:center; margin-bottom:20px; font-size:38px; color:#6A4AE0; font-weight:700;}
 
 .field{margin-bottom:10px}
 .field label{margin-bottom:5px; display:block;}
 .input{width:100%; padding:10px; font-size:14px; border:1px solid #000000; border-radius:10px; outline:none; background:#ffffff; box-sizing:border-box;}
 
-.flex{display:flex; gap:5px; align-items:center; justify-content:center; justify-content:center; width:100%;}
+.flex{display:flex; gap:5px; align-items:center; justify-content:center; width:100%;}
 .flex.input{flex:1;}
+.flex select{cursor:pointer;}
 .zipcode{padding:8px; font-size:14px; background:#ffffff; color:#000000; border:1px solid #000000; border-radius:10px; cursor:pointer; white-space:nowrap;}
 .zipcode:hover{background:#F0F0F0;}
 .check{padding:10px; font-size:14px; background:#ffffff; color:#6A4AE0; border:1px solid #6A4AE0; border-radius:10px; cursor:pointer; white-space:nowrap;}
@@ -43,27 +44,28 @@ main, .main {flex:1;}
 .password-input{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;}
 .address-input{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;}
 
-.big-button{width:100%; margin-top:20px; padding:14px 16px; border:none; border-radius:10px; background:#6A4AE0; color:#ffffff; font-size:18px;}
+.big-button{width:100%; margin-top:20px; padding:14px 16px; border:none; border-radius:10px; background:#6A4AE0; color:#ffffff; font-size:18px; cursor:pointer;}
 .big-button:hover{background:#584AAF;}
 .help{display:flex; justify-content:center; gap:10px; margin-top:10px; font-size:14px; color:#676767;}
 .help a:hover{color:#6A4AE0;}
 
+.update{display:flex; align-items:center; gap:5px}
+.update button{margin-bottom:5px; padding:3px 6px; border:none; border-radius:10px; background:#F1EDFC; color:#6A4AE0; font-size:14px; cursor:pointer;}
+.update button:hover{background:#D3C9F6;}
+
 .member-button{display:flex; align-items:flex-end; justify-content:space-between; margin-top:30px;}
 .member-buttons{display:flex; justify-content:flex-end; gap:10px;}
-.small-button{padding:10px 15px; border:none; border-radius:10px; background:#6A4AE0; color:#ffffff; font-size:16px;}
+.small-button{padding:10px 15px; border:none; border-radius:10px; background:#6A4AE0; color:#ffffff; font-size:16px; cursor:pointer;}
 .small-button:hover{background:#584AAF;}
-.quit{padding:5px 10px; border:none; border-radius:10px; background:#FDE9EB; color:#EB2332; font-size:14px;}
+.quit{padding:5px 10px; border:none; border-radius:10px; background:#FDE9EB; color:#EB2332; font-size:14px; cursor:pointer;}
 .quit:hover{background:#F8D2D7;}
 
-/* 로그인, 회원가입, 마이페이지 - 개발자 추가 */
-.login-error{text-align: center; margin-top: 20px; font-size:16px; color:#ff0000; min-height: 25px;}
-
-
 /* 홈페이지 */
-.banner{display:flex; align-items:center; justify-content:center;}
-.banner button{border:none; background:none; color:#555555; font-size:30px;}
-.banner.prev{left:20px;}
-.banner.next{right:20px;}
+.banner{display:flex; position:relative; overflow:hidden; width:1000px; height: 180px;}
+.slides img {width:100%; height:100%;}
+.banner button{position:absolute; top:50%; transform:translateY(-50%); color:ffffff; background:none; border:none; font-size:60px; opacity:0.5; padding:0 20px; cursor:pointer;}
+.banner .prev{left:10px;}
+.banner .next{right:10px;}
 
 /* 반응형 */
 @media(max-width:720px){

@@ -5,7 +5,6 @@ import java.util.Objects;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.*;
 
 /*
  * MemberService 인터페이스 구현체
@@ -28,8 +27,21 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	public MemberDTO.Info getInfo(Long mId) {
-		return memberDAO.findById(mId).orElse(null);		
+		return memberDAO.findById(mId).orElseThrow(() -> new ServiceException("회원정보 조회에 실패했습니다<br>잠시 후에 다시 시도해 주세요"));
 	}
+	
+	
+	@Override
+	public Boolean checkEmailDuplication(String email) {
+		return memberDAO.findByEmail(email).isEmpty();
+	}
+
+	
+	@Override
+	public Boolean checkNicknameDuplication(String nickname) {
+		return memberDAO.findByNickname(nickname).isEmpty();
+	}
+	
 	
 	@Override
 	public LoginMember login(String email, String password) {
@@ -47,13 +59,13 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Info join(Join request) {
+	public MemberDTO.Info join(MemberDTO.Join request) {
 		Long memberId = memberDAO.save(request);
 		return getInfo(memberId);
 	}
 
 	@Override
-	public void editName(Edit request) {
+	public void editName(MemberDTO.Edit request) {
 		if (Objects.equals(memberDAO.updateName(request), 1)) {
 	        System.out.println("이름 수정 성공");
 	    } else {
@@ -62,7 +74,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void editNickname(Edit request) {
+	public void editNickname(MemberDTO.Edit request) {
 		if (Objects.equals(memberDAO.updateNickname(request), 1)) {
 	        System.out.println("닉네임 수정 성공");
 	    } else {
@@ -71,7 +83,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void editPassword(Edit request) {
+	public void editPassword(MemberDTO.Edit request) {
 		if (Objects.equals(memberDAO.updatePassword(request), 1)) {
 	        System.out.println("비밀번호 수정 성공");
 	    } else {
@@ -80,7 +92,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void editAddress(Edit request) {
+	public void editAddress(MemberDTO.Edit request) {
 		if (Objects.equals(memberDAO.updateAddress(request), 1)) {
 	        System.out.println("주소 수정 성공");
 	    } else {
@@ -99,9 +111,5 @@ public class MemberServiceImpl implements MemberService {
 		// TODO Auto-generated method stub
 		
 	}
-
-
-	
-	
 
 }

@@ -14,6 +14,22 @@ public interface MemberService {
      * @return Info     조회된 회원정보 DTO 반환
      */
     MemberDTO.Info getInfo(Long memberId);
+    
+    
+	/**
+     * 이메일 중복여부 확인
+     * @param email		검증 대상 이메일 문자열
+     * @return Boolean  중복 시 false, 중복되지 않으면 true
+     */
+    Boolean checkEmailDuplication(String email);
+    
+    
+	/**
+     * 닉네임 중복여부 확인
+     * @param nickname	검증 대상 닉네임 문자열
+     * @return Boolean  중복 시 false, 중복되지 않으면 true
+     */
+    Boolean checkNicknameDuplication(String nickname);
 
 
     /**

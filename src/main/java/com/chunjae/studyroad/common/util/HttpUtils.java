@@ -23,8 +23,7 @@ public class HttpUtils {
 	public static final String GET = "GET";
 	
 	// 프레임 JSP
-	private static final String JSP_FRAME = "/WEB-INF/views/base/page/frame.jsp";
-	private static final String JSP_FRAME_POPUP = "/WEB-INF/views/base/pupup/frame_popup.jsp";
+	private static final String JSP_FRAME = "/WEB-INF/views/base/frame.jsp";
 	private static final String BODY = "body";
 	
 	
@@ -196,23 +195,6 @@ public class HttpUtils {
 		
 		try {
 			request.getRequestDispatcher(JSP_FRAME).forward(request, response);
-			
-		} catch (Exception e) {
-			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
-		}
-	}
-	
-	
-	/**
-	 * 뼈대가 되는 frame_popup.jsp forward 수행
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	public static void forwardPopupFrame(HttpServletRequest request, HttpServletResponse response) {
-		
-		try {
-			request.getRequestDispatcher(JSP_FRAME_POPUP).forward(request, response);
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);

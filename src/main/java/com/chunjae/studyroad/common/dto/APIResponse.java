@@ -81,6 +81,14 @@ public class APIResponse {
 	
 	
 	/**
+	 * 오류 발생 사실만을 전달
+	 */
+	public static APIResponse error(Integer errorCode) {
+	    return error(null, errorCode);
+	}
+	
+	
+	/**
 	 * 오류 발생 사실과 다음의 데이터 전달
 	 * - 메세지, 원인
 	 */

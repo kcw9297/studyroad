@@ -6,17 +6,12 @@
 
 <%-- 서버에서 내려준 변수 --%>
 <script>
-    let patternEmail = "${patternEmail}";
-    let patternPassword = "${patternPassword}";
-    let minLengthEmail = "${minLengthEmail}";
-    let maxLengthEmail = "${maxLengthEmail}";
-    let minLengthPassword = "${minLengthPassword}";
-    let maxLengthPassword = "${maxLengthPassword}";
+
 </script>
 
 
 <div class="container main-inner">
-    <form id="login-form" class="card" method="post">
+    <form id="loginForm" class="card" method="post">
         <h1>LOGIN</h1>
         <div class="field">
             <label class="email" for="email">이메일</label>

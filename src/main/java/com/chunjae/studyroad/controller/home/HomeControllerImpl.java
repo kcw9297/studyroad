@@ -34,7 +34,7 @@ public class HomeControllerImpl implements HomeController {
 			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
-			System.out.printf("editor view forward 실패! 원인 : %s\n", e);
+			System.out.printf("[getHomeView] - editor view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 		
