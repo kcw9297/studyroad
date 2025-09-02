@@ -17,21 +17,37 @@ $(document).ready(function() {
 		}
 	});
 	
-	// 이메일 도메인 선택
+	// 이메일 도메인 선택 검증
 	$("select[name='domain']").on("change", function() {
 		insertSelectedValue(this, "#domain");
 		checkEmail(".text.email");
     });
 	
-	// 이름 입력 칸에서 포커스가 벗어나면 수행
+	// 이름 검증
 	$("#name").on("blur", function() {
 		checkName(".text.name");
 	});
 
-	// 이메일 입력 칸에서 포커스가 벗어나면 수행
+	// 이메일 검증
 	$("#email, #domain").on("blur", function() {
 	    checkEmail(".text.email");
 	});
+	
+	// 닉네임 검증
+	$("#nickname").on("blur", function() {
+	    checkNickname(".text.nickname");
+	});
+	
+	// 비밀번호 검증
+	$("#password, #passwordCheck").on("blur", function() {
+	    checkPassword(".text.password");
+	});
+	
+	// 주소 검증
+	$("#zipcode, #address").on("blur", function() {
+	    checkAddress(".text.address");
+	});
+
 
 	
 	$("#joinForm").on("submit", function(e) {
@@ -39,87 +55,61 @@ $(document).ready(function() {
 		// form submit 방지
 	    e.preventDefault();
 		
-		// 콘솔 출력
-		const inputEmail = $("#email").val();
-		const inputDomain = $("#domain").val();
-		const email = inputEmail + "@" + inputDomain;
-		const name = $("#name").val();
-		const nickname = $("#nickname").val();
-		const password = $("#password").val();
-		const passwordCheck = $("#passwordCheck").val();
-		const address = $("#address").val();
-		const zipcode = $("#zipcode").val();
+		// 입력 파라미터
+		const email = $("#email").val() + "@" + $("#domain").val();
+		const form = new FormData(this);
 
-		// 콘솔 출력
-		console.log("===== 회원가입 입력 값 =====");
-        console.log("이메일:", email);
-        console.log("이름:", name);
-        console.log("닉네임:", nickname);
-        console.log("비밀번호:", password);
-        console.log("비밀번호 확인:", passwordCheck);
-        console.log("상세주소:", address);
-        console.log("우편번호:", zipcode);
+		// 필드에서 유효성 검사를 하나라도 실패하면 false
+		// 비동기 요청에서 return 값을 얻어오려면, "Promise" 사용
+		Promise.all([
+		        checkEmail(".text.email"),
+		        checkName(".text.name"),
+		        checkNickname(".text.nickname"),
+		        checkPassword(".text.password"),
+		        checkAddress(".text.address")
 
-		// 유효성 검사 - 이름
-		let errorMessage;
-		
-		
-		// 유효성 검사 - 이메일
-		errorMessage = checkNullOrEmpty("이메일 도메인을 선택하거나", inputDomain)
-		if (errorMessage) {
-			insertErrorMessage("", errorMessage);
-			return;
-		}
-		
+	    ]).then(results => {
+	        const isValid = results.every(r => r === true);
+	        console.log("최종 결과:", isValid);
 
-		// 유효성 검사 - 이름
-		errorMessage = 
-				checkNullOrEmpty("이메일을", email) || 
-				checkMinMaxLength("이메일은", email, minLengthEmail, maxLengthEmail) ||
-				checkPattern("이메일", email, new RegExp(patternEmail));
-		
-		
-		if (errorMessage) {
-			showAlertModal(errorMessage, null);
-			return;
-		}
+	        if (isValid) {
+				// AJAX 비동기 요청 수행
+				form.set("email", email);
+				sendAJAX(form);
+	        }
+	    });
 
-		showAlertModal("검증 통과!", null);
-		
-		// 검증 - 아이디
-		
-		
-
-	    // AJAX 비동기 요청 수행
-		/*
-		sendRequest("/api/login.do", new FormData(this))
-		    .done(function(response) {
-				
-				// 응답 JSON 보기
-				console.log("성공 응답:", response);
-				
-				// 에러 메세지 비우기
-				$(".login-error").text("").show();
-				
-				// 응답 모달 띄움
-				showAlertModal(response.alertMessage || "로그인 성공!", 
-					function() { if (response.redirectURL) {window.location.href = response.redirectURL }}
-				);
-		    })
-		    .fail(function(xhr) {
-				
-				// 실패 응답 JSON 파싱 후 보기
-				const response = xhr.responseJSON || {};
-				console.log("실패 응답:", response);
-				
-				// 실패 응답 메세지를 로그인 페이지에 출력
-				const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
-				insertLoginErrorMessage("login-error", msg);
-		    });
-			*/
 	});
 	
 });
 	
+
+
+function sendAJAX(form) {
+	sendRequest("/api/member/join.do", "post", form)
+	    .done(function(response) {
+			
+			// 응답 JSON 보기
+			console.log("성공 응답:", response);
+			
+			// 에러 메세지 비우기
+			$(".login-error").text("").show();
+			
+			// 응답 모달 띄움
+			showAlertModal(response.alertMessage || "회원가입에 성공했습니다.", 
+				function() { if (response.redirectURL) {window.location.href = response.redirectURL }}
+			);
+	    })
+	    .fail(function(xhr) {
+			
+			// 실패 응답 JSON 파싱 후 보기
+			const response = xhr.responseJSON || {};
+			console.log("실패 응답:", response);
+			
+			// 실패 응답 메세지를 로그인 페이지에 출력
+			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
+			insertLoginErrorMessage("login-error", msg);
+	    });
+}
 
 

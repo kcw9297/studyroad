@@ -23,39 +23,33 @@ function isNullOrEmpty(value) {
 
 // 최소 길이 검증
 function checkMinLength(prefix, value, minLength) {
-	
-	if (value.trim().length < minLength) {
-	    return prefix + " 최소 " + minLength + "자 이상 이상이여야 합니다";
-	}
-	
-	// 검증에 통과 시 null
-	return null;
+    if (getCharLength(value) < minLength) {
+        return prefix + " 최소 " + minLength + "자 이상이어야 합니다";
+    }
+    return null;
 }
-
 
 // 최대 길이 검증
 function checkMaxLength(prefix, value, maxLength) {
-	
-	if (value.trim().length > maxLength) {
-	    return prefix + " 최대 " + maxLength + "자 까지 가능합니다";
-	}
-	
-	// 검증에 통과 시 null
-	return null;
+    if (getCharLength(value) > maxLength) {
+        return prefix + " 최대 " + maxLength + "자 까지 가능합니다";
+    }
+    return null;
 }
-
 
 // 최대 최소 길이 검증
 function checkMinMaxLength(prefix, value, minLength, maxLength) {
-	
-	if (value.trim().length < minLength || value.trim().length > maxLength) {
-	    return prefix + " " + minLength + "자 이상 " + maxLength + "자 이하여야 합니다";
-	}
-	
-	// 검증에 통과 시 null
-	return null;
+    const length = getCharLength(value);
+    if (length < minLength || length > maxLength) {
+        return prefix + " " + minLength + "자 이상 " + maxLength + "자 이하여야 합니다";
+    }
+    return null;
 }
 
+// 문자열의 글자 수 계산 (유니코드 안전)
+function getCharLength(str) {
+    return Array.from(str.trim()).length;
+}
 
 // 공백 및 패턴 검증
 function checkPattern(name, value, pattern) {
@@ -76,11 +70,11 @@ function checkName(textType) {
 			
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(name)) {
-		insertDefaultMessage(textType, "2~10자의 한글, 영문대소문자 사용 가능");
-		return;
+		insertDefaultMessage(textType, "2~10자의 한글 사용 가능");
+		return Promise.resolve(false);
 	}		
 	
-	// 에러 검증
+	// 유효성 검사
 	const errorMessage = 		
 			checkMinMaxLength("이름은", name, minLengthName, maxLengthName) ||
 			checkPattern("이름", name, new RegExp(patternName));
@@ -88,8 +82,10 @@ function checkName(textType) {
 	// 에러가 발생한 경우와 정상 사용 가능한 경우 분기	
 	if (errorMessage) {
 		insertErrorMessage(textType, errorMessage);
+		return Promise.resolve(false);
 	} else {
 		insertSuccessMessage(textType, "사용할 수 있는 이름입니다");
+		return Promise.resolve(true);
 	}
 }
 
@@ -100,24 +96,25 @@ function checkEmail(textType) {
 	const inputEmail = $("#email").val();
 	const inputDomain = $("#domain").val();
 	const email = inputEmail + "@" + inputDomain;
-	console.log(inputDomain);
 	
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(inputEmail) && isNullOrEmpty(inputDomain)) {
 		insertDefaultMessage(textType, "10~50자의 영문 대소문자, 숫자 사용 가능");
-		return;
+		return Promise.resolve(false);
 	}	
 	
 	if (isNullOrEmpty(inputEmail)) {
 		insertErrorMessage(textType, "이메일을 입력해 주세요");
-		return;
+		return Promise.resolve(false);
 	}
 	
 	if (isNullOrEmpty(inputDomain)) {
 		insertErrorMessage(textType, "이메일 도메인을 선택하거나 입력해 주세요");
-		return;
+		return Promise.resolve(false);
 	}		
 	
+	
+	// 유효성 검사
 	errorMessage = 		
 			checkMinMaxLength("이메일은", email, minLengthEmail, maxLengthEmail) ||
 			checkPattern("이메일", email, new RegExp(patternEmail));
@@ -126,34 +123,180 @@ function checkEmail(textType) {
 	// 에러가 발생한 경우 안내문 출력
 	if (errorMessage) {
 		insertErrorMessage(textType, errorMessage);
-		return;
+		return Promise.resolve(false);
+		
+	} else {
+		// AJAX 요청 - 이메일 중복 검증
+		return sendRequest("/api/validation/exist/member.do?email=" + email, "post")
+		    .then(response => {
+				
+				// 응답 JSON 보기
+				console.log("성공 응답:", response);
+				
+				// 성공/실패 여부에 따라 응답 메세지 표기
+				if (response.success) {
+					insertSuccessMessage(textType, "사용 가능한 이메일 입니다");
+					return true;
+				}
+				else {
+					insertErrorMessage(textType, "이미 가입한 이메일이 존재합니다");
+					return false;
+				}
+				
+		    })
+			.catch(xhr => {
+				
+				const response = xhr.responseJSON || {};
+				console.log("실패 응답:", response);
+				
+			    const alertMessage = response.alertMessage || "검증 요청이 실패했습니다. 잠시 후에 다시 시도해 주세요";
+			    insertErrorMessage(textType, alertMessage);
+			    return false;
+			});
 	}
-	
-	// AJAX 요청 - 이메일 중복 검증
-	sendRequest("/api/validation/exist/member.do?email=" + email)
-	    .done(function(response) {
-			
-			// 응답 JSON 보기
-			console.log("성공 응답:", response);
-			
-			// 성공/실패 여부에 따라 응답 메세지 표기
-			if (response.success) insertSuccessMessage(textType, "사용 가능한 이메일 입니다");
-			else insertErrorMessage(textType, "이미 가입한 이메일이 존재합니다");
-
-	    })
-	    .fail(function(xhr) {
-			
-			// 실패 응답 JSON 파싱 후 보기
-			const response = xhr.responseJSON || {};
-			console.log("실패 응답:", response);
-			
-			// 실패 응답 메세지를 로그인 페이지에 출력
-			const alertMessage = response.alertMessage || "검증 요청이 실패했습니다. 잠시 후에 다시 시도해 주세요";
-			insertErrorMessage(textType, alertMessage);
-	    });
 }
 
 
+// 특정 필드 검증 - 닉네임
+function checkNickname(textType) {
+
+	const nickname = $("#nickname").val();
+	
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(nickname)) {
+		insertDefaultMessage(textType, "2~20자의 한글, 영문대소문자, 숫자 사용 가능");
+		return Promise.resolve(false);
+	}	
+	
+	
+	// 유효성 검사
+	errorMessage = 		
+			checkMinMaxLength("닉네임은", nickname, minLengthNickname, maxLengthNickname) ||
+			checkPattern("닉네임", nickname, new RegExp(patternNickname));
+				
+					
+	// 에러가 발생한 경우 안내문 출력
+	if (errorMessage) {
+		insertErrorMessage(textType, errorMessage);
+		return Promise.resolve(false);
+		
+	} else {
+		// AJAX 요청 - 이메일 중복 검증
+		return sendRequest("/api/validation/exist/member.do?nickname=" + nickname, "post")
+		    .then(response => {
+				
+				// 응답 JSON 보기
+				console.log("성공 응답:", response);
+				
+				// 성공/실패 여부에 따라 응답 메세지 표기
+				if (response.success) {
+					insertSuccessMessage(textType, "사용 가능한 닉네임 입니다");
+					return true;
+				}
+				else {
+					insertErrorMessage(textType, "이미 가입한 닉네임이 존재합니다");
+					return false;
+				}
+
+		    })
+			.catch(xhr => {
+	        	
+				const response = xhr.responseJSON || {};
+				console.log("실패 응답:", response);
+				
+	            const alertMessage = response.alertMessage || "검증 요청이 실패했습니다. 잠시 후에 다시 시도해 주세요";
+	            insertErrorMessage(textType, alertMessage);
+	            return false;
+	        });
+	}
+}
+
+
+// 특정 필드 검증 - 비밀번호
+function checkPassword(textType) {
+
+	const password = $("#password").val();
+	const passwordCheck = $("#passwordCheck").val();
+			
+			
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(password) && isNullOrEmpty(passwordCheck)) {
+		insertDefaultMessage(textType, "8~20자의 영문 대소문자, 숫자, 특수문자를 포함한 비밀번호 입력");
+		return Promise.resolve(false);
+	}
+	
+	// 둘 중 하나만 입력한 경우
+	if (isNullOrEmpty(password)) {
+		insertErrorMessage(textType, "비밀번호를 입력해 주세요");
+		return Promise.resolve(false);
+	}
+	
+	if (isNullOrEmpty(passwordCheck)) {
+		insertErrorMessage(textType, "비밀번호 확인을 입력해 주세요");
+		return Promise.resolve(false);
+	}
+	
+	// 비밀번호와 비밀번호확인이 일치하지 않는 경우
+	if (password !== passwordCheck) {
+		insertErrorMessage(textType, "비밀번호와 비밀번호 확인이 일치하지 않습니다");
+		return Promise.resolve(false);
+	}
+			
+	
+	// 유효성 검사
+	const errorMessage = 		
+			checkMinMaxLength("비밀번호는", password, minLengthPassword, maxLengthPassword) ||
+			checkPattern("비밀번호", password, new RegExp(patternPassword));
+					
+	// 에러가 발생한 경우와 정상 사용 가능한 경우 분기	
+	if (errorMessage) {
+		insertErrorMessage(textType, errorMessage);
+		return Promise.resolve(false);
+	} else {
+		insertSuccessMessage(textType, "사용할 수 있는 비밀번호 입니다");
+		return Promise.resolve(true);
+	}
+}
+
+
+// 특정 필드 검증 - 주소
+function checkAddress(textType) {
+
+	const zipcode = $("#zipcode").val();
+	const address = $("#address").val();
+			
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(zipcode) && isNullOrEmpty(address)) {
+		insertDefaultMessage(textType, "공백을 포함한 100자 이내 상세주소 입력");
+		return Promise.resolve(false);
+	}
+	
+	// 둘 중 하나만 입력한 경우
+	if (isNullOrEmpty(zipcode)) {
+		insertErrorMessage(textType, "우편번호 검색을 다시 시도해 주세요");
+		return Promise.resolve(false);
+	}
+	
+	if (isNullOrEmpty(address)) {
+		insertErrorMessage(textType, "상세주소를 입력해 주세요");
+		return Promise.resolve(false);
+	}
+	
+	
+	// 유효성 검사
+	const errorMessage =
+			checkMinMaxLength("상세주소는", address, minLengthAddress, maxLengthAddress) ||
+			checkPattern("비밀번호", zipcode, new RegExp(patternZipcode));
+					
+	// 에러가 발생한 경우와 정상 사용 가능한 경우 분기	
+	if (errorMessage) {
+		insertErrorMessage(textType, errorMessage);
+		return Promise.resolve(false);
+	} else {
+		insertSuccessMessage(textType, "주소가 올바르게 작성되었습니다");
+		return Promise.resolve(true);
+	}
+}
 
 
 // 오류 영역에 메세지 삽입 (로그인 전용)

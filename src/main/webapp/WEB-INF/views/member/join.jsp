@@ -12,6 +12,7 @@
     let patternPassword = "${patternPassword}";
     let patternName = "${patternName}";
     let patternNickname = "${patternNickname}";
+    let patternZipcode = "${patternZipcode}";
     
  	// min, max length
     let minLengthEmail = "${minLengthEmail}";
@@ -22,6 +23,8 @@
     let maxLengthNickname = "${maxLengthNickname}";
     let minLengthPassword = "${minLengthPassword}";
     let maxLengthPassword = "${maxLengthPassword}";
+    let minLengthAddress = "${minLengthAddress}";
+    let maxLengthAddress = "${maxLengthAddress}";
 </script>
 
 
@@ -45,12 +48,12 @@
         <div class="field">
             <label for="name">이름</label>
             <input class="input" id="name" name="name" type="text" placeholder="이름">
-            <div class="text name">2~10자의 한글, 영문대소문자 사용 가능</div>
+            <div class="text name">2~10자의 한글 사용 가능</div>
         </div>
         <div class="field">
             <label class="nickname" for="nickname">닉네임</label>
             <input class="input" id="nickname" name="nickname" type="text" placeholder="닉네임">
-            <div class="text">2~20자의 한글, 영문대소문자, 숫자 사용 가능</div>
+            <div class="text nickname">2~20자의 한글, 영문대소문자, 숫자 사용 가능</div>
         </div>
         <div class="field">
             <label class="password" for="password">비밀번호</label>
@@ -58,7 +61,7 @@
              <input class="input" id="password" name="password" type="password" placeholder="비밀번호">
              <input class="input" id="passwordCheck" name="passwordCheck" type="password" placeholder="비밀번호 확인">
             </div>
-            <div class="text">8~20자의 영문 대소문자, 숫자, 특수문자를 포함한 비밀번호 입력</div>
+            <div class="text password">8~20자의 영문 대소문자, 숫자, 특수문자를 포함한 비밀번호 입력</div>
         </div>
         <div class="field">
             <label class="address" for="address">주소</label>
@@ -69,7 +72,7 @@
                  <button class="zipcode" id="zipcodeButton" type="button">우편번호 검색</button>
                 </div>
             </div>
-            <div class="text">우편번호 검색 후 100자 이내의 상세주소 압력</div>
+            <div class="text address">공백을 포함한 100자 이내 상세주소 입력</div>
         </div>
         <button class="big-button" type="submit">회원가입</button>
     </form>

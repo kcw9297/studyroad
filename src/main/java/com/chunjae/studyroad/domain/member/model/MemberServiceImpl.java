@@ -32,14 +32,14 @@ public class MemberServiceImpl implements MemberService {
 	
 	
 	@Override
-	public Boolean existsEmail(String email) {
-		return memberDAO.findByEmail(email).isPresent();
+	public Boolean checkEmailDuplication(String email) {
+		return memberDAO.findByEmail(email).isEmpty();
 	}
 
 	
 	@Override
-	public Boolean existsNickname(String nickname) {
-		return memberDAO.findByNickname(nickname).isPresent();
+	public Boolean checkNicknameDuplication(String nickname) {
+		return memberDAO.findByNickname(nickname).isEmpty();
 	}
 	
 	

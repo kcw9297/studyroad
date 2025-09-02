@@ -26,7 +26,7 @@ $(document).ready(function() {
 		}
 
 	    // AJAX 비동기 요청 수행
-		sendRequest("/api/login.do", new FormData(this))
+		sendRequest("/api/login.do", "post", new FormData(this))
 		    .done(function(response) {
 				
 				// 응답 JSON 보기

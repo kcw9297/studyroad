@@ -78,6 +78,11 @@ public class MemberControllerImpl implements MemberController {
 	        String address = request.getParameter("address");
 	        MemberDTO.Join join = new MemberDTO.Join(name, nickname, email, password, zipcode, address);
 			
+	        System.out.printf(
+	        	    "회원가입 입력 값 => 이름: %s, 닉네임: %s, 이메일: %s, 비밀번호: %s, 우편번호: %s, 주소: %s%n",
+	        	    name, nickname, email, password, zipcode, address
+	        	);
+	        
 			// [3] service 조회
 	        MemberDTO.Info memberInfo = memberService.join(join); 
 			

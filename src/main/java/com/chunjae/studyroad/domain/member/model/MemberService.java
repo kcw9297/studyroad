@@ -17,19 +17,19 @@ public interface MemberService {
     
     
 	/**
-     * 회원 존재여부 확인 - 이메일
+     * 이메일 중복여부 확인
      * @param email		검증 대상 이메일 문자열
-     * @return Boolean  존재 시 true, 존재하지 않으면 false 반환
+     * @return Boolean  중복 시 false, 중복되지 않으면 true
      */
-    Boolean existsEmail(String email);
+    Boolean checkEmailDuplication(String email);
     
     
 	/**
-     * 회원 존재여부 확인 - 닉네임
+     * 닉네임 중복여부 확인
      * @param nickname	검증 대상 닉네임 문자열
-     * @return Boolean  존재 시 true, 존재하지 않으면 false 반환
+     * @return Boolean  중복 시 false, 중복되지 않으면 true
      */
-    Boolean existsNickname(String nickname);
+    Boolean checkNicknameDuplication(String nickname);
 
 
     /**

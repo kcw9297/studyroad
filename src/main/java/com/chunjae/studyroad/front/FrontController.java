@@ -111,6 +111,7 @@ public class FrontController extends HttpServlet {
     	request.setAttribute("patternPassword", ValidationUtils.PATTERN_PASSWORD);
     	request.setAttribute("patternName", ValidationUtils.PATTERN_NAME);
     	request.setAttribute("patternNickname", ValidationUtils.PATTERN_NICKNAME);
+    	request.setAttribute("patternZipcode", ValidationUtils.PATTERN_ZIPCODE);
     	
     	// min, max length
     	request.setAttribute("minLengthEmail", ValidationUtils.MIN_LANGTH_EMAIL);
@@ -121,6 +122,8 @@ public class FrontController extends HttpServlet {
     	request.setAttribute("maxLengthNickname", ValidationUtils.MAX_LANGTH_NICKNAME);
     	request.setAttribute("minLengthPassword", ValidationUtils.MIN_LANGTH_PASSWORD);
     	request.setAttribute("maxLengthPassword", ValidationUtils.MAX_LANGTH_PASSWORD);
+    	request.setAttribute("minLengthAddress", ValidationUtils.MIN_LANGTH_ADDRESS);
+    	request.setAttribute("maxLengthAddress", ValidationUtils.MAX_LANGTH_ADDRESS);
 	}
 
 

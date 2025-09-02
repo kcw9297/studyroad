@@ -12,6 +12,7 @@ function kakaoAddress(){
 			$("#address").prop("readonly", false);
 			$("#address").prop("disabled", false);
 			$("#address, #zipcode").off("click");
+			checkAddress(".text.address");
         }
     }).open();
 }

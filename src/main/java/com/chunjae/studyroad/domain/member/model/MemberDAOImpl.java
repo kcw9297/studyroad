@@ -78,7 +78,7 @@ class MemberDAOImpl implements MemberDAO {
 	public Optional<MemberDTO.Info> findByNickname(String nickname) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_EMAIL)) {
+			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_NICKNAME)) {
 				
 				// [1] 파라미터 세팅
 				statement.setString(1, nickname);
@@ -109,7 +109,7 @@ class MemberDAOImpl implements MemberDAO {
 							resultSet.getString("name"),
 							resultSet.getString("password"),
 							resultSet.getString("zipcode"),
-							resultSet.getString("detail_address"),
+							resultSet.getString("address"),
 							resultSet.getDate("joined_at"),
 							resultSet.getDate("quited_at"),
 							resultSet.getDate("ban_end_at"),
