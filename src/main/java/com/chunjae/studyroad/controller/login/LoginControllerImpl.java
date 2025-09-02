@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.controller.login;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
@@ -9,6 +10,7 @@ import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
+import com.chunjae.studyroad.common.util.TimeUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.MemberService;
 import com.chunjae.studyroad.domain.member.model.MemberServiceImpl;
@@ -49,7 +51,7 @@ public class LoginControllerImpl implements LoginController {
 			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf("[getLoginView] view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
     }
@@ -73,7 +75,7 @@ public class LoginControllerImpl implements LoginController {
 			SessionUtils.setLoginMember(request, loginMember);
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!", "/");
+			APIResponse rp = APIResponse.success(String.format("%s님 환영합니다.<br>로그인 시간 : %s", loginMember.getNickname(), TimeUtils.formatKoreanDateTime()), "/");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		

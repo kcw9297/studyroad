@@ -20,7 +20,7 @@
 <header class="header-main">
     <div class="container header-mainin">
         <div class="header-logo">
-            <img src="/file/display.do?fileName=logo1.png&type=BASE" width="250" height="57"/>
+        	<a href="/"> <img src="/file/display.do?fileName=logo1.png&type=BASE" width="250" height="57"/> </a>
         </div>
         <div class="header-menu">
             <a class="link" href="#">공지사항</a>

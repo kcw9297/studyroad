@@ -19,11 +19,18 @@ interface MemberDAO {
     
     /**
      * 로그인
-     * @param email  대상 아이디
-     * @param password  대상 비밀번호
-     * @return Info     조회된 회원정보 DTO 반환
+     * @param email 대상 이메일
+     * @return Info	조회된 회원정보 DTO 반환
      */
     Optional<MemberDTO.Info> findByEmail(String email);
+    
+    
+    /**
+     * 로그인
+     * @param nickname	대상 낙네임
+     * @return Info		조회된 회원정보 DTO 반환
+     */
+    Optional<MemberDTO.Info> findByNickname(String nickname);
     
     
     /**

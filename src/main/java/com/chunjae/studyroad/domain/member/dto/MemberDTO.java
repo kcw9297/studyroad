@@ -142,7 +142,7 @@ public class MemberDTO {
              return status;
          }
     }
-    
+
 
     /**
      * 회원 DTO - 정보수정 요청

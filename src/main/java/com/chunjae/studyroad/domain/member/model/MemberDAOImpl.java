@@ -10,8 +10,6 @@ import java.sql.*;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.Edit;
-import com.chunjae.studyroad.domain.member.dto.MemberDTO.Join;
 
 class MemberDAOImpl implements MemberDAO {
 
@@ -44,11 +42,11 @@ class MemberDAOImpl implements MemberDAO {
 			
 		} catch (SQLException e) {
 			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
-			return Optional.empty();
+			throw new DAOException(e);
 			
 		} catch (Exception e) {
 			System.out.printf(DAOUtils.MESSAGE_EX, e);
-			return Optional.empty();
+			throw new DAOException(e);
 		}
 	}
 	
@@ -67,12 +65,35 @@ class MemberDAOImpl implements MemberDAO {
 			
 		} catch (SQLException e) {
 			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
-			return Optional.empty();
+			throw new DAOException(e);
 			
 		} catch (Exception e) {
 			System.out.printf(DAOUtils.MESSAGE_EX, e);
-			return Optional.empty();
+			throw new DAOException(e);
 		}
+	}
+	
+	
+	@Override
+	public Optional<MemberDTO.Info> findByNickname(String nickname) {
+		
+		try (Connection connection = dataSource.getConnection();
+			 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_NICKNAME)) {
+				
+				// [1] 파라미터 세팅
+				statement.setString(1, nickname);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+				return Optional.ofNullable(mapToInfo(statement));
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 	
 	
@@ -136,7 +157,7 @@ class MemberDAOImpl implements MemberDAO {
 	}
 	
 	@Override
-	public Integer updateName(Edit request) {
+	public Integer updateName(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
 				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NAME)) {
 				
@@ -156,7 +177,7 @@ class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public Integer updateNickname(Edit request) {
+	public Integer updateNickname(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
 				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NICKNAME)) {
 				
@@ -176,7 +197,7 @@ class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public Integer updatePassword(Edit request) {
+	public Integer updatePassword(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
 				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD)) {
 				
@@ -196,7 +217,7 @@ class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public Integer updateAddress(Edit request) {
+	public Integer updateAddress(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
 				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_ADDRESS)) {
 				
@@ -236,6 +257,7 @@ class MemberDAOImpl implements MemberDAO {
 				throw new DAOException(e);
 			}
 	}
+
 	
 	
 }

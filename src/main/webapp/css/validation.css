@@ -1,0 +1,10 @@
+
+/* 로그인 에러 택스트 */
+.login-error{text-align: center; margin-top: 20px; font-size:16px; color:#ff0000; min-height: 25px;}
+
+
+/* 기본 필드 에러 텍스트 */
+.field-error{color:#ff0000; font-weight: 500; }
+
+/* 기본 필드 통과 텍스트 */
+.field-success{color:#008040; font-weight: 500;}
