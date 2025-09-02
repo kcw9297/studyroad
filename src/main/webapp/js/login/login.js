@@ -9,25 +9,21 @@ $(document).ready(function() {
 		
 		// form submit 방지
 	    e.preventDefault();
+
 		
 		// 검증 - 아이디
-		let errorMessage = checkNullOrEmpty("이메일을", email);
+		let errorMessage = checkNullOrEmpty("이메일을", $("#email").val());
 		if (errorMessage) {
 			$(".login-error").text(errorMessage).show();
 			return;
 		}
 		
 		// 검증 - 이메일
-		errorMessage = checkNullOrEmpty("비밀번호를", password);
+		errorMessage = checkNullOrEmpty("비밀번호를", $("#password").val());
 		if (errorMessage) {
 			$(".login-error").text(errorMessage).show();
 			return;
 		}
-		
-		// 검증 성공 처리
-		alert("검증 성공!");
-		$(".login-error").text("").show();
-		
 
 	    // AJAX 비동기 요청 수행
 		sendRequest("/api/login.do", new FormData(this))
@@ -38,7 +34,11 @@ $(document).ready(function() {
 				
 				// 에러 메세지 비우기
 				$(".login-error").text("").show();
-				window.location.href = response.redirectURL;
+				
+				// 응답 모달 띄움
+				showAlertModal(response.alertMessage || "로그인 성공!", 
+					function() { if (response.redirectURL) {window.location.href = response.redirectURL }}
+				);
 		    })
 		    .fail(function(xhr) {
 				

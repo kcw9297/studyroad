@@ -13,10 +13,13 @@
 	
 	<%-- 공용 스크립트 --%>
 	<script src="<c:url value='/js/base/ajax.js'/>"></script>
+	<script src="<c:url value='/js/base/modal.js'/>"></script>
 	<script src="<c:url value='/js/base/validation.js'/>"></script>
     	
 	<%-- 공용 CSS --%>
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
+	<link rel="stylesheet" type="text/css" href="<c:url value='/css/modal.css'/>">
+	<link rel="stylesheet" type="text/css" href="<c:url value='/css/error.css'/>">
 	
 </head>
 
