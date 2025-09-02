@@ -6,7 +6,7 @@
 
 <%-- 서버에서 내려준 변수 --%>
 <script>
-
+	returnURL = "${param.returnURL}" || "/";
 </script>
 
 

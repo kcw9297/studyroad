@@ -1,6 +1,5 @@
 package com.chunjae.studyroad.controller.login;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
@@ -40,13 +39,14 @@ public class LoginControllerImpl implements LoginController {
     @Override
     public void getLoginView(HttpServletRequest request, HttpServletResponse response) {
     	try {
-    		LoginMember loginMember = SessionUtils.getLoginMember(request);
-            if(Objects.nonNull(loginMember)){
-                System.out.println("로그인 멤버: " + loginMember.getNickname());
-            } else {
-                System.out.println("세션에 로그인 정보 없음");
-            }
+    		
+			// [1] 세션 검증
+			if (Objects.nonNull(SessionUtils.getLoginMember(request))) {
+				HttpUtils.redirectHome(response);
+				return;
+			}
 			
+			// [2] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/login/login.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 			
@@ -61,7 +61,7 @@ public class LoginControllerImpl implements LoginController {
     	try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-    		HttpUtils.checkMethod(request, "POST");
+    		HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
@@ -75,7 +75,11 @@ public class LoginControllerImpl implements LoginController {
 			SessionUtils.setLoginMember(request, loginMember);
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success(String.format("%s님 환영합니다.<br>로그인 시간 : %s", loginMember.getNickname(), TimeUtils.formatKoreanDateTime()), "/");
+			String returnURL = request.getParameter("returnURL");	// 만약 로그인 서비스가 필요한 곳에서 접근한 경우 존재
+			String returnUrl = Objects.nonNull(returnURL) ? returnURL : "/";
+			System.out.println(returnURL);
+			
+			APIResponse rp = APIResponse.success(String.format("%s님 환영합니다.<br>로그인 시간 : %s", loginMember.getNickname(), TimeUtils.formatKoreanDateTime()), returnUrl);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
@@ -98,13 +102,14 @@ public class LoginControllerImpl implements LoginController {
     	try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "POST");
+			HttpUtils.checkMethod(request, HttpUtils.POST);
 			
 			// [2] 로그아웃
 			SessionUtils.invalidate(request);
 			
 			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			String alertMessage = String.format("로그아웃에 성공했습니다.<br>로그아웃 시간 : %s", TimeUtils.formatKoreanDateTime());
+			APIResponse rp = APIResponse.success(alertMessage, "/");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
