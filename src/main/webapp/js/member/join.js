@@ -87,7 +87,7 @@ $(document).ready(function() {
 
 function sendAJAX(form) {
 	sendRequest("/api/member/join.do", "post", form)
-	    .done(function(response) {
+	    .then(response => {
 			
 			// 응답 JSON 보기
 			console.log("성공 응답:", response);
@@ -100,7 +100,7 @@ function sendAJAX(form) {
 				function() { if (response.redirectURL) {window.location.href = response.redirectURL }}
 			);
 	    })
-	    .fail(function(xhr) {
+	    .catch(xhr => {
 			
 			// 실패 응답 JSON 파싱 후 보기
 			const response = xhr.responseJSON || {};

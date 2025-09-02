@@ -27,7 +27,7 @@ $(document).ready(function() {
 
 	    // AJAX 비동기 요청 수행
 		sendRequest("/api/login.do", "post", new FormData(this))
-		    .done(function(response) {
+		    .then(response => {
 				
 				// 응답 JSON 보기
 				console.log("성공 응답:", response);
@@ -40,7 +40,7 @@ $(document).ready(function() {
 					function() { if (response.redirectURL) {window.location.href = response.redirectURL }}
 				);
 		    })
-		    .fail(function(xhr) {
+		    .catch(xhr => {
 				
 				// 실패 응답 JSON 파싱 후 보기
 				const response = xhr.responseJSON || {};
