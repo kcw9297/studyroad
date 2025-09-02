@@ -51,7 +51,7 @@ public class LoginControllerImpl implements LoginController {
 			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf("[getLoginView] view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
     }
@@ -81,12 +81,12 @@ public class LoginControllerImpl implements LoginController {
 		
 			// 오류 응답 반환
 		} catch (ServiceException e) {
-			System.out.printf("[LoginController] - 비즈니스 예외 발생!: %s\n", e);
+			System.out.printf("[postLoginAPI] - 비즈니스 예외 발생!: %s\n", e);
 			APIResponse rp =  APIResponse.error(e.getMessage(), StatusCode.CODE_INPUT_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);
 		
 		} catch (Exception e) {
-			System.out.printf("[LoginController] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			System.out.printf("[postLoginAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("오류가 발생했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
@@ -110,6 +110,7 @@ public class LoginControllerImpl implements LoginController {
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+			System.out.printf("[postLogoutAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("로그아웃에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}

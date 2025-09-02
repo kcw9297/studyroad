@@ -14,6 +14,22 @@ public interface MemberService {
      * @return Info     조회된 회원정보 DTO 반환
      */
     MemberDTO.Info getInfo(Long memberId);
+    
+    
+	/**
+     * 회원 존재여부 확인 - 이메일
+     * @param email		검증 대상 이메일 문자열
+     * @return Boolean  존재 시 true, 존재하지 않으면 false 반환
+     */
+    Boolean existsEmail(String email);
+    
+    
+	/**
+     * 회원 존재여부 확인 - 닉네임
+     * @param nickname	검증 대상 닉네임 문자열
+     * @return Boolean  존재 시 true, 존재하지 않으면 false 반환
+     */
+    Boolean existsNickname(String nickname);
 
 
     /**

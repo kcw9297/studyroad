@@ -5,7 +5,7 @@
 
 $(document).ready(function() {
     
-	$("#login-form").on("submit", function(e) {
+	$("#loginForm").on("submit", function(e) {
 		
 		// form submit 방지
 	    e.preventDefault();

@@ -83,7 +83,10 @@ public class MemberControllerImpl implements MemberController {
 			
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!", memberInfo);
+	        String alertMessage = 
+	        		String.format("회원 가입이 완료되었습니다.<br>닉네임 : %s<br>이메일 : %s<br>가입일 : %s", memberInfo.getNickname(), memberInfo.getEmail(), TimeUtils.formatKoreanDateTime(memberInfo.getJoinedAt()));
+			
+	        APIResponse rp = APIResponse.success(alertMessage, "/login.do", memberInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
@@ -143,6 +146,7 @@ public class MemberControllerImpl implements MemberController {
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
