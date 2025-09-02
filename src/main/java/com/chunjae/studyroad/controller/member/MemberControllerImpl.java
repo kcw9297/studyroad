@@ -97,6 +97,7 @@ public class MemberControllerImpl implements MemberController {
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+			System.out.printf("[postJoinAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
@@ -112,8 +113,7 @@ public class MemberControllerImpl implements MemberController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String strMemberId = request.getParameter("memberId");
-			long memberId = Long.parseLong(strMemberId);
+			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			String type = request.getParameter("type");
 			switch (type) {
 				case "name":
@@ -160,15 +160,58 @@ public class MemberControllerImpl implements MemberController {
 	
 	@Override
 	public void postQuitAPI(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			HttpUtils.checkMethod(request, "POST");
+
+			
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			long memberId = SessionUtils.getLoginMember(request).getMemberId();
+			
+			// [3] service 조회
+	        memberService.quit(memberId); 
+			
+			
+			// [4] JSON 응답 반환
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
 		
+			// [예외 발생] 오류 응답 반환
+		} catch (Exception e) {
+			System.out.printf("[postQuitAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	
 	@Override
 	public void postRecoverQuitAPI(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			HttpUtils.checkMethod(request, "POST");
+
+			
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			long memberId = SessionUtils.getLoginMember(request).getMemberId();
+			
+			// [3] service 조회
+	        memberService.recoverQuit(memberId); 
+			
+			
+			// [4] JSON 응답 반환
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
 		
+			// [예외 발생] 오류 응답 반환
+		} catch (Exception e) {
+			System.out.printf("[postRecoverQuitAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
-
-
-
 }

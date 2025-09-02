@@ -7,11 +7,14 @@ import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.*;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.controller.base.*;
+import com.chunjae.studyroad.controller.comment.*;
 import com.chunjae.studyroad.controller.home.*;
+import com.chunjae.studyroad.controller.like.*;
 import com.chunjae.studyroad.controller.login.*;
 import com.chunjae.studyroad.controller.mail.*;
 import com.chunjae.studyroad.controller.member.*;
 import com.chunjae.studyroad.controller.post.*;
+import com.chunjae.studyroad.controller.report.*;
 import com.chunjae.studyroad.controller.validation.*;
 
 import jakarta.servlet.*;
@@ -39,6 +42,9 @@ public class FrontController extends HttpServlet {
 	private final ValidationController validationController = ValidationControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	private final PostController postController = PostControllerImpl.getInstance();
+	private final CommentController commentController = CommentControllerImpl.getInstance();
+	private final ReportController reportController = ReportControllerImpl.getInstance();
+	private final LikeController likeController = LikeControllerImpl.getInstance();
 	private final LoginController loginController = LoginControllerImpl.getInstance();
 	
 	
@@ -78,6 +84,18 @@ public class FrontController extends HttpServlet {
             else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
             else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
             else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
+            else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
+            else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
+            else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
+            else if (path.startsWith("/api/comment/write.do")) commentController.postWriteAPI(request, response);
+            else if (path.startsWith("/api/comment/edit.do")) commentController.postEditAPI(request, response);
+            else if (path.startsWith("/api/comment/remove.do")) commentController.postRemoveAPI(request, response);
+            else if (path.startsWith("/api/report/submit.do")) reportController.postSubmitAPI(request, response);
+            else if (path.startsWith("/api/like/like.do")) likeController.postLikeAPI(request, response);
+            else if (path.startsWith("/api/like/unlike.do")) likeController.postUnlikeAPI(request, response);
+            else if (path.startsWith("/editor.do")) baseController.getEditorView(request, response);
+            else if (path.startsWith("/api/mail/send.do")) mailController.postSendAPI(request, response);
+            else if (path.startsWith("/home.do")) homeController.getHomeView(request, response);
             else if (path.startsWith("/api/mail/send.do")) mailController.postSendAPI(request, response);
             else if (path.startsWith("/file/display.do")) baseController.getDisplayFile(request, response);
             else if (path.startsWith("/file/download.do")) baseController.getDownloadFile(request, response);

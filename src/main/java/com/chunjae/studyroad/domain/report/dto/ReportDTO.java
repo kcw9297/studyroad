@@ -86,17 +86,23 @@ public class ReportDTO {
      */
     public static class Submit {
 
-        private String targetId;
+    	private Long memberId;
+        private Long targetId;
         private String targetType;
         private String reason;
 
-        public Submit(String targetId, String targetType, String reason) {
+        public Submit(Long memberId, Long targetId, String targetType, String reason) {
+            this.memberId = memberId;
             this.targetId = targetId;
             this.targetType = targetType;
             this.reason = reason;
         }
 
-        public String getTargetId() {
+        public Long getMemberId() {
+            return memberId;
+        }
+
+        public Long getTargetId() {
             return targetId;
         }
 
