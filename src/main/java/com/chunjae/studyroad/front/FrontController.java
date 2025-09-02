@@ -7,6 +7,7 @@ import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.*;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.controller.base.*;
+import com.chunjae.studyroad.controller.comment.*;
 import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.login.*;
 import com.chunjae.studyroad.controller.mail.*;
@@ -37,6 +38,7 @@ public class FrontController extends HttpServlet {
 	private final MailController mailController = MailControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	private final PostController postController = PostControllerImpl.getInstance();
+	private final CommentController commentController = CommentControllerImpl.getInstance();
 	private final LoginController loginController = LoginControllerImpl.getInstance();
 	
 	
@@ -76,6 +78,9 @@ public class FrontController extends HttpServlet {
             else if (Objects.equals(path, "/api/post/write.do")) postController.postWriteAPI(request, response);
             else if (Objects.equals(path, "/api/post/edit.do")) postController.postEditAPI(request, response);
             else if (Objects.equals(path, "/api/post/remove.do")) postController.postRemoveAPI(request, response);
+            else if (Objects.equals(path, "/api/comment/write.do")) commentController.postWriteAPI(request, response);
+            else if (Objects.equals(path, "/api/comment/edit.do")) commentController.postEditAPI(request, response);
+            else if (Objects.equals(path, "/api/comment/remove.do")) commentController.postRemoveAPI(request, response);
             else if (Objects.equals(path, "/editor.do")) baseController.getEditorView(request, response);
             else if (Objects.equals(path, "/api/mail/send.do")) mailController.postSendAPI(request, response);
             else if (Objects.equals(path, "/home.do")) homeController.getHomeView(request, response);

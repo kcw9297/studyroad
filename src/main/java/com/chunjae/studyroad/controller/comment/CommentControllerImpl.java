@@ -1,56 +1,46 @@
-package com.chunjae.studyroad.controller.post;
+package com.chunjae.studyroad.controller.comment;
 
-import java.util.*;
+import java.util.Objects;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
-import com.chunjae.studyroad.common.exception.ControllerException;
-import com.chunjae.studyroad.common.util.*;
-import com.chunjae.studyroad.domain.post.dto.PostDTO;
-import com.chunjae.studyroad.domain.post.model.*;
+import com.chunjae.studyroad.common.util.HttpUtils;
+import com.chunjae.studyroad.common.util.JSONUtils;
+import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
+import com.chunjae.studyroad.domain.comment.model.*;
 
 import jakarta.servlet.http.*;
 
-public class PostControllerImpl implements PostController {
+/**
+ * 댓글 동기/비동기 요청 처리
+ */
+public class CommentControllerImpl implements CommentController {
 
 
 	// 인스턴스
-	private static final PostControllerImpl INSTACE = new PostControllerImpl();
+	private static final CommentControllerImpl INSTACE = new CommentControllerImpl();
 	
 	// 사용 서비스
-	private final PostService postService = PostServiceImpl.getInstance();
+	private final CommentService commentService = CommentServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
-	private PostControllerImpl() {}
+	private CommentControllerImpl() {}
 	
 	// 인스턴스 제공
-	public static PostControllerImpl getInstance() {
+	public static CommentControllerImpl getInstance() {
 		return INSTACE;
 	}
 
-	
 	@Override
-	public void getInfoView(HttpServletRequest request, HttpServletResponse response) {
-		
-	}
-
-
-	@Override
-	public void getListView(HttpServletRequest request, HttpServletResponse response) {
-		
-	}
+	public void getListAPI(HttpServletRequest request, HttpServletResponse response) {
+    	
+    }
 
 
 	@Override
-	public void getWriteView(HttpServletRequest request, HttpServletResponse response) {
-		
-	}
-
-
-	@Override
-	public void getEditView(HttpServletRequest request, HttpServletResponse response) {
-		
-	}
+	public void getEditAPI(HttpServletRequest request, HttpServletResponse response) {
+    	
+    }
 
 
 	@Override
@@ -62,19 +52,19 @@ public class PostControllerImpl implements PostController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+	        String strPostId = request.getParameter("postId");
+	        long postId = Long.parseLong(strPostId);
 	        String strMemberId = request.getParameter("memberId");
 	        long memberId = Long.parseLong(strMemberId);
-			String title = request.getParameter("title");
-	        String boardType = request.getParameter("boardType");
-	        String category = request.getParameter("category");
-	        String grade = request.getParameter("grade");
-	        String content = request.getParameter("content");
-	        String strNotice = request.getParameter("notice");
-	        Boolean notice = Boolean.parseBoolean(strNotice);
-	        PostDTO.Write write = new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
-			
-			// [3] service 조회
-	        long postWrite = postService.write(write);
+	        String strParentId = request.getParameter("parentId");
+	        Long parentId = (strParentId == null || strParentId.isBlank()) ? null : Long.parseLong(strParentId);
+	        String strMentionId = request.getParameter("mentionId");
+	        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
+			String content = request.getParameter("content");
+	        CommentDTO.Write write = new CommentDTO.Write(postId, memberId, parentId, mentionId, content);
+	 
+	        
+	        commentService.write(write);
 			
 			
 			// [4] JSON 응답 반환
@@ -99,17 +89,14 @@ public class PostControllerImpl implements PostController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String strPostId = request.getParameter("postId");
-			long postId = Long.parseLong(strPostId);
-			String strMemberId = request.getParameter("memberId");
-	        long memberId = Long.parseLong(strMemberId);
-			String title = request.getParameter("title");
-	        String category = request.getParameter("category");
-	        String grade = request.getParameter("grade");
+	        String strCommentId = request.getParameter("commentId");
+	        long commentId = Long.parseLong(strCommentId);
+	        String strMentionId = request.getParameter("mentionId");
+	        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
 	        String content = request.getParameter("content");
-	        PostDTO.Edit edit = new PostDTO.Edit(postId, memberId, title, category, grade, content);
+	        CommentDTO.Edit edit = new CommentDTO.Edit(commentId, mentionId, content);
 
-			postService.edit(edit);
+			commentService.edit(edit);
 			
 			
 			// [3] JSON 응답 반환
@@ -134,10 +121,10 @@ public class PostControllerImpl implements PostController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String strPostId = request.getParameter("postId");
-			long postId = Long.parseLong(strPostId);
+			String strCommentId = request.getParameter("commentId");
+			long commentId = Long.parseLong(strCommentId);
 	        
-			postService.remove(postId);
+			commentService.remove(commentId);
 			
 			
 			// [3] JSON 응답 반환
@@ -151,4 +138,5 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
+
 }

@@ -71,7 +71,7 @@ class PostDAOImpl implements PostDAO {
 							resultSet.getString("post_status"),
 							resultSet.getBoolean("is_notice"),
 							resultSet.getLong("likeCount"),
-							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("detail_address"), resultSet.getDate("joined_at"),	resultSet.getDate("quited_at"),	resultSet.getDate("ban_end_at"), resultSet.getString("member_status"))
+							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getDate("joined_at"),	resultSet.getDate("quited_at"),	resultSet.getDate("ban_end_at"), resultSet.getString("member_status"))
 				    ) : null;
 		}
 	}

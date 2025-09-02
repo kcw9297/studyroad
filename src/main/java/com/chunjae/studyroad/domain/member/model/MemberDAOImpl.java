@@ -88,7 +88,7 @@ class MemberDAOImpl implements MemberDAO {
 							resultSet.getString("name"),
 							resultSet.getString("password"),
 							resultSet.getString("zipcode"),
-							resultSet.getString("detail_address"),
+							resultSet.getString("address"),
 							resultSet.getDate("joined_at"),
 							resultSet.getDate("quited_at"),
 							resultSet.getDate("ban_end_at"),

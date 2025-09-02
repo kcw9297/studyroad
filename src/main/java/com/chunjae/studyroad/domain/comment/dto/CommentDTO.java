@@ -125,19 +125,6 @@ public class CommentDTO {
         private String content;
         private Long mentionId;
 
-        public Write(Long postId, Long memberId, String content) {
-            this.postId = postId;
-            this.memberId = memberId;
-            this.content = content;
-        }
-
-        public Write(Long postId, Long memberId, String content, Long parentId) {
-            this.postId = postId;
-            this.memberId = memberId;
-            this.content = content;
-            this.parentId = parentId;
-        }
-
         public Write(Long postId, Long memberId, Long parentId, Long mentionId, String content) {
             this.postId = postId;
             this.memberId = memberId;
@@ -158,12 +145,12 @@ public class CommentDTO {
             return parentId;
         }
 
-        public String getContent() {
-            return content;
-        }
-
         public Long getMentionId() {
             return mentionId;
+        }
+
+        public String getContent() {
+            return content;
         }
     }
 
@@ -176,22 +163,22 @@ public class CommentDTO {
         private String content;
         private Long mentionId;
 
-        public Edit(Long commentId, String content, Long mentionId) {
+        public Edit(Long commentId, Long mentionId, String content) {
             this.commentId = commentId;
-            this.content = content;
             this.mentionId = mentionId;
+            this.content = content;
         }
 
         public Long getCommentId() {
             return commentId;
         }
 
-        public String getContent() {
-            return content;
-        }
-
         public Long getMentionId() {
             return mentionId;
+        }
+
+        public String getContent() {
+            return content;
         }
     }
 }

@@ -20,13 +20,19 @@ public interface CommentController {
 
 
     /**
-     * [POST] /comment/edit.do
+     * [POST] /api/comment/write.do
+     */
+    void postWriteAPI(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
+     * [POST] /api/comment/edit.do
      */
     void postEditAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /comment/remove.do
+     * [POST] /api/comment/remove.do
      */
     void postRemoveAPI(HttpServletRequest request, HttpServletResponse response);
 
