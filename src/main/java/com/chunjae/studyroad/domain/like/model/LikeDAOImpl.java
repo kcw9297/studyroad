@@ -1,4 +1,4 @@
-package com.chunjae.studyroad.domain.report.model;
+package com.chunjae.studyroad.domain.like.model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,47 +8,67 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
-import com.chunjae.studyroad.domain.report.dto.ReportDTO;
+import com.chunjae.studyroad.domain.like.dto.LikeDTO;
 
 /**
- * 신고 DB 로직 관리
+ * 추천 DB 로직 관리
  */
-class ReportDAOImpl implements ReportDAO {
+class LikeDAOImpl implements LikeDAO {
 
 	// MemberDAOImpl 인스턴스
-	private static final ReportDAOImpl INSTANCE = new ReportDAOImpl();
+	private static final LikeDAOImpl INSTANCE = new LikeDAOImpl();
 	
 	// 사용 DBCP
 	private final DataSource dataSource = DAOUtils.getDataSource();
 	
 	// 생성자 접근 제한
-	private ReportDAOImpl() {}
+	private LikeDAOImpl() {}
 	
 	// 이미 생성한 인스턴스 제공
-	public static ReportDAOImpl getInstance() {
+	public static LikeDAOImpl getInstance() {
 		return INSTANCE;
 	}
 
 	@Override
-	public Page.Response<ReportDTO.Info> search(Page.Request<ReportDTO.Search> request) {
-		return null;
+	public Boolean exists(Long memberId, Long targetId, String targetType) {
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_EXISTS)) {
+				
+				// [1] 파라미터 세팅
+
+				statement.setLong(1, memberId);
+				statement.setLong(2, targetId);
+				statement.setString(3, targetType);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				try (ResultSet resultSet = statement.executeQuery()) {
+		            return resultSet.next();
+		        }
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 
 
 	@Override
-	public Long save(ReportDTO.Submit request) {
+	public Long save(LikeDTO.Like request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_REPORT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 
 				statement.setLong(1, request.getMemberId());
 				statement.setLong(2, request.getTargetId());
 				statement.setString(3, request.getTargetType());
-				statement.setString(4, request.getReason());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
@@ -77,7 +97,7 @@ class ReportDAOImpl implements ReportDAO {
 
 
 	@Override
-	public Integer updateStatus(Long reportId, String status) {
+	public Integer updateStatus(Long likeId, String status) {
 		return null;
 	}
 
@@ -85,7 +105,7 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 
@@ -96,6 +116,30 @@ class ReportDAOImpl implements ReportDAO {
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
 				statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
+	}
+
+
+	@Override
+	public Integer deleteById(Long likeId) {
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_LIKE_DELETE)) {
+				
+				// [1] 파라미터 세팅
+
+				statement.setLong(1, likeId);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				return statement.executeUpdate();
 				
 			} catch (SQLException e) {
 				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);

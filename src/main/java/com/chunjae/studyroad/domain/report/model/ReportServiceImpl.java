@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.domain.report.model;
 
+import java.util.Objects;
+
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.report.dto.ReportDTO;
 
@@ -31,7 +33,11 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public void submit(ReportDTO.Submit request) {
-		
+		if (Objects.nonNull(reportDAO.save(request))) {
+	        System.out.println("신고 제출 성공");
+	    } else {
+	        System.out.println("신고 제출 실패");
+	    }	
 	}
 
 
@@ -43,12 +49,12 @@ public class ReportServiceImpl implements ReportService {
 
 	@Override
 	public void quit(Long memberId) {
-		
+		reportDAO.updateStatusByMemberId(memberId, "BEFORE", "QUITED");
 	}
 
 
 	@Override
 	public void recoverQuit(Long memberId) {
-		
+		reportDAO.updateStatusByMemberId(memberId, "QUITED", "BEFORE");
 	}
 }

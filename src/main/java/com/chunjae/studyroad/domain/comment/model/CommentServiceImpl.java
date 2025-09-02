@@ -75,12 +75,12 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public void quit(Long memberId) {
-		
+		commentDAO.updateStatusByMemberId(memberId, "EXIST", "QUITED");
 	}
 
 
 	@Override
 	public void recoverQuit(Long memberId) {
-		
+		commentDAO.updateStatusByMemberId(memberId, "QUITED", "EXIST");
 	}
 }

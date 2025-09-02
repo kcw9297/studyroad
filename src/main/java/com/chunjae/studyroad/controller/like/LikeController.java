@@ -8,13 +8,13 @@ import jakarta.servlet.http.*;
 public interface LikeController {
 
     /**
-     * [POST] /like/like.do
+     * [POST] /api/like/like.do
      */
     void postLikeAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /like/unlike.do
+     * [POST] /api/like/unlike.do
      */
     void postUnlikeAPI(HttpServletRequest request, HttpServletResponse response);
 }

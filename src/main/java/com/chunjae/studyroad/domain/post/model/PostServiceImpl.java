@@ -64,13 +64,21 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void like(Long postId) {
-		
+		if (Objects.equals(postDAO.updateLikeCount(postId, 1L), 1)) {
+	        System.out.println("게시글 추천 성공");
+	    } else {
+	        System.out.println("게시글 추천 실패");
+	    }	
 	}
 
 
 	@Override
 	public void unlike(Long postId) {
-		
+		if (Objects.equals(postDAO.updateLikeCount(postId, -1L), 1)) {
+	        System.out.println("게시글 추천 취소 성공");
+	    } else {
+	        System.out.println("게시글 추천 취소 실패");
+	    }
 	}
 
 
@@ -86,12 +94,12 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void quit(Long memberId) {
-		
+		postDAO.updateStatusByMemberId(memberId, "EXIST", "QUITED");
 	}
 
 
 	@Override
 	public void recoverQuit(Long memberId) {
-		
+		postDAO.updateStatusByMemberId(memberId, "QUITED", "EXIST");
 	}
 }

@@ -9,10 +9,12 @@ import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.controller.base.*;
 import com.chunjae.studyroad.controller.comment.*;
 import com.chunjae.studyroad.controller.home.*;
+import com.chunjae.studyroad.controller.like.*;
 import com.chunjae.studyroad.controller.login.*;
 import com.chunjae.studyroad.controller.mail.*;
 import com.chunjae.studyroad.controller.member.*;
 import com.chunjae.studyroad.controller.post.*;
+import com.chunjae.studyroad.controller.report.*;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -39,6 +41,8 @@ public class FrontController extends HttpServlet {
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	private final PostController postController = PostControllerImpl.getInstance();
 	private final CommentController commentController = CommentControllerImpl.getInstance();
+	private final ReportController reportController = ReportControllerImpl.getInstance();
+	private final LikeController likeController = LikeControllerImpl.getInstance();
 	private final LoginController loginController = LoginControllerImpl.getInstance();
 	
 	
@@ -65,26 +69,29 @@ public class FrontController extends HttpServlet {
             
             // [3] 요청한 URL에 따라 적절한 컨트롤러에 연결
             if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
-            else if (Objects.equals(path, "/member/join.do")) memberController.getJoinView(request, response);
-            else if (Objects.equals(path, "/api/member/join.do")) memberController.postJoinAPI(request, response);
-            else if (Objects.equals(path, "/api/member/edit.do")) memberController.postEditAPI(request, response);
-            else if (Objects.equals(path, "/login.do")) loginController.getLoginView(request, response);
-            else if (Objects.equals(path, "/api/login.do")) loginController.postLoginAPI(request, response);
-            else if (Objects.equals(path, "/api/logout.do")) loginController.postLogoutAPI(request, response);
-            else if (Objects.equals(path, "/file/display.do")) baseController.getDisplayFile(request, response);
-            else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
-            else if (Objects.equals(path, "/file/display.do")) baseController.getDisplayFile(request, response);
-            else if (Objects.equals(path, "/file/download.do")) baseController.getDownloadFile(request, response);
-            else if (Objects.equals(path, "/api/post/write.do")) postController.postWriteAPI(request, response);
-            else if (Objects.equals(path, "/api/post/edit.do")) postController.postEditAPI(request, response);
-            else if (Objects.equals(path, "/api/post/remove.do")) postController.postRemoveAPI(request, response);
-            else if (Objects.equals(path, "/api/comment/write.do")) commentController.postWriteAPI(request, response);
-            else if (Objects.equals(path, "/api/comment/edit.do")) commentController.postEditAPI(request, response);
-            else if (Objects.equals(path, "/api/comment/remove.do")) commentController.postRemoveAPI(request, response);
-            else if (Objects.equals(path, "/editor.do")) baseController.getEditorView(request, response);
-            else if (Objects.equals(path, "/api/mail/send.do")) mailController.postSendAPI(request, response);
-            else if (Objects.equals(path, "/home.do")) homeController.getHomeView(request, response);
-            else if (Objects.equals(path, "/test.do")) request.getRequestDispatcher("/WEB-INF/views/test/test.jsp").forward(request, response);
+            else if (path.startsWith("/member/join.do")) memberController.getJoinView(request, response);
+            else if (path.startsWith("/api/member/join.do")) memberController.postJoinAPI(request, response);
+            else if (path.startsWith("/api/member/edit.do")) memberController.postEditAPI(request, response);
+            else if (path.startsWith("/login.do")) loginController.getLoginView(request, response);
+            else if (path.startsWith("/api/login.do")) loginController.postLoginAPI(request, response);
+            else if (path.startsWith("/api/logout.do")) loginController.postLogoutAPI(request, response);
+            else if (path.startsWith("/file/display.do")) baseController.getDisplayFile(request, response);
+            else if (path.startsWith("/file/download.do")) baseController.getDownloadFile(request, response);
+            else if (path.startsWith("/file/display.do")) baseController.getDisplayFile(request, response);
+            else if (path.startsWith("/file/download.do")) baseController.getDownloadFile(request, response);
+            else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
+            else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
+            else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
+            else if (path.startsWith("/api/comment/write.do")) commentController.postWriteAPI(request, response);
+            else if (path.startsWith("/api/comment/edit.do")) commentController.postEditAPI(request, response);
+            else if (path.startsWith("/api/comment/remove.do")) commentController.postRemoveAPI(request, response);
+            else if (path.startsWith("/api/report/submit.do")) reportController.postSubmitAPI(request, response);
+            else if (path.startsWith("/api/like/like.do")) likeController.postLikeAPI(request, response);
+            else if (path.startsWith("/api/like/unlike.do")) likeController.postUnlikeAPI(request, response);
+            else if (path.startsWith("/editor.do")) baseController.getEditorView(request, response);
+            else if (path.startsWith("/api/mail/send.do")) mailController.postSendAPI(request, response);
+            else if (path.startsWith("/home.do")) homeController.getHomeView(request, response);
+            else if (path.startsWith("/test.do")) request.getRequestDispatcher("/WEB-INF/views/test/test.jsp").forward(request, response);
             else response.sendRedirect("/"); // 대응하는 URL 존재하지 않을 시, HOME 리다이렉트
 
             

@@ -63,7 +63,8 @@ public interface PostDAO {
     /**
      * 회원번호 기반 상태 변경
      * @param memberId  탈퇴 대상 회원번호
-     * @param status    변경 상태 (게시중, 탈퇴됨)
+     * @param beforeStatus    변경 전 상태 (게시중, 탈퇴됨)
+     * @param afterStatus    변경할 상태 (게시중, 탈퇴됨)
      */
-    void updateStatusByMemberId(Long memberId, String status);
+    void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus);
 }

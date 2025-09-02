@@ -20,13 +20,13 @@ public interface ReportController {
 
 
     /**
-     * [POST] /report/submit.do
+     * [POST] /api/report/submit.do
      */
     void postSubmitAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [POST] /report/execute.do
+     * [POST] /api/report/execute.do
      */
     void postExecuteAPI(HttpServletRequest request, HttpServletResponse response);
 }

@@ -36,7 +36,8 @@ public interface ReportDAO {
     /**
      * 회원번호 기반 상태 변경 (처리전 ↔ 탈퇴됨)
      * @param memberId  탈퇴 대상 회원번호
-     * @param status    처리할 상태 (처리전, 탈퇴됨)
+     * @param beforeStatus    처리전 상태 (처리전, 탈퇴됨)
+     * @param afterStatus    처리할 상태 (처리전, 탈퇴됨)
      */
-    void updateStatusByMemberId(Long memberId, String status);
+    void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus);
 }

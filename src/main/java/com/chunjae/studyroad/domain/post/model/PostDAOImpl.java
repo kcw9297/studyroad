@@ -151,7 +151,25 @@ class PostDAOImpl implements PostDAO {
 
     @Override
     public Integer updateLikeCount(Long postId, Long amount) {
-    	return null;
+    	try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_LIKECOUNT)) {
+				
+				// [1] 파라미터 세팅
+				statement.setLong(1, amount);
+				statement.setLong(2, postId);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				return statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
     }
 
 
@@ -180,8 +198,28 @@ class PostDAOImpl implements PostDAO {
 
 
     @Override
-    public void updateStatusByMemberId(Long memberId, String status) {
-    	
+    public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
+				
+				// [1] 파라미터 세팅
+
+				statement.setString(1, afterStatus);
+				statement.setLong(2, memberId);
+				statement.setString(3, beforeStatus);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
     }
 
 }

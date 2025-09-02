@@ -90,14 +90,20 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void quit(Long memberId) {
-		// TODO Auto-generated method stub
-		
+		if (Objects.equals(memberDAO.updateStatus(memberId, "ACTIVE", "QUITED"), 1)) {
+	        System.out.println("회원 탈퇴 성공");
+	    } else {
+	        System.out.println("회원 탈퇴 실패");
+	    }	
 	}
 
 	@Override
 	public void recoverQuit(Long memberId) {
-		// TODO Auto-generated method stub
-		
+		if (Objects.equals(memberDAO.updateStatus(memberId, "QUITED", "ACTIVE"), 1)) {
+	        System.out.println("회원 탈퇴 복구 성공");
+	    } else {
+	        System.out.println("회원 탈퇴 복구 실패");
+	    }	
 	}
 
 

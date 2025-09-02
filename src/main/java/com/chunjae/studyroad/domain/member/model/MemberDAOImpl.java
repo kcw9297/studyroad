@@ -217,12 +217,13 @@ class MemberDAOImpl implements MemberDAO {
 	}
 
 	@Override
-	public Integer updateStatus(Long memberId, String status) {
+	public Integer updateStatus(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
 				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_STATUS)) {
 				
-				statement.setString(1, status);
+				statement.setString(1, afterStatus);
 				statement.setLong(2, memberId);
+				statement.setString(3, beforeStatus);
 
 				return statement.executeUpdate();
 				

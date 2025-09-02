@@ -133,8 +133,28 @@ class CommentDAOImpl implements CommentDAO {
 
 
 	@Override
-	public void updateStatusByMemberId(Long memberId, String status) {
+	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement statement = connection.prepareStatement(DAOUtils.SQL_COMMENT_UPDATE_STATUS_BY_MEMBERID)) {
+				
+				// [1] 파라미터 세팅
 
+				statement.setString(1, afterStatus);
+				statement.setLong(2, memberId);
+				statement.setString(3, beforeStatus);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
 	}
 }
 

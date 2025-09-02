@@ -74,6 +74,7 @@ public class CommentControllerImpl implements CommentController {
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+			System.out.printf("[postWriteAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
@@ -106,6 +107,7 @@ public class CommentControllerImpl implements CommentController {
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
@@ -134,6 +136,7 @@ public class CommentControllerImpl implements CommentController {
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+			System.out.printf("[postRemoveAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
