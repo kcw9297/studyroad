@@ -98,7 +98,25 @@ class LikeDAOImpl implements LikeDAO {
 
 	@Override
 	public Integer updateStatus(Long likeId, String status) {
-		return null;
+		try (Connection connection = dataSource.getConnection();
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_UPDATE_STATUS)) {
+					
+					// [1] 파라미터 세팅
+					pstmt.setString(1, status);
+					pstmt.setLong(2, likeId);
+						
+					// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+					return pstmt.executeUpdate();
+					
+				} catch (SQLException e) {
+					System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+					throw new DAOException(e);
+					
+				} catch (Exception e) {
+					System.out.printf(DAOUtils.MESSAGE_EX, e);
+					throw new DAOException(e);
+				}
 	}
 
 

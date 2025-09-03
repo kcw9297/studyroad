@@ -23,7 +23,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileDTO.Info> getInfos(Long postId) {
-        return List.of();
+        return fileDAO.findAllByPostId(postId);
     }
 
     @Override

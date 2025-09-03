@@ -33,7 +33,7 @@ class FileDAOImpl implements FileDAO {
 	public List<FileDTO.Info> findAllByPostId(Long postId) {
 
 		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement("")) {
+			 PreparedStatement pstmt = conn.prepareStatement()) {
 
 			// 파라미터 세팅
 			pstmt.setLong(1, postId);

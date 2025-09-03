@@ -83,6 +83,16 @@ public class PostServiceImpl implements PostService {
 
 
 	@Override
+	public void comment(Long postId) {
+		if (Objects.equals(postDAO.updateCommentCount(postId, 1L), 1)) {
+	        System.out.println("댓글 추가 성공");
+	    } else {
+	        System.out.println("댓글 추가 실패");
+	    }	
+	}
+
+
+	@Override
 	public void remove(Long postId) {
 		if (Objects.equals(postDAO.updateStatus(postId, "REMOVED"), 1)) {
 	        System.out.println("게시글 삭제 성공");

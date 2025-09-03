@@ -28,10 +28,11 @@ public class PostDTO {
         private String status;
         private Boolean isNotice;
         private Long likeCount;
+        private Long commentCount;
         private MemberDTO.Info member;  	// 게시글 작성회원 정보
         private List<FileDTO.Info> files;	// 게시글 내 업로드된 파일 정보
 
-        public Info(Long postId, String title, String boardType, String category, String grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, MemberDTO.Info member) {
+        public Info(Long postId, String title, String boardType, String category, String grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, Long commentCount, MemberDTO.Info member) {
             this.postId = postId;
             this.title = title;
             this.boardType = boardType;
@@ -44,6 +45,7 @@ public class PostDTO {
             this.status = status;
             this.isNotice = isNotice;
             this.likeCount = likeCount;
+            this.commentCount = commentCount;
             this.member = member;
         }
 
@@ -102,6 +104,10 @@ public class PostDTO {
 
         public Long getLikeCount() {
             return likeCount;
+        }
+
+        public Long getCommentCount() {
+            return commentCount;
         }
 
         public MemberDTO.Info getMember() {

@@ -71,6 +71,7 @@ public class Page {
             this.groupSize = groupSize;
             this.pageSize = pageSize;
             this.dataCount = dataCount;
+            calculateGroup();
         }
  
         
@@ -97,7 +98,11 @@ public class Page {
             this.isStartPage = (currentPage == 1);
             this.isEndPage = (currentPage == totalPage);
         }
-
+        /**
+         * 서비스에서 가공한 데이터로 변경
+         */
+        public void setData(List<T> data) { this.data = data; }
+        
         public List<T> getData() { return data; }
 
         public int getCurrentPage() { return currentPage; }

@@ -74,6 +74,7 @@ public class FrontController extends HttpServlet {
             if (path.startsWith("/home.do")) homeController.getHomeView(request, response);
             else if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
             else if (path.startsWith("/member/join.do")) memberController.getJoinView(request, response);
+            else if (path.startsWith("/post/info.do")) postController.getInfoView(request, response);
             else if (path.startsWith("/api/member/join.do")) memberController.postJoinAPI(request, response);
             else if (path.startsWith("/api/member/edit.do")) memberController.postEditAPI(request, response);
             else if (path.startsWith("/api/member/find/password.do")) memberController.postFindPasswordAPI(request, response);
@@ -86,6 +87,7 @@ public class FrontController extends HttpServlet {
             else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
             else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
             else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
+            else if (path.startsWith("/comment/list.do")) commentController.getListAPI(request, response);
             else if (path.startsWith("/api/comment/write.do")) commentController.postWriteAPI(request, response);
             else if (path.startsWith("/api/comment/edit.do")) commentController.postEditAPI(request, response);
             else if (path.startsWith("/api/comment/remove.do")) commentController.postRemoveAPI(request, response);

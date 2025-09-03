@@ -62,6 +62,13 @@ public interface PostService {
 
 
     /**
+     * 댓글 추가 수행
+     * @param postId    공감 개대상
+     */
+    void comment(Long postId);
+
+
+    /**
      * 게시글 삭제
      * @param postId    삭제 대상 게시글번호 (PK)
      */

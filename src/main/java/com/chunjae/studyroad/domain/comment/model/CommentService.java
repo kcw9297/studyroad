@@ -13,7 +13,7 @@ public interface CommentService {
      * @param request   댓글 페이징 검색요청 DTO
      * @return Info     검색된 페이징된 댓글정보 DTO 반환
      */
-    Page.Response<CommentDTO.Info> search(Page.Request<CommentDTO.Search> request);
+    Page.Response<CommentDTO.Info> getList(Page.Request<CommentDTO.Search> request);
 
 
     /**
