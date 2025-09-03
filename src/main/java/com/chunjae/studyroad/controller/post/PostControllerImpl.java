@@ -4,8 +4,10 @@ import java.util.*;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.util.*;
+import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
 import com.chunjae.studyroad.domain.file.model.*;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
@@ -42,21 +44,15 @@ public class PostControllerImpl implements PostController {
 			List<FileDTO.Info> files = fileService.getInfos(postId);
 			post.setPostFiles(files);
 			
-//			request.setAttribute("data", post);
-//			
-//			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/info.jsp");
-//			HttpUtils.forwardPageFrame(request, response);
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!", post);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			request.setAttribute("data", post);
+			
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/info.jsp");
+			HttpUtils.forwardPageFrame(request, response);
 			
 			
 		} catch (Exception e) {
-//			System.out.printf("view forward 실패! 원인 : %s\n", e);
-//			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
-			System.out.printf("[getInfoView] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
 
@@ -81,8 +77,39 @@ public class PostControllerImpl implements PostController {
 
 	@Override
 	public void getListAPI(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			HttpUtils.checkMethod(request, "GET");
+
+			
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+
+	        String strPostId = request.getParameter("postId");
+	        long postId = Long.parseLong(strPostId);
+	        String order = request.getParameter("order");
+	        String strPage= request.getParameter("page");
+	        int page = Integer.parseInt(strPage);
+	        
+			Page.Request<PostDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 10);
+	        
+	        
+			// [3] service 조회
+			Page.Response<PostDTO.Info> PostInfo = postService.getList(search); 
+			
+			
+			// [4] JSON 응답 반환
+	        
+	        APIResponse rp = APIResponse.success("요청에 성공했습니다!", commentInfo);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
 		
-	}
+			// [예외 발생] 오류 응답 반환
+		} catch (Exception e) {
+			System.out.printf("[getListAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+    }
 
 
 	@Override

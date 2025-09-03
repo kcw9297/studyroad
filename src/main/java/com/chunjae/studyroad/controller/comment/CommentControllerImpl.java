@@ -98,7 +98,7 @@ public class CommentControllerImpl implements CommentController {
 			String content = request.getParameter("content");
 	        CommentDTO.Write write = new CommentDTO.Write(postId, memberId, parentId, mentionId, content);
 	 
-	        
+	        // [3] service
 	        commentService.write(write);
 	        postService.comment(postId);
 			
