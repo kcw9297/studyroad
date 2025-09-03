@@ -64,13 +64,13 @@ function checkPattern(name, value, pattern) {
 
 
 // 특정 필드 검증 - 이름
-function checkName(textType) {
+function checkName(textType, fieldType = "#name", defaultMsg = "2~10자의 한글 사용 가능") {
 
-	const name = $("#name").val();
+	const name = $(fieldType).val();
 			
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(name)) {
-		insertDefaultMessage(textType, "2~10자의 한글 사용 가능");
+		insertDefaultMessage(textType, defaultMsg);
 		return Promise.resolve(false);
 	}		
 	
@@ -91,15 +91,15 @@ function checkName(textType) {
 
 
 // 특정 필드 검증 - 이름
-function checkEmail(textType) {
+function checkEmail(textType, emailType = "#email", domainType = "#domain", defaultMsg = "10~50자의 영문 대소문자, 숫자 사용 가능") {
 
-	const inputEmail = $("#email").val();
-	const inputDomain = $("#domain").val();
+	const inputEmail = $(emailType).val();
+	const inputDomain = $(domainType).val();
 	const email = inputEmail + "@" + inputDomain;
 	
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(inputEmail) && isNullOrEmpty(inputDomain)) {
-		insertDefaultMessage(textType, "10~50자의 영문 대소문자, 숫자 사용 가능");
+		insertDefaultMessage(textType, defaultMsg);
 		return Promise.resolve(false);
 	}	
 	
@@ -133,15 +133,8 @@ function checkEmail(textType) {
 				// 응답 JSON 보기
 				console.log("성공 응답:", response);
 				
-				// 성공/실패 여부에 따라 응답 메세지 표기
-				if (response.success) {
-					insertSuccessMessage(textType, "사용 가능한 이메일 입니다");
-					return true;
-				}
-				else {
-					insertErrorMessage(textType, "이미 가입한 이메일이 존재합니다");
-					return false;
-				}
+				insertSuccessMessage(textType, "사용 가능한 이메일 입니다");
+				return true;
 				
 		    })
 			.catch(xhr => {
@@ -158,13 +151,13 @@ function checkEmail(textType) {
 
 
 // 특정 필드 검증 - 닉네임
-function checkNickname(textType) {
+function checkNickname(textType, fieldType = "#nickname", defaultMsg = "2~20자의 한글, 영문대소문자, 숫자 사용 가능") {
 
-	const nickname = $("#nickname").val();
+	const nickname = $(fieldType).val();
 	
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(nickname)) {
-		insertDefaultMessage(textType, "2~20자의 한글, 영문대소문자, 숫자 사용 가능");
+		insertDefaultMessage(textType, defaultMsg);
 		return Promise.resolve(false);
 	}	
 	
@@ -188,15 +181,8 @@ function checkNickname(textType) {
 				// 응답 JSON 보기
 				console.log("성공 응답:", response);
 				
-				// 성공/실패 여부에 따라 응답 메세지 표기
-				if (response.success) {
-					insertSuccessMessage(textType, "사용 가능한 닉네임 입니다");
-					return true;
-				}
-				else {
-					insertErrorMessage(textType, "이미 가입한 닉네임이 존재합니다");
-					return false;
-				}
+				insertSuccessMessage(textType, "사용 가능한 닉네임 입니다");
+				return true;
 
 		    })
 			.catch(xhr => {
@@ -213,15 +199,15 @@ function checkNickname(textType) {
 
 
 // 특정 필드 검증 - 비밀번호
-function checkPassword(textType) {
+function checkPassword(textType, passwordType = "#password", passwordCheckType = "#passwordCheck", defaultMsg = "8~20자의 영문 대소문자, 숫자, 특수문자를 포함한 비밀번호 입력") {
 
-	const password = $("#password").val();
-	const passwordCheck = $("#passwordCheck").val();
+	const password = $(passwordType).val();
+	const passwordCheck = $(passwordCheckType).val();
 			
 			
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(password) && isNullOrEmpty(passwordCheck)) {
-		insertDefaultMessage(textType, "8~20자의 영문 대소문자, 숫자, 특수문자를 포함한 비밀번호 입력");
+		insertDefaultMessage(textType, defaultMsg);
 		return Promise.resolve(false);
 	}
 	
@@ -260,14 +246,14 @@ function checkPassword(textType) {
 
 
 // 특정 필드 검증 - 주소
-function checkAddress(textType) {
+function checkAddress(textType, zipcodeType = "#zipcode", addressType = "#address", defaultMsg = "공백을 포함한 100자 이내 상세주소 입력") {
 
-	const zipcode = $("#zipcode").val();
-	const address = $("#address").val();
+	const zipcode = $(zipcodeType).val();
+	const address = $(addressType).val();
 			
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(zipcode) && isNullOrEmpty(address)) {
-		insertDefaultMessage(textType, "공백을 포함한 100자 이내 상세주소 입력");
+		insertDefaultMessage(textType, defaultMsg);
 		return Promise.resolve(false);
 	}
 	
@@ -286,7 +272,7 @@ function checkAddress(textType) {
 	// 유효성 검사
 	const errorMessage =
 			checkMinMaxLength("상세주소는", address, minLengthAddress, maxLengthAddress) ||
-			checkPattern("비밀번호", zipcode, new RegExp(patternZipcode));
+			checkPattern("우편번호", zipcode, new RegExp(patternZipcode));
 					
 	// 에러가 발생한 경우와 정상 사용 가능한 경우 분기	
 	if (errorMessage) {
@@ -296,12 +282,6 @@ function checkAddress(textType) {
 		insertSuccessMessage(textType, "주소가 올바르게 작성되었습니다");
 		return Promise.resolve(true);
 	}
-}
-
-
-// 오류 영역에 메세지 삽입 (로그인 전용)
-function insertLoginErrorMessage(clazz, message) {
-	$("." + clazz).text(message).show();
 }
 
 

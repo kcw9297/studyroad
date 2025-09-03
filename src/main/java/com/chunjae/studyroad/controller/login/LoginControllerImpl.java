@@ -109,7 +109,7 @@ public class LoginControllerImpl implements LoginController {
 			
 			// [3] JSON 응답 반환
 			String alertMessage = String.format("로그아웃에 성공했습니다.<br>로그아웃 시간 : %s", TimeUtils.formatKoreanDateTime());
-			APIResponse rp = APIResponse.success(alertMessage, "/");
+			APIResponse rp = APIResponse.success(alertMessage, "/login.do");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		

@@ -74,7 +74,7 @@ public class MailSender {
 
             // [3] 본문
             MimeBodyPart htmlPart = createHtmlBodyPart(text);   // HTML part
-            File logoImage = FileUtils.getStoredFile(FileUtils.DIR_BASE, "cat.gif");    // 이미지 파일
+            File logoImage = FileUtils.getStoredFile(FileUtils.DIR_BASE, "logo1.png");    // 이미지 파일
             MimeBodyPart imagePart = createImageBodyPart(logoImage, "logoImage");       // 이미지 part
 
             // [4] 본문 내용 조립 후 전송
@@ -121,9 +121,9 @@ public class MailSender {
 
         // 예시 텍스트
         String htmlText = new StringBuilder()
-                .append("<h2>안녕하세요! Studyroad 입니다</h2><br>")
-                .append("<p>아래는 귀여운 로고 이미지입니다 😺</p><br>")
-                .append("<img src=\"cid:logoImage\"><br>")
+        		.append("<img src='cid:logoImage' style='width:300px; height:auto;'/><br>")
+                .append("<h2>비밀번호 재설정 안내</h2><br>")
+                .append(text)
                 .toString();
 
         // 보내는 타입을 "text/html" 으로 설정 후 반환
