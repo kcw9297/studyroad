@@ -2,8 +2,8 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
 <%-- login.jsp 스크립트 --%>
-<script src="<c:url value='/js/board/list.js'/>"></script>
-
+<script src="<c:url value='/js/post/list.js'/>"></script>
+1
 <%-- 서버에서 내려준 변수 --%>
 <script>
 </script>
@@ -20,7 +20,7 @@
 		</select>
 		<div class="search-box">
 			<input id="title" name="title" type="search" placeholder="두 글자 이상 입력하세요">
-			<button type="submit"><img src="../img/search.png" width="20" height="20"/></button>
+			<button type="submit"><img src="/file/display.do?fileName=search.png&type=BASE" width="20" height="20"/></button>
 		</div>
 	</div>
 	<div class="board-category">
@@ -132,8 +132,8 @@
 	    <button>5</button>
 	    <button>></button>
     	<button>>></button>
-		</div>
+	</div>
 		<div class="board-new">
-    	<button type="button" onclick="location.href='#'">글쓰기</button>
+    	<button type="button" onclick="location.href='/post/write.do?boardType=${boardType}'">글쓰기</button>
     </div>
 </div>
