@@ -52,6 +52,15 @@ public interface PostDAO {
 
 
     /**
+     * 게시글번호 기반 상태 댓글수 변경
+     * @param postId    삭제 대상 게시글번호 (PK)
+     * @param amount    변동 수량
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
+     */
+    Integer updateCommentCount(Long postId, Long amount);
+
+
+    /**
      * 게시글번호 기반 상태 변경
      * @param postId    삭제 대상 게시글번호 (PK)
      * @param status    변경 상태 (게시중, 삭제)

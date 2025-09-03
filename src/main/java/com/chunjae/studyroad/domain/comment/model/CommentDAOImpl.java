@@ -2,6 +2,7 @@ package com.chunjae.studyroad.domain.comment.model;
 
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
@@ -65,7 +66,7 @@ class CommentDAOImpl implements CommentDAO {
 			
 			
 
-			String pageSql = "SELECT c.comment_id, c.post_id, c.parent_id, c.content, c.written_at, c.edited_at, c.mention_id, c.status AS comment_status, c.likeCount, m.member_id, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? ORDER BY "+orderSql+" LIMIT ? OFFSET ?" ;
+			String pageSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? AND parent_id IS NULL ORDER BY "+orderSql+" LIMIT ? OFFSET ?" ;
 			
 			// [2-2] 페이징 쿼리
 			try (PreparedStatement pstmt = connection.prepareStatement(pageSql)) {
@@ -117,14 +118,58 @@ class CommentDAOImpl implements CommentDAO {
 					rs.getTimestamp("written_at"),
 					rs.getTimestamp("edited_at"),
 					rs.getLong("mention_id"),
-					rs.getString("comment_status"),
+					rs.getString("status"),
 					rs.getLong("likeCount"),
 					new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
 				));
-			
-			
-			
 			return new Page.Response<>(data, request.getPage(), 5, request.getSize(), dataCount);
+		}
+	}
+	
+
+	@Override
+	public List<CommentDTO.Info> findAllChildByParentIds(List<Long> commentIds) {
+		try (Connection connection = dataSource.getConnection()) {
+			String placeholders = commentIds.stream()
+	                .map(id -> "?")
+	                .collect(Collectors.joining(", "));
+	
+			String childSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE parent_id IN (" + placeholders + ")";
+			
+			try (PreparedStatement pstmt = connection.prepareStatement(childSql)) {
+				
+				for (int i = 0; i < commentIds.size(); i++) {
+					pstmt.setLong(i + 1, commentIds.get(i));
+				}
+				
+				List<CommentDTO.Info> info = new ArrayList<>();
+					
+				try (ResultSet rs = pstmt.executeQuery()) {
+			        while (rs.next()) {
+			            CommentDTO.Info dto = new CommentDTO.Info(
+													rs.getLong("comment_id"),
+													rs.getLong("post_id"),
+													rs.getLong("parent_id"),
+													rs.getString("content"),
+													rs.getTimestamp("written_at"),
+													rs.getTimestamp("edited_at"),
+													rs.getLong("mention_id"),
+													rs.getString("status"),
+													rs.getLong("likeCount"),
+													new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
+				            					  );
+			            info.add(dto);
+			        }
+			    }
+				return info;
+			}
+		} catch (SQLException e) {
+			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			throw new DAOException(e);
+			
+		} catch (Exception e) {
+			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			throw new DAOException(e);
 		}
 	}
 		

@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.domain.comment.model;
 
+import java.util.List;
+
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 
@@ -15,7 +17,15 @@ public interface CommentDAO {
      */
     Page.Response<CommentDTO.Info> search(Page.Request<CommentDTO.Search> request);
 
-
+    
+    /**
+     * 자식 댓글 조회
+     * @param commentIds   부모 댓글번호 리스트
+     * @return Info     조회된 자식 댓글정보 DTO 반환
+     */
+    List<CommentDTO.Info> findAllChildByParentIds(List<Long> commentIds);
+    
+    
     /**
      * 댓글 작성
      * @param request   댓글 작성요청 DTO
@@ -34,7 +44,7 @@ public interface CommentDAO {
 
     /**
      * 댓글번호 기반 추천수 변경
-     * @param commentId 대상 게시글번호 (PK)
+     * @param commentId 대상 댓글번호 (PK)
      * @param amount    변동 수량
      * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
      */
@@ -43,7 +53,7 @@ public interface CommentDAO {
 
     /**
      * 댓글번호 기반 상태 변경
-     * @param commentId 대상 게시글번호 (PK)
+     * @param commentId 대상 댓글번호 (PK)
      * @param status    변경 상태 (게시중, 삭제)
      * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
      */

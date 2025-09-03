@@ -71,6 +71,7 @@ class PostDAOImpl implements PostDAO {
 							resultSet.getString("post_status"),
 							resultSet.getBoolean("is_notice"),
 							resultSet.getLong("likeCount"),
+							resultSet.getLong("commentCount"),
 							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getTimestamp("joined_at"),	resultSet.getTimestamp("quited_at"),	resultSet.getTimestamp("ban_end_at"), resultSet.getString("member_status"))
 				    ) : null;
 		}
@@ -153,6 +154,30 @@ class PostDAOImpl implements PostDAO {
     public Integer updateLikeCount(Long postId, Long amount) {
     	try (Connection connection = dataSource.getConnection();
 				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_LIKECOUNT)) {
+				
+				// [1] 파라미터 세팅
+	    		pstmt.setLong(1, amount);
+	    		pstmt.setLong(2, postId);
+					
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+				return pstmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
+    }
+
+
+    @Override
+    public Integer updateCommentCount(Long postId, Long amount) {
+    	try (Connection connection = dataSource.getConnection();
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_COMMENTCOUNT)) {
 				
 				// [1] 파라미터 세팅
 	    		pstmt.setLong(1, amount);

@@ -87,6 +87,7 @@ public class FrontController extends HttpServlet {
             else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
             else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
             else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
+            else if (path.startsWith("/comment/list.do")) commentController.getListAPI(request, response);
             else if (path.startsWith("/api/comment/write.do")) commentController.postWriteAPI(request, response);
             else if (path.startsWith("/api/comment/edit.do")) commentController.postEditAPI(request, response);
             else if (path.startsWith("/api/comment/remove.do")) commentController.postRemoveAPI(request, response);

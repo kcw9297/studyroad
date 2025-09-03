@@ -32,6 +32,7 @@ public class DAOUtils {
     public static final String SQL_POST_UPDATE_STATUS = "UPDATE post SET status = ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_STATUS_BY_MEMBERID = "UPDATE post SET status = ? WHERE member_id = ? AND status = ?";
     public static final String SQL_POST_UPDATE_LIKECOUNT = "UPDATE post SET likeCount = likeCount + ? WHERE post_id = ?";
+    public static final String SQL_POST_UPDATE_COMMENTCOUNT = "UPDATE post SET commentCount = commentCount + ? WHERE post_id = ?";
     public static final String SQL_COMMENT_SAVE = "INSERT INTO comment(post_id, member_id, parent_id, mention_id, content) VALUES (?, ?, ?, ?, ?)";
     public static final String SQL_COMMENT_UPDATE = "UPDATE comment SET mention_id = ?, content = ? WHERE comment_id = ?";
     public static final String SQL_COMMENT_UPDATE_STATUS = "UPDATE comment SET status = ? WHERE comment_id = ?";
