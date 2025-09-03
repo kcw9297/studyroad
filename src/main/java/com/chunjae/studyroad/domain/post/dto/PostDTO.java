@@ -125,26 +125,32 @@ public class PostDTO {
      */
     public static class Search {
 
-        private String target;              // 검색 대상
         private String keyword;             // 검색 키워드(검색어)
+        private String option;              // 검색 항목(제목, 본문, 사용자, ...)
+        private String boardType;           // 선택 게시판 (공지사항, 뉴스, 문제공유, 커뮤니티)
         private List<String> categories;    // 선택 카테고리 (일상, 입시, ...)
         private List<Integer> grades;       // 선택 학년 (1학년, 2학년, ...)
         private String order;               // 정렬 기준 (추천순, 조회순, 최신순, ...)
 
-        public Search(String target, String keyword, List<String> categories, List<Integer> grades, String order) {
-            this.target = target;
-            this.keyword = keyword;
+        public Search(String keyword, String option, String boardType, List<String> categories, List<Integer> grades, String order) {
+        	this.keyword = keyword;
+            this.option = option;
+            this.boardType = boardType;
             this.categories = categories;
             this.grades = grades;
             this.order = order;
         }
 
-        public String getTarget() {
-            return target;
-        }
-
         public String getKeyword() {
             return keyword;
+        }
+
+        public String getOption() {
+            return option;
+        }
+
+        public String getBoardType() {
+            return boardType;
         }
 
         public List<String> getCategories() {

@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
+import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
@@ -85,8 +86,105 @@ class PostDAOImpl implements PostDAO {
 
     @Override
     public Page.Response<PostDTO.Info> search(Page.Request<PostDTO.Search> request) {
-    	return null;
-    }
+		
+		try (Connection connection = dataSource.getConnection()) {
+			
+			// [1] 파라미터 세팅
+		
+			PostDTO.Search params = request.getData();
+			
+			String keyword = params.getKeyword();
+			params.getOption();
+			
+			params.getBoardType();
+			params.getCategories();
+			params.getGrades();
+			
+			int page = request.getPage();
+			int size = request.getSize();
+			String order;
+			switch(params.getOrder()) {
+				case "oldest": order = "written_at ASC"; break;
+			    case "latest": order = "written_at DESC"; break;
+			    case "like": order = "like_count DESC"; break;
+			    default: order = "written_at ASC"; break;
+			}
+			
+			// 페이징 결과 DTO
+			Integer dataCount;
+
+			String countSql = "SELECT COUNT(post_id) FROM post WHERE status = 'EXIST'";
+			
+			// [2-1] 카운팅 쿼리
+			try (PreparedStatement pstmt = connection.prepareStatement(countSql)) {
+
+				
+				// 카운팅 쿼리 수행
+				dataCount = executeAndGetDataCount(pstmt);
+			}
+
+			
+			
+
+			String pageSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? AND parent_id IS NULL ORDER BY "+order+" LIMIT ? OFFSET ?" ;
+			
+			// [2-2] 페이징 쿼리
+			try (PreparedStatement pstmt = connection.prepareStatement(pageSql)) {
+
+				// 파라미터 삽입
+				
+				pstmt.setLong(1, params.getPostId());
+				pstmt.setInt(2, size);
+				pstmt.setInt(3, (page-1)*size);
+				
+				// SQL 수행 + 결과 DTO 생성 후 반환
+				return executeAndMapToSearchDTO(pstmt, request, dataCount);
+			}
+			
+			
+		} catch (SQLException e) {
+			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			throw new DAOException(e);
+			
+		} catch (Exception e) {
+			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			throw new DAOException(e);
+		}
+	}
+	
+	
+	private Integer executeAndGetDataCount(PreparedStatement pstmt) throws SQLException {
+		
+		// 카운트 쿼리 결과 반환
+		try	(ResultSet rs = pstmt.executeQuery()) {
+			if (rs.next()) return rs.getInt(1);
+			return null;
+		}
+	}
+	
+	
+	private Page.Response<PostDTO.Info> executeAndMapToSearchDTO(PreparedStatement pstmt, Page.Request<PostDTO.Search> request, int dataCount) throws SQLException {
+		
+		// DTO 매핑 후 반환
+		try	(ResultSet rs = pstmt.executeQuery()) {
+			List<PostDTO.Info> data = new ArrayList<>();
+			
+			while (rs.next())
+				data.add(new PostDTO.Info(
+					rs.getLong("comment_id"),
+					rs.getLong("post_id"),
+					rs.getLong("parent_id"),
+					rs.getString("content"),
+					rs.getTimestamp("written_at"),
+					rs.getTimestamp("edited_at"),
+					rs.getLong("mention_id"),
+					rs.getString("status"),
+					rs.getLong("likeCount"),
+					new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
+				));
+			return new Page.Response<>(data, request.getPage(), 5, request.getSize(), dataCount);
+		}
+	}
 
 
     @Override

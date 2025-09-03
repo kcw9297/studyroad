@@ -60,7 +60,7 @@ public class ReportControllerImpl implements ReportController {
 			
 	        ReportDTO.Submit submit = new ReportDTO.Submit(memberId, targetId, targetType, reason);
 	 
-	        
+	        // [3] service
 	        reportService.submit(submit);
 			
 			
@@ -80,6 +80,34 @@ public class ReportControllerImpl implements ReportController {
 
 	@Override
 	public void postExecuteAPI(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			HttpUtils.checkMethod(request, HttpUtils.POST);
+
+			
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			String strReportId = request.getParameter("reportId");
+			long reportId = Long.parseLong(strReportId);
+			String status = request.getParameter("status");
+			
+			// [3] service
+	        switch (status) {
+		        case "accept": reportService.accept(reportId); break;
+		        case "reject": reportService.reject(reportId); break;
+	        }
+			
+			
+			// [4] JSON 응답 반환
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
 		
+			// [예외 발생] 오류 응답 반환
+		} catch (Exception e) {
+			System.out.printf("[postSubmitAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
 }

@@ -40,12 +40,12 @@ class CommentDAOImpl implements CommentDAO {
 			CommentDTO.Search params = request.getData();
 			int page = request.getPage();
 			int size = request.getSize();
-			String orderSql;
+			String order;
 			switch(params.getOrder()) {
-				case "oldest": orderSql = "written_at ASC"; break;
-			    case "latest": orderSql = "written_at DESC"; break;
-			    case "like": orderSql = "like_count DESC"; break;
-			    default: orderSql = "written_at ASC"; break;
+				case "oldest": order = "written_at ASC"; break;
+			    case "latest": order = "written_at DESC"; break;
+			    case "like": order = "like_count DESC"; break;
+			    default: order = "written_at ASC"; break;
 			}
 			
 			// 페이징 결과 DTO
@@ -66,7 +66,7 @@ class CommentDAOImpl implements CommentDAO {
 			
 			
 
-			String pageSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? AND parent_id IS NULL ORDER BY "+orderSql+" LIMIT ? OFFSET ?" ;
+			String pageSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? AND parent_id IS NULL ORDER BY "+order+" LIMIT ? OFFSET ?" ;
 			
 			// [2-2] 페이징 쿼리
 			try (PreparedStatement pstmt = connection.prepareStatement(pageSql)) {
