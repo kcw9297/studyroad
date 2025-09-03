@@ -32,6 +32,12 @@ public interface PostController {
 
 
     /**
+     * [GET] /api/post/list.do
+     */
+    void getListAPI(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
      * [POST] /api/post/write.do
      */
     void postWriteAPI(HttpServletRequest request, HttpServletResponse response);

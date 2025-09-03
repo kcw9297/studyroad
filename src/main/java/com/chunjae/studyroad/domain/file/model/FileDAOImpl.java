@@ -33,7 +33,7 @@ class FileDAOImpl implements FileDAO {
 	public List<FileDTO.Info> findAllByPostId(Long postId) {
 
 		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement()) {
+			 PreparedStatement pstmt = conn.prepareStatement(DAOUtils.SQL_FILE_FIND_BY_POSTID)) {
 
 			// 파라미터 세팅
 			pstmt.setLong(1, postId);
@@ -62,9 +62,9 @@ class FileDAOImpl implements FileDAO {
 			// 조회된 파일 정보를 모두 저장
 			while (resultSet.next())
 				infos.add(new FileDTO.Info(
-						resultSet.getLong(1),
-						resultSet.getLong(2),
-						resultSet.getString(3)
+						resultSet.getLong("file_id"),
+						resultSet.getLong("post_id"),
+						resultSet.getString("original_name")
 				));
 
 			return infos;
