@@ -48,5 +48,27 @@ public class ValidationUtils {
         // Base64 URL-safe 인코딩 (길이 22자)
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
+	
+
+	
+	
+	public static int getPage(String strPage) {
+		
+		return Objects.nonNull(strPage) && isNumberString(strPage) ?
+				Integer.parseInt(strPage)-1 : 0;
+	}
+	
+	
+	public static Long getId(String strId) {
+		
+		return Objects.nonNull(strId) && isNumberString(strId) ?
+				Long.parseLong(strId) : null;
+	}
+	
+	
+	
+	public static boolean isNumberString(String str) {
+		return Objects.nonNull(str) && str.matches("^[0-9]+$");
+	}
 
 }
