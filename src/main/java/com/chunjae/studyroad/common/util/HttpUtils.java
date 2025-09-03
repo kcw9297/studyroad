@@ -24,10 +24,81 @@ public class HttpUtils {
 	
 	// 파라미터 상수
 	public static final String BODY = "body";
+	public static final String CATEGORIES = "categories";
+	public static final String GRADES = "grades";
 	
+	public static final List<Integer> LIST_GRADES = List.of(1, 2, 3);
 	
+	public static final Map<String, String> BOARD_TYPES = 
+			Map.of("1", "공지사항", "2", "뉴스", "3", "문제공유", "4", "커뮤니티");
+	
+	public static final Map<String, String> CATEGORY_NOTICE = 
+			Map.of("101", "점검", "102", "행사", "103", "설문", "104", "안내");
+	
+	public static final Map<String, String> CATEGORY_NEWS = 
+			Map.of("201", "사회", "202", "경제", "203", "IT", "204", "과학");
+	
+	public static final Map<String, String> CATEGORY_PROBLEM = 
+			Map.of("301", "국어", "302", "영어", "303", "수학", "304", "탐구");
+	
+	public static final Map<String, String> CATEGORY_COMMUNITY = 
+			Map.of("401", "일상", "402", "고민", "403", "입시", "404", "진로");
+	
+	public static final Map<String, String> BOARD_ORDERS =
+			Map.of("LIKE", "추천순", "VIEW_COUNT", "조회순", "LATEST", "최신순");
+	
+	public static final Map<String, String> COMMENT_ORDERS =
+			Map.of("LIKE", "추천순", "OLDEST", "오래된순", "LATEST", "최신순");
+	
+	public static final Map<String, String> SEARCH_OPTION = 
+			Map.of("NICKNAME", "작성자", "TITLE", "제목", "CONTENT", "본문", "TITLE_CONTENT", "제목+본문");
+	
+
 	// 생성자 접근 제한
 	private HttpUtils() {}
+	
+	
+	/**
+	 * 검증에 필요한 상수 삽입
+	 * @param request	서블릿 요청 객체
+	 */
+	public static void setValidationConstantAttributes(HttpServletRequest request) {
+		
+		// REGEX
+    	request.setAttribute("patternEmail", ValidationUtils.PATTERN_EMAIL);
+    	request.setAttribute("patternPassword", ValidationUtils.PATTERN_PASSWORD);
+    	request.setAttribute("patternName", ValidationUtils.PATTERN_NAME);
+    	request.setAttribute("patternNickname", ValidationUtils.PATTERN_NICKNAME);
+    	request.setAttribute("patternZipcode", ValidationUtils.PATTERN_ZIPCODE);
+    	
+    	// min, max length
+    	request.setAttribute("minLengthEmail", ValidationUtils.MIN_LANGTH_EMAIL);
+    	request.setAttribute("maxLengthEmail", ValidationUtils.MAX_LANGTH_EMAIL);
+    	request.setAttribute("minLengthName", ValidationUtils.MIN_LANGTH_NAME);
+    	request.setAttribute("maxLengthName", ValidationUtils.MAX_LANGTH_NAME);
+    	request.setAttribute("minLengthNickname", ValidationUtils.MIN_LANGTH_NICKNAME);
+    	request.setAttribute("maxLengthNickname", ValidationUtils.MAX_LANGTH_NICKNAME);
+    	request.setAttribute("minLengthPassword", ValidationUtils.MIN_LANGTH_PASSWORD);
+    	request.setAttribute("maxLengthPassword", ValidationUtils.MAX_LANGTH_PASSWORD);
+    	request.setAttribute("minLengthAddress", ValidationUtils.MIN_LANGTH_ADDRESS);
+    	request.setAttribute("maxLengthAddress", ValidationUtils.MAX_LANGTH_ADDRESS);
+	}
+	
+	
+	/**
+	 * 게시글 작성에 필요한 상수 삽입
+	 * @param request	서블릿 요청 객체
+	 */
+	public static void setPostConstantAttributes(HttpServletRequest request, String boardType) {
+		
+		switch (boardType.toUpperCase()) {
+			case "1" : request.setAttribute(CATEGORIES, CATEGORY_NOTICE); break;
+			case "2" : request.setAttribute(CATEGORIES, CATEGORY_NEWS); break;
+			case "3" : request.setAttribute(CATEGORIES, CATEGORY_PROBLEM); request.setAttribute(GRADES, LIST_GRADES); break;
+			case "4" : request.setAttribute(CATEGORIES, CATEGORY_COMMUNITY); break;
+		}
+	}
+	
 	
 	
 	/**
@@ -138,7 +209,7 @@ public class HttpUtils {
 			if (Objects.equals(errorCode, StatusCode.CODE_ACCESS_ERROR)) {
 				request.setAttribute(ALERT_MESSAGE, "접근 권한이 없습니다");
 				
-			} else if (Objects.equals(errorCode, StatusCode.CODE_NO_DATA)) {
+			} else if (Objects.equals(errorCode, StatusCode.CODE_NOT_FOUND)) {
 				request.setAttribute(ALERT_MESSAGE, "삭제된 정보입니다");
 				
 			} else {

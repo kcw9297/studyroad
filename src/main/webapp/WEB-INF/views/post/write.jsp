@@ -11,31 +11,34 @@
 <form class="container information" method="post">
 	<div class="information-form">
 		<label for="nickname">작성자</label>
-		<input id="nickname" name="nickname" type="text" value="관리자" disabled/>
+		<input id="nickname" name="nickname" type="text" value="${loginMember.nickname}" disabled/>
 	</div>
 	<div class="information-form">
 		<label for="category">분류</label>
 		<select id="category" name="category">
 			<option value="">선택</option>
-			<option value="국어">국어</option>
-			<option value="영어">영어</option>
-			<option value="수학">수학</option>
-			<option value="탐구">탐구</option>
+			<c:forEach var="entry" items="${categories}">
+		        <option value="${entry.key}">${entry.value}</option>
+		    </c:forEach>
 		</select>
 	</div>
 	<div class="information-form">
 		<label for="grade">학년</label>
 		<select id="grade" name="grade">
 			<option value="">선택</option>
-			<option value="고1">고1</option>
-			<option value="고2">고2</option>
-			<option value="고3">고3</option>
+			<c:forEach var="grade" items="${grades}">
+		        <option value="${grade}">${grade}학년</option>
+		    </c:forEach>
 		</select>
 	</div>
 	<div class="information-form">
 		<label>파일첨부</label>
 		<button>파일추가</button>
-		<a href="#"><img src="../img/file1.png" width="16" height="16"/>파일업로드</a>
+		<span>
+			<a href="#"><img src="/file/display.do?fileName=delete2.png&type=BASE" width="16" height="16"/> 파일업로드 </a>
+			<a href="#"><img src="/file/display.do?fileName=delete2.png&type=BASE" width="16" height="16"/> 파일업로드 </a>
+			<a href="#"><img src="/file/display.do?fileName=delete2.png&type=BASE" width="16" height="16"/> 파일업로드 </a>
+		</span>
 	</div>
 	<div class="information-title">
 		<input id="title" name="title" type="text" placeholder="제목">
@@ -45,6 +48,6 @@
 	</div>
 	<div class="information-written">
 		<button type="submit">등록</button>
-		<button type="reset">취소</button>
+		<button type="button" onclick="location.href='/post/list.do?boardType=${boardType}&page=1'">취소</button>
 	</div>
 </form>

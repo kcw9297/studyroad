@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
@@ -34,29 +35,29 @@ public class PostControllerImpl implements PostController {
 	
 	@Override
 	public void getInfoView(HttpServletRequest request, HttpServletResponse response) {
+		
 		try {
-			String strPostId = request.getParameter("postId");
-			long postId = Long.parseLong(strPostId);
 			
+			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET)) return;
+			
+			// [1] PK 조회 - 존재하지 않으면 목록으로 redirect
+			Long postId = ValidationUtils.getId(request.getParameter("postId"));
+			if (Objects.isNull(postId)) response.sendRedirect("/post/list.do?page=1");
+	
+			// [2] service 조회
 			PostDTO.Info post = postService.getInfo(postId);
 			List<FileDTO.Info> files = fileService.getInfos(postId);
 			post.setPostFiles(files);
 			
-//			request.setAttribute("data", post);
-//			
-//			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/info.jsp");
-//			HttpUtils.forwardPageFrame(request, response);
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!", post);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			request.setAttribute("data", post);
+			
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/info.jsp");
+			HttpUtils.forwardPageFrame(request, response);
 			
 			
 		} catch (Exception e) {
-//			System.out.printf("view forward 실패! 원인 : %s\n", e);
-//			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
-			System.out.printf("[getInfoView] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);	
 		}
 	}
 
@@ -64,18 +65,102 @@ public class PostControllerImpl implements PostController {
 	@Override
 	public void getListView(HttpServletRequest request, HttpServletResponse response) {
 		
+		try {
+
+			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET)) return;
+			
+			// [1] 페이지 조회 - 존재하지 않으면 1
+			int page = ValidationUtils.getPage(request.getParameter("page"));
+			String boardType = request.getParameter("boardType");
+
+			
+			/*
+			PostDTO.Info post = postService.getInfo(postId);
+			List<FileDTO.Info> files = fileService.getInfos(postId);
+			post.setPostFiles(files);
+			
+			request.setAttribute("data", post);
+			*/
+			
+			System.out.println(boardType);
+			request.setAttribute("boardType", boardType);
+			
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
+			HttpUtils.forwardPageFrame(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);	
+		}
 	}
 
 
 	@Override
 	public void getWriteView(HttpServletRequest request, HttpServletResponse response) {
 		
+		try {
+			
+			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET)) return;
+			
+			// [1] 세션 확인 - 비 로그인 회원이면 리다이렉트
+			if (Objects.isNull(SessionUtils.getLoginMember(request))) {
+				HttpUtils.redirectLogin(request, response);
+				return;
+			}
+			
+			// [2] 파라미터 출력
+			String boardType = request.getParameter("boardType");
+			request.setAttribute("boardType", boardType);
+			HttpUtils.setPostConstantAttributes(request, boardType);
+				
+			
+			// [3] view 출력
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/write.jsp");
+			HttpUtils.forwardPageFrame(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);	
+		}
 	}
 
 
 	@Override
 	public void getEditView(HttpServletRequest request, HttpServletResponse response) {
 		
+		try {
+			
+			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET)) return;
+			
+			// [1] 세션 확인 - 비 로그인 회원이면 리다이렉트
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.redirectLogin(request, response);
+				return;
+			}	
+			
+			// [2] PK 확인 - 값이 정상 존재하지 않으면 리다이렉트
+			Long postId = ValidationUtils.getId(request.getParameter("postId"));
+			String boardType = request.getParameter("boardType");
+			
+			if (Objects.isNull(postId)) {
+				response.sendRedirect("/member/list.do?page=1");
+				return;
+			}	
+			
+			// [3] 파라미터 출력
+			request.setAttribute("boardType", boardType);
+			HttpUtils.setPostConstantAttributes(request, boardType);
+			
+			// [4] view 출력
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/edit.jsp");
+			HttpUtils.forwardPageFrame(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);	
+		}
 	}
 
 

@@ -53,7 +53,10 @@ public class MemberControllerImpl implements MemberController {
 				return;
 			}
 			
-			// [2] view 출력
+			// [2] 필요 파라미터 삽입
+			HttpUtils.setValidationConstantAttributes(request);
+			
+			// [3] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/join.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 			
@@ -82,6 +85,7 @@ public class MemberControllerImpl implements MemberController {
 			
 			// [3] 파라미터 삽입
 			request.setAttribute("data", memberInfo);
+			HttpUtils.setValidationConstantAttributes(request);
 			
 			// [4] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/info.jsp");

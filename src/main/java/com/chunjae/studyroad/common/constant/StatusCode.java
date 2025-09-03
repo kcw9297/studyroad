@@ -30,15 +30,18 @@ public class StatusCode {
 	public static final int CODE_ACCESS_ERROR = 3;
 	
 	/**
-	 * 데이터 없음. 접근한 데이터가 이미 삭제되어 없는 경우에 발생. (= 400 BAD REQUEST)
-	 * 특정 번호 게시글에 댓글을 다는데, 댓글을 달 게시글이 삭제된 경우 등
+	 * 데이터 없음. 접근한 데이터가 이미 삭제되어 없는 경우에 발생. (= 404 NOT FOUND)
+	 * 특정 번호 게시글에 댓글을 다는데 댓글을 달 게시글이 삭제된 경우, 잘못된 URL 접근 등
 	 */
-	public static final int CODE_NO_DATA = 4;
+	public static final int CODE_NOT_FOUND = 4;
+
 	
 	/**
 	 * 서버의 문제로 발생한 오류. 사용자에게 구체적으로 안내할 필요 없는 기타 오류들에 해당 (= 500 INTERNAL SERVER ERROR)
 	 * DB 처리 오류, 서버 로직 오류, NullPointer 등
 	 */
 	public static final int CODE_INTERNAL_ERROR = 5;
+	
+	
 
 }
