@@ -35,6 +35,8 @@ class PostDAOImpl implements PostDAO {
 
     @Override
     public Optional<PostDTO.Info> findById(Long postId) {
+    	System.out.println("[DEBUG] SQL: " + DAOUtils.SQL_POST_FIND_BY_ID);
+    	System.out.println("[DEBUG] postId: " + postId);
 
 
     	try (Connection connection = dataSource.getConnection();
@@ -57,7 +59,7 @@ class PostDAOImpl implements PostDAO {
     }
 
     private PostDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
-		
+    	
 		try (ResultSet resultSet = pstmt.executeQuery()) {
 			return resultSet.next() ? 
 					
