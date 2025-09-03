@@ -8,13 +8,13 @@ import jakarta.servlet.http.*;
 public interface CommentController {
 
     /**
-     * [GET] /comment/list.do
+     * [GET] /api/comment/list.do
      */
     void getListAPI(HttpServletRequest request, HttpServletResponse response);
 
 
     /**
-     * [GET] /comment/edit.do
+     * [GET] /api/comment/edit.do
      */
     void getEditAPI(HttpServletRequest request, HttpServletResponse response);
 

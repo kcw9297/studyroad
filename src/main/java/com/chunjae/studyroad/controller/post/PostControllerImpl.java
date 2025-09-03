@@ -80,6 +80,12 @@ public class PostControllerImpl implements PostController {
 
 
 	@Override
+	public void getListAPI(HttpServletRequest request, HttpServletResponse response) {
+		
+	}
+
+
+	@Override
 	public void postWriteAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
