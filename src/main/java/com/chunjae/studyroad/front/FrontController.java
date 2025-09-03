@@ -11,7 +11,6 @@ import com.chunjae.studyroad.controller.comment.*;
 import com.chunjae.studyroad.controller.home.*;
 import com.chunjae.studyroad.controller.like.*;
 import com.chunjae.studyroad.controller.login.*;
-import com.chunjae.studyroad.controller.mail.*;
 import com.chunjae.studyroad.controller.member.*;
 import com.chunjae.studyroad.controller.post.*;
 import com.chunjae.studyroad.controller.report.*;
@@ -38,7 +37,6 @@ public class FrontController extends HttpServlet {
 	// FrontController 내에서 연결할 Controller
 	private final HomeController homeController = HomeControllerImpl.getInstance();
 	private final BaseController baseController = BaseControllerImpl.getInstance();
-	private final MailController mailController = MailControllerImpl.getInstance();
 	private final ValidationController validationController = ValidationControllerImpl.getInstance();
 	private final MemberController memberController = MemberControllerImpl.getInstance();
 	private final PostController postController = PostControllerImpl.getInstance();
@@ -78,6 +76,7 @@ public class FrontController extends HttpServlet {
             else if (path.startsWith("/member/join.do")) memberController.getJoinView(request, response);
             else if (path.startsWith("/api/member/join.do")) memberController.postJoinAPI(request, response);
             else if (path.startsWith("/api/member/edit.do")) memberController.postEditAPI(request, response);
+            else if (path.startsWith("/api/member/find/password.do")) memberController.postFindPasswordAPI(request, response);
             else if (path.startsWith("/login.do")) loginController.getLoginView(request, response);
             else if (path.startsWith("/api/login.do")) loginController.postLoginAPI(request, response);
             else if (path.startsWith("/api/logout.do")) loginController.postLogoutAPI(request, response);
@@ -94,9 +93,7 @@ public class FrontController extends HttpServlet {
             else if (path.startsWith("/api/like/like.do")) likeController.postLikeAPI(request, response);
             else if (path.startsWith("/api/like/unlike.do")) likeController.postUnlikeAPI(request, response);
             else if (path.startsWith("/editor.do")) baseController.getEditorView(request, response);
-            else if (path.startsWith("/api/mail/send.do")) mailController.postSendAPI(request, response);
             else if (path.startsWith("/home.do")) homeController.getHomeView(request, response);
-            else if (path.startsWith("/api/mail/send.do")) mailController.postSendAPI(request, response);
             else if (path.startsWith("/file/display.do")) baseController.getDisplayFile(request, response);
             else if (path.startsWith("/file/download.do")) baseController.getDownloadFile(request, response);
             else if (path.startsWith("/api/validation/exist/member.do")) validationController.postExistMemberAPI(request, response);

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 /*
@@ -32,14 +33,16 @@ public class MemberServiceImpl implements MemberService {
 	
 	
 	@Override
-	public Boolean checkEmailDuplication(String email) {
-		return memberDAO.findByEmail(email).isEmpty();
+	public void checkEmailDuplication(String email) {
+		if (memberDAO.findByEmail(email).isPresent())
+			throw new ServiceException("이미 가입한 이메일이 존재합니다");
 	}
 
 	
 	@Override
-	public Boolean checkNicknameDuplication(String nickname) {
-		return memberDAO.findByNickname(nickname).isEmpty();
+	public void checkNicknameDuplication(String nickname) {
+		if (memberDAO.findByNickname(nickname).isPresent())
+			throw new ServiceException("이미 가입한 닉네임이 존재합니다");
 	}
 	
 	
@@ -101,6 +104,29 @@ public class MemberServiceImpl implements MemberService {
 	        System.out.println("주소 수정 실패");
 	    }	
 	}
+	
+	
+	@Override
+	public String resetPassword(String email, String name) {
+		
+		// [1-1] 이메일로 대상 회원정보 조회
+		MemberDTO.Info memberInfo = 
+				memberDAO.findByEmail(email).orElseThrow(() -> new ServiceException("가입한 이메일이 존재하지 않습니다"));
+		
+		// [1-2] 이메일 내 회원정보 확인
+		if (!Objects.equals(memberInfo.getName(), name))
+			throw new ServiceException("가입자 성함과 이메일이 일치하지 않습니다");
+		
+		// [2] 변경 수행
+		// 새롭게 변경할 패스워드 (16자 랜덤 문자열)
+		String shortUUID = ValidationUtils.getShortUUID();
+		
+		if (!Objects.equals(memberDAO.updatePasswordByEmail(email, shortUUID), 1))
+			throw new ServiceException("비밀번호 재설정에 실패했습니다");
+		
+		return shortUUID;
+	}
+	
 
 	@Override
 	public void quit(Long memberId) {

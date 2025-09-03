@@ -26,8 +26,9 @@
         
         <button class="big-button" id="login-button" type="submit">로그인</button>
         <div class="help">
-            <a class="link" href="#">이메일•비밀번호 찾기</a> |
+            <a class="link password" href="#">비밀번호 찾기</a> |
             <a class="link" href="/member/join.do">회원가입</a>
         </div>
     </form>
 </div>
+

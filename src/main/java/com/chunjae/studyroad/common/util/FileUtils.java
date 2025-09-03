@@ -117,7 +117,7 @@ public class FileUtils {
         // 확장자 추출
         int idx = originalFileName.lastIndexOf(".");
         String ext = idx > 0 ? originalFileName.substring(idx) : ""; // 확장자가 없으면 공백
-        String fileName = getShortUUID(); // 랜덤 문자열로 파일 생성
+        String fileName = ValidationUtils.getShortUUID(); // 랜덤 문자열로 파일 생성
 
         // 파일 객체 생성
         File storeFile = ext.length() == 0 ? 
@@ -128,7 +128,7 @@ public class FileUtils {
         while (storeFile.exists()) {
         	
         	// 새로운 랜덤 문자열 생성
-        	fileName = getShortUUID();
+        	fileName = ValidationUtils.getShortUUID();
         	
         	// 새로운 파일 객체 생성
         	storeFile = ext.length() == 0 ? 
@@ -141,23 +141,6 @@ public class FileUtils {
     }
 
 
-    private static String getShortUUID() {
-
-        // 랜덤 문자열 생성
-        UUID uuid = UUID.randomUUID();
-
-        // byte 배열로 변환
-        long msb = uuid.getMostSignificantBits();
-        long lsb = uuid.getLeastSignificantBits();
-        byte[] bytes = new byte[16];
-        for (int i = 0; i < 8; i++) {
-            bytes[i]     = (byte)(msb >>> 8 * (7 - i));
-            bytes[8 + i] = (byte)(lsb >>> 8 * (7 - i));
-        }
-
-        // Base64 URL-safe 인코딩 (길이 22자)
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-    }
 
 
     private static void store(File storeFile, Part filePart) throws IOException {

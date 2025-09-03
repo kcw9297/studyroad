@@ -215,6 +215,30 @@ class MemberDAOImpl implements MemberDAO {
 				throw new DAOException(e);
 			}
 	}
+	
+	
+	
+
+	@Override
+	public Integer updatePasswordByEmail(String email, String password) {
+		try (Connection connection = dataSource.getConnection();
+			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD_BY_EMAIL)) {
+				
+				pstmt.setString(1, password);
+				pstmt.setString(2, email);
+
+				return pstmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
+	}
+	
 
 	@Override
 	public Integer updateAddress(MemberDTO.Edit request) {
@@ -257,6 +281,7 @@ class MemberDAOImpl implements MemberDAO {
 				throw new DAOException(e);
 			}
 	}
+
 
 	
 	

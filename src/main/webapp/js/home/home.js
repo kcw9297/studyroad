@@ -4,19 +4,6 @@
 
 
 $(document).ready(function() {
-    
-	// 배너 초기화
-	const banner = initBannerSlider('.slides', 3000);
-	
-	// 이전 배너
-	$(".prev").on("click", function () {
-	  banner.prev();
-	});
-	
-	  // 다음 배너
-	$(".next").on("click", function () {
-	  banner.next();
-	});
 
 	
 	

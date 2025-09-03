@@ -29,4 +29,24 @@ public class ValidationUtils {
 	public static final int MIN_LANGTH_ADDRESS = 20;
 	public static final int MAX_LANGTH_ADDRESS = 100;
 	
+	
+	
+	public static String getShortUUID() {
+
+        // 랜덤 문자열 생성
+        UUID uuid = UUID.randomUUID();
+
+        // byte 배열로 변환
+        long msb = uuid.getMostSignificantBits();
+        long lsb = uuid.getLeastSignificantBits();
+        byte[] bytes = new byte[16];
+        for (int i = 0; i < 8; i++) {
+            bytes[i]     = (byte)(msb >>> 8 * (7 - i));
+            bytes[8 + i] = (byte)(lsb >>> 8 * (7 - i));
+        }
+
+        // Base64 URL-safe 인코딩 (길이 22자)
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+    }
+
 }

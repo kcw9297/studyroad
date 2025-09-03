@@ -42,6 +42,12 @@ public interface MemberController {
      */
     void postEditAPI(HttpServletRequest request, HttpServletResponse response);
 
+    
+    /**
+     * [POST] /api/member/find/password.do
+     */
+    void postFindPasswordAPI(HttpServletRequest request, HttpServletResponse response);
+    
 
     /**
      * [POST] /api/member/quit.do

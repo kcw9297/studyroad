@@ -19,17 +19,15 @@ public interface MemberService {
 	/**
      * 이메일 중복여부 확인
      * @param email		검증 대상 이메일 문자열
-     * @return Boolean  중복 시 false, 중복되지 않으면 true
      */
-    Boolean checkEmailDuplication(String email);
+    void checkEmailDuplication(String email);
     
     
 	/**
      * 닉네임 중복여부 확인
      * @param nickname	검증 대상 닉네임 문자열
-     * @return Boolean  중복 시 false, 중복되지 않으면 true
      */
-    Boolean checkNicknameDuplication(String nickname);
+    void checkNicknameDuplication(String nickname);
 
 
     /**
@@ -76,6 +74,14 @@ public interface MemberService {
      */
     void editAddress(MemberDTO.Edit request);
 
+    
+    /**
+     * 비밀번호 리셋 (비밀번호 찾기를 통한 임의의 비밀번호로 변경)
+     * @param email	비밀번호 초기화 대상 이메일 문자열
+     * @param name	초기화를 요청한 대상 성함
+     */
+	String resetPassword(String email, String name);
+    
 
     /**
      * 회원정보 수정 - 회원 탈퇴 (활성화 → 탈퇴됨)
@@ -89,4 +95,6 @@ public interface MemberService {
      * @param memberId  탈퇴 대상 회원번호
      */
     void recoverQuit(Long memberId);
+
+
 }

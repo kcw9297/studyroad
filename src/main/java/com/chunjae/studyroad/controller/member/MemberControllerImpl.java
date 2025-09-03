@@ -6,6 +6,8 @@ import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.ControllerException;
+import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.mail.MailSender;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.*;
@@ -14,13 +16,15 @@ import jakarta.servlet.http.*;
 
 public class MemberControllerImpl implements MemberController {
 
-
-	// 인스턴스
-	private static final MemberControllerImpl INSTACE = new MemberControllerImpl();
-	
 	// 사용 서비스
 	private final MemberService memberService = MemberServiceImpl.getInstance();
 	
+	// 이메일 전송을 위한 sender
+	private final MailSender mailSender = MailSender.getInstance();
+	
+	// 인스턴스
+	private static final MemberControllerImpl INSTACE = new MemberControllerImpl();
+
 	// 생성자 접근 제한
 	private MemberControllerImpl() {}
 	
@@ -148,6 +152,7 @@ public class MemberControllerImpl implements MemberController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			String type = request.getParameter("type");
+			System.out.printf("type = %s\n", type);
 			switch (type) {
 				case "name":
 					String name = request.getParameter("name");
@@ -171,22 +176,84 @@ public class MemberControllerImpl implements MemberController {
 					break;
 					
 				default:
-					new ControllerException("수정할 컬럼명이 없습니다");
+					new ControllerException("잘못된 요청입니다. 다시 시도해 주세요");
 			}
 			
 			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			APIResponse rp = APIResponse.success("회원정보 수정을 완료했습니다");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
 			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			APIResponse rp =  APIResponse.error("수정 요청에 실패했습니다. 잠시 후에 시도해 주세요.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	
+	
+	@Override
+	public void postFindPasswordAPI(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			HttpUtils.checkMethod(request, HttpUtils.POST);
+
+			// [2] service 조회 (분기)
+	        String newPassword = resetPassword(request);
+	        sendMail(request, newPassword);
+			
+	        // [3] JSON 응답 반환
+	        APIResponse rp = APIResponse.success("이메일로 재설정된 비밀번호를 발송했습니다");
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
+		
+		} catch (ServiceException e) {
+			System.out.printf("[postExistMemberAPI] - 비즈니스 예외 발생!: %s\n", e);
+			APIResponse rp =  APIResponse.error(e.getMessage(), StatusCode.CODE_INPUT_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);
+		
+		} catch (Exception e) {
+			System.out.printf("[postExistMemberAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp =  APIResponse.error("검증 요청이 실패했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} 
+		
+	}
+
+
+	// 비밀번호 재설정
+	private String resetPassword(HttpServletRequest request) {
+		
+		// 입력 파라미터
+		String email = request.getParameter("email");
+		String name = request.getParameter("name");
+
+		// 비밀번호 재설정 후, 재설정된 비밀번호 반환
+		return memberService.resetPassword(email, name);
+	}
+	
+	
+	// 재설정 이메일 발송
+	private void sendMail(HttpServletRequest request, String newPassword) {
+		
+		// 입력 파라미터
+		String email = request.getParameter("email");
+		String name = request.getParameter("name");
+		
+		// 메일 발송
+		String title = String.format("%s님 비밀번호 초기화 안내 메일입니다.", name);
+		String text = new StringBuilder()
+				.append(String.format("<p>재설정된 비밀번호 : %s</p>", newPassword))
+				.append("<p>로그인 후 반드시 비밀번호를 변경해 주세요.</p>")
+				.toString();
+		
+		mailSender.sendMail(email, title, text);
+	}
+
+	
 	
 	@Override
 	public void postQuitAPI(HttpServletRequest request, HttpServletResponse response) {
@@ -244,4 +311,5 @@ public class MemberControllerImpl implements MemberController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
+
 }

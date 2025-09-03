@@ -64,6 +64,15 @@ interface MemberDAO {
      */
     Integer updatePassword(MemberDTO.Edit request);
 
+    
+    /**
+     * 회원정보 수정 - 비밀번호 (이메일 기반으로 변경)
+     * @param email   	변경 대상 이메일 문자열
+     * @param password	새롭게 변경할 비밀번호
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
+     */
+    Integer updatePasswordByEmail(String email, String password);
+    
 
     /**
      * 회원정보 수정 - 주소

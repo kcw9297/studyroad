@@ -76,7 +76,11 @@ $(document).ready(function() {
 				// AJAX 비동기 요청 수행
 				form.set("email", email);
 				sendAJAX(form);
-	        }
+				
+	        } else {
+				// 실패를 알릴 모달을 띄움
+				showAlertModal("입력 정보를 다시 확인해 주세요");
+			}
 	    });
 
 	});
