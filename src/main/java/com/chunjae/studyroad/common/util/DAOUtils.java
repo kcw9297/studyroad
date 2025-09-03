@@ -25,8 +25,7 @@ public class DAOUtils {
     public static final String SQL_MEMBER_UPDATE_STATUS = "UPDATE member SET status = ? WHERE member_id = ? AND status = ?";
     public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name, size, ext) VALUES (?, ?, ?, ?, ?)";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
-    public static final String SQL_POST_FIND_BY_ID = "SELECT p.post_id, p.title, p.board_type, p.category, p.grade, p.content, p.written_at, p.edited_at, p.views, p.status AS post_status, p.is_notice, p.like_count,"
-    													+ " m.member_id, m.name, m.nickname, m.email, m.password, m.zipcode, m.address, m.joined_at, m.quited_at, m.ban_end_at, m.status AS member_status FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.post_id = ?";
+    public static final String SQL_POST_FIND_BY_ID = "SELECT p.post_id, p.title, p.board_type, p.category, p.grade, p.content, p.written_at, p.edited_at, p.views, p.status, p.is_notice, p.likeCount, p.commentCount, m.member_id, m.name, m.nickname, m.email, m.password, m.zipcode, m.address, m.joined_at, m.quited_at, m.ban_end_at, m.status FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.post_id = ?";
     public static final String SQL_POST_SAVE = "INSERT INTO post(member_id, title, board_type, category, grade, content, is_notice) VALUES (?, ?, ?, ?, ?, ?, ?)";
     public static final String SQL_POST_UPDATE = "UPDATE post SET title = ?, category = ?, grade = ?, content = ? WHERE post_id = ? AND member_id = ?";
     public static final String SQL_POST_UPDATE_STATUS = "UPDATE post SET status = ? WHERE post_id = ?";
@@ -45,6 +44,7 @@ public class DAOUtils {
     public static final String SQL_LIKE_EXISTS = "SELECT like_id FROM likes WHERE member_id = ? AND target_id = ? AND target_type = ?";
     public static final String SQL_LIKE_SAVE = "INSERT INTO likes(member_id, target_id, target_type) VALUES (?, ?, ?)";
     public static final String SQL_LIKE_DELETE = "DELETE FROM likes WHERE like_id = ?";
+    public static final String SQL_LIKE_UPDATE_STATUS = "UPDATE likes SET status = ? WHERE like_id = ?";
     public static final String SQL_LIKE_UPDATE_STATUS_BY_MEMBERID = "UPDATE likes SET status = ? WHERE member_id = ? AND status = ?";
     
     // DAO 예외 메세지

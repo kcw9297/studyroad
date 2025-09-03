@@ -3,6 +3,7 @@ package com.chunjae.studyroad.domain.post.model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
@@ -34,12 +35,14 @@ class PostDAOImpl implements PostDAO {
 
     @Override
     public Optional<PostDTO.Info> findById(Long postId) {
+
+
     	try (Connection connection = dataSource.getConnection();
    			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_FIND_BY_ID)) {
    			
    			// [1] 파라미터 세팅
     		pstmt.setLong(1, postId);
-   			
+
    			// [2] SQL 수행 + 결과 DTO 생성 후 반환
    			return Optional.ofNullable(mapToInfo(pstmt));
    			
@@ -56,8 +59,9 @@ class PostDAOImpl implements PostDAO {
     private PostDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
 		
 		try (ResultSet resultSet = pstmt.executeQuery()) {
-			
 			return resultSet.next() ? 
+					
+					
 					new PostDTO.Info(
 							resultSet.getLong("post_id"),
 							resultSet.getString("title"),
@@ -68,11 +72,11 @@ class PostDAOImpl implements PostDAO {
 							resultSet.getTimestamp("written_at"),
 							resultSet.getTimestamp("edited_at"),
 							resultSet.getLong("views"),
-							resultSet.getString("post_status"),
+							resultSet.getString(10),
 							resultSet.getBoolean("is_notice"),
 							resultSet.getLong("likeCount"),
 							resultSet.getLong("commentCount"),
-							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getTimestamp("joined_at"),	resultSet.getTimestamp("quited_at"),	resultSet.getTimestamp("ban_end_at"), resultSet.getString("member_status"))
+							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getTimestamp("joined_at"), resultSet.getTimestamp("quited_at"), resultSet.getTimestamp("ban_end_at"), resultSet.getString(24))
 				    ) : null;
 		}
 	}

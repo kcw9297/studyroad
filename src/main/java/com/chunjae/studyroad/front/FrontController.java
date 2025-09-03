@@ -76,6 +76,7 @@ public class FrontController extends HttpServlet {
             if (path.startsWith("/home.do")) homeController.getHomeView(request, response);
             else if (path.startsWith("/member/info.do")) memberController.getInfoView(request, response);
             else if (path.startsWith("/member/join.do")) memberController.getJoinView(request, response);
+            else if (path.startsWith("/post/info.do")) postController.getInfoView(request, response);
             else if (path.startsWith("/api/member/join.do")) memberController.postJoinAPI(request, response);
             else if (path.startsWith("/api/member/edit.do")) memberController.postEditAPI(request, response);
             else if (path.startsWith("/login.do")) loginController.getLoginView(request, response);

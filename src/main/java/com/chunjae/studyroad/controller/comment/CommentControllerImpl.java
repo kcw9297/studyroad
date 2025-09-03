@@ -9,6 +9,7 @@ import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.comment.model.*;
+import com.chunjae.studyroad.domain.post.model.*;
 
 import jakarta.servlet.http.*;
 
@@ -23,6 +24,7 @@ public class CommentControllerImpl implements CommentController {
 	
 	// 사용 서비스
 	private final CommentService commentService = CommentServiceImpl.getInstance();
+	private final PostService postService = PostServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
 	private CommentControllerImpl() {}
@@ -40,7 +42,14 @@ public class CommentControllerImpl implements CommentController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			Page.Request<CommentDTO.Search> search = new Page.Request<>(new CommentDTO.Search(11L, "LATEST"), 1, 20);
+
+	        String strPostId = request.getParameter("postId");
+	        long postId = Long.parseLong(strPostId);
+	        String order = request.getParameter("order");
+	        String strPage= request.getParameter("page");
+	        int page = Integer.parseInt(strPage);
+	        
+			Page.Request<CommentDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 10);
 	        
 	        
 			// [3] service 조회
@@ -91,6 +100,7 @@ public class CommentControllerImpl implements CommentController {
 	 
 	        
 	        commentService.write(write);
+	        postService.comment(postId);
 			
 			
 			// [4] JSON 응답 반환

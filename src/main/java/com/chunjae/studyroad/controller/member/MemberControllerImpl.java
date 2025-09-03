@@ -6,8 +6,12 @@ import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.util.*;
+import com.chunjae.studyroad.domain.comment.model.*;
+import com.chunjae.studyroad.domain.like.model.*;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.*;
+import com.chunjae.studyroad.domain.post.model.*;
+import com.chunjae.studyroad.domain.report.model.*;
 
 import jakarta.servlet.http.*;
 
@@ -19,6 +23,10 @@ public class MemberControllerImpl implements MemberController {
 	
 	// 사용 서비스
 	private final MemberService memberService = MemberServiceImpl.getInstance();
+	private final PostService postService = PostServiceImpl.getInstance();
+	private final CommentService commentService = CommentServiceImpl.getInstance();
+	private final LikeService likeService = LikeServiceImpl.getInstance();
+	private final ReportService reportService = ReportServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
 	private MemberControllerImpl() {}
@@ -168,6 +176,10 @@ public class MemberControllerImpl implements MemberController {
 			
 			// [3] service 조회
 	        memberService.quit(memberId); 
+	        postService.quit(memberId); 
+	        commentService.quit(memberId); 
+	        likeService.quit(memberId); 
+	        reportService.quit(memberId); 
 			
 			
 			// [4] JSON 응답 반환
@@ -197,6 +209,10 @@ public class MemberControllerImpl implements MemberController {
 			
 			// [3] service 조회
 	        memberService.recoverQuit(memberId); 
+	        postService.recoverQuit(memberId); 
+	        commentService.recoverQuit(memberId); 
+	        likeService.recoverQuit(memberId); 
+	        reportService.recoverQuit(memberId); 
 			
 			
 			// [4] JSON 응답 반환

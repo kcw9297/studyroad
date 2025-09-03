@@ -6,6 +6,8 @@ import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.exception.ControllerException;
 import com.chunjae.studyroad.common.util.*;
+import com.chunjae.studyroad.domain.file.dto.FileDTO;
+import com.chunjae.studyroad.domain.file.model.*;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
 import com.chunjae.studyroad.domain.post.model.*;
 
@@ -19,6 +21,7 @@ public class PostControllerImpl implements PostController {
 	
 	// 사용 서비스
 	private final PostService postService = PostServiceImpl.getInstance();
+	private final FileService fileService = FileServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
 	private PostControllerImpl() {}
@@ -31,7 +34,30 @@ public class PostControllerImpl implements PostController {
 	
 	@Override
 	public void getInfoView(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String strPostId = request.getParameter("postId");
+			long postId = Long.parseLong(strPostId);
+			
+			PostDTO.Info post = postService.getInfo(postId);
+			List<FileDTO.Info> files = fileService.getInfos(postId);
+			post.setPostFiles(files);
+			
+//			request.setAttribute("data", post);
+//			
+//			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/info.jsp");
+//			HttpUtils.forwardPageFrame(request, response);
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!", post);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
+			
+		} catch (Exception e) {
+//			System.out.printf("view forward 실패! 원인 : %s\n", e);
+//			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			System.out.printf("[getInfoView] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		
+		}
 	}
 
 

@@ -45,7 +45,7 @@ class CommentDAOImpl implements CommentDAO {
 				case "oldest": orderSql = "written_at ASC"; break;
 			    case "latest": orderSql = "written_at DESC"; break;
 			    case "like": orderSql = "like_count DESC"; break;
-			    default: orderSql = "written_at DESC"; break;
+			    default: orderSql = "written_at ASC"; break;
 			}
 			
 			// 페이징 결과 DTO

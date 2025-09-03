@@ -6,8 +6,10 @@ import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
+import com.chunjae.studyroad.domain.comment.model.*;
 import com.chunjae.studyroad.domain.like.dto.LikeDTO;
 import com.chunjae.studyroad.domain.like.model.*;
+import com.chunjae.studyroad.domain.post.model.*;
 
 import jakarta.servlet.http.*;
 
@@ -18,6 +20,8 @@ public class LikeControllerImpl implements LikeController {
 
     // 사용 service
 	private final LikeService likeService = LikeServiceImpl.getInstance();
+	private final PostService postService = PostServiceImpl.getInstance();
+	private final CommentService commentService = CommentServiceImpl.getInstance();
 
     // 인스턴스
     private static final LikeControllerImpl INSTANCE = new LikeControllerImpl();
@@ -46,6 +50,10 @@ public class LikeControllerImpl implements LikeController {
 	        LikeDTO.Like like = new LikeDTO.Like(memberId, targetId, targetType);
 
 			likeService.like(like);
+			switch(targetType) {
+				case "post": postService.like(targetId); break;
+				case "comment": commentService.like(targetId); break;
+			}
 			
 			
 			// [3] JSON 응답 반환
@@ -72,9 +80,16 @@ public class LikeControllerImpl implements LikeController {
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			String strLikeId = request.getParameter("likeId");
-			long likeId = Long.parseLong(strLikeId);
+			long likeId = Long.parseLong(strLikeId);;
+			String strTargetId = request.getParameter("targetId");
+			long targetId = Long.parseLong(strTargetId);
+			String targetType = request.getParameter("targetType");
 
 			likeService.unlike(likeId);
+			switch(targetType) {
+				case "post": postService.unlike(targetId); break;
+				case "comment": commentService.unlike(targetId); break;
+			}
 			
 			
 			// [3] JSON 응답 반환
