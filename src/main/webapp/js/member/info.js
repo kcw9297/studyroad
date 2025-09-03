@@ -8,25 +8,61 @@ $(document).ready(function() {
 	// 수정 버튼
 	$(".edit.name").on("click", function(e) {
 		showEditNameModal(function() {
-			sendEditNameAJAX();
+			
+		// 유효성 검증
+		Promise.all([checkName(".modal.edit-name.name.text", "#editNameFormName")])
+			.then(results => {
+			    const isValid = results.every(r => r === true);
+			    console.log("최종 결과:", isValid);
+		
+			    if (isValid) {sendEditNameAJAX();} 
+				else {$(".modal.edit-name.field").text("입력 정보를 다시 확인해 주세요");}
+			});
 		});
 	});
 	
 	$(".edit.nickname").on("click", function(e) {
 		showEditNicknameModal(function() {
-			alert("sumbit");
+					
+		// 유효성 검증
+		Promise.all([checkNickname(".modal.edit-nickname.nickname.text", "#editNicknameFormNickname")])
+			.then(results => {
+			    const isValid = results.every(r => r === true);
+			    console.log("최종 결과:", isValid);
+		
+			    if (isValid) {sendEditNicknameAJAX();} 
+				else {$(".modal.edit-nickname.field").text("입력 정보를 다시 확인해 주세요");}
+			});
 		});
 	});
 		
 	$(".edit.address").on("click", function(e) {
 		showEditAddressModal(function() {
-			alert("sumbit");
+							
+		// 유효성 검증
+		Promise.all([checkAddress(".modal.edit-address.address.text", "#editAddressFormZipcode", "#editAddressFormAddress")])
+			.then(results => {
+			    const isValid = results.every(r => r === true);
+			    console.log("최종 결과:", isValid);
+		
+			    if (isValid) {sendEditAddressAJAX();} 
+				else {$(".modal.edit-address.field").text("입력 정보를 다시 확인해 주세요");}
+			});
 		});
 	});
 	
 	$(".edit.password").on("click", function(e) {
 		showEditPasswordModal(function() {
-			alert("sumbit");
+									
+		// 유효성 검증
+		Promise.all([checkPassword(".modal.edit-password.password.text", "#editPasswordFormPassword", "#editPasswordFormPasswordCheck")])
+			.then(results => {
+			    const isValid = results.every(r => r === true);
+			    console.log("최종 결과:", isValid);
+		
+			    if (isValid) {sendEditPasswordAJAX();} 
+				else {$(".modal.edit-password.field").text("입력 정보를 다시 확인해 주세요");}
+			});
 		});
 	});
 	
@@ -45,9 +81,6 @@ function sendEditNameAJAX() {
 	form.append("name", name);
 	form.append("type", "name");
 	
-	// 유효성 검증
-	if 
-	
 	
 	// 잠시 비활성화
 	$("#modalOKBtn").prop("disabled", true);
@@ -57,7 +90,7 @@ function sendEditNameAJAX() {
 			
 			// 응답 JSON 보기
 			console.log("성공 응답:", response);
-			$("#name").text(name).show(); // 바뀐 이름으로 표시
+			$("#editName").val(name).show(); // 바뀐 값으로 표시
 			
 			// 응답 모달 띄움
 			showAlertModal(response.alertMessage || "회원 이름을 수정했습니다", closeModal("#editNameModal"));
@@ -74,14 +107,118 @@ function sendEditNameAJAX() {
 			$("#modalOKBtn").prop("disabled", false); // 실패 시 다시 활성화
 	    });	
 }
+
+
+
+function sendEditNicknameAJAX() {
 	
+	const form = new FormData();
+	const nickname = $("#editNicknameFormNickname").val();
+	
+	form.append("nickname", nickname);
+	form.append("type", "nickname");
+	
+	
+	// 잠시 비활성화
+	$("#modalOKBtn").prop("disabled", true);
+	
+	sendRequest("/api/member/edit.do", "post", form)
+	    .then(response => {
+			
+			// 응답 JSON 보기
+			console.log("성공 응답:", response);
+			$("#editNickname").val(nickname).show(); // 바뀐 값으로 표시
+			
+			// 응답 모달 띄움
+			showAlertModal(response.alertMessage || "회원 닉네임을 수정했습니다", closeModal("#editNicknameModal"));
+	    })
+	    .catch(xhr => {
+			
+			// 실패 응답 JSON 파싱 후 보기
+			const response = xhr.responseJSON || {};
+			console.log("실패 응답:", response);
+			
+			// 실패 응답 메세지를 로그인 페이지에 출력
+			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
+			$(".modal.edit-nickname.field").text(msg);
+			$("#modalOKBtn").prop("disabled", false); // 실패 시 다시 활성화
+	    });	
+}
 
 
+function sendEditAddressAJAX() {
+	
+	const form = new FormData();
+	const address = $("#editAddressFormAddress").val();
+	const zipcode = $("#editAddressFormZipcode").val();
+	
+	form.append("address", address);
+	form.append("zipcode", zipcode);
+	form.append("type", "address");
+	
+	
+	// 잠시 비활성화
+	$("#modalOKBtn").prop("disabled", true);
+	
+	sendRequest("/api/member/edit.do", "post", form)
+	    .then(response => {
+			
+			// 응답 JSON 보기
+			console.log("성공 응답:", response);
+			$("#editAddress").val(address).show(); // 바뀐 값으로 표시
+			$("#editZipcode").val(zipcode).show();
+			
+			// 응답 모달 띄움
+			showAlertModal(response.alertMessage || "회원 주소를 수정했습니다", closeModal("#editAddressModal"));
+	    })
+	    .catch(xhr => {
+			
+			// 실패 응답 JSON 파싱 후 보기
+			const response = xhr.responseJSON || {};
+			console.log("실패 응답:", response);
+			
+			// 실패 응답 메세지를 로그인 페이지에 출력
+			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
+			$(".modal.edit-address.field").text(msg);
+			$("#modalOKBtn").prop("disabled", false); // 실패 시 다시 활성화
+	    });	
+}
 
 
-
-
-
+function sendEditPasswordAJAX() {
+	
+	const form = new FormData();
+	const password = $("#editPasswordFormPassword").val();
+	
+	form.append("password", password);
+	form.append("type", "password");
+	
+	
+	// 잠시 비활성화
+	$("#modalOKBtn").prop("disabled", true);
+	
+	sendRequest("/api/member/edit.do", "post", form)
+	    .then(response => {
+			
+			// 응답 JSON 보기
+			console.log("성공 응답:", response);
+			
+			// 응답 모달 띄움
+			showAlertModal(response.alertMessage || "비밀번호를 수정했습니다", closeModal("#editPasswordModal"));
+	    })
+	    .catch(xhr => {
+			
+			// 실패 응답 JSON 파싱 후 보기
+			const response = xhr.responseJSON || {};
+			console.log("실패 응답:", response);
+			
+			// 실패 응답 메세지를 로그인 페이지에 출력
+			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
+			$(".modal.edit-password.field").text(msg);
+			$("#modalOKBtn").prop("disabled", false); // 실패 시 다시 활성화
+	    });	
+}
+	
 
 
 
@@ -153,7 +290,7 @@ function showEditNameModal(onConfirm, onCancel) {
 function showEditNicknameModal(onConfirm, onCancel) {
 	
 	const modalHtml = `
-			<div class="modal-overlay" id="editNickNameModal" style="display:none;">
+			<div class="modal-overlay" id="editNicknameModal" style="display:none;">
 			  <div class="modal-content large">
 			    <div class="modal-header">
 			      <span class="modal-title">회원정보 변경</span>
@@ -164,7 +301,7 @@ function showEditNicknameModal(onConfirm, onCancel) {
 			        <h1 class="modal-h1">닉네임 변경</h1>
 			        <div class="field">
 			          <label for="editNicknameFormNickName">이름</label>
-			          <input class="input" id="editNicknameFormNickName" name="nickname" type="text" placeholder="변경 닉네임">
+			          <input class="input" id="editNicknameFormNickname" name="nickname" type="text" placeholder="변경 닉네임">
 			          <div class="modal edit-nickname nickname text">2~20자의 한글, 영문대소문자, 숫자 사용 가능</div>
 			        </div>
 					<div class="modal edit-nickname field modal-error"></div>
@@ -184,16 +321,16 @@ function showEditNicknameModal(onConfirm, onCancel) {
     $("body").append(modalHtml);
 	
     // 모달 띄우기
-    $("#editNickNameModal").css("display", "flex");
+    $("#editNicknameModal").css("display", "flex");
 	
 	// 검증
-	$("#editNicknameFormNickName").on("blur", function() {
-	    checkNickname(".modal.edit-nickname.nickname.text", "#editNicknameFormNickName");
+	$("#editNicknameFormNickname").on("blur", function() {
+	    checkNickname(".modal.edit-nickname.nickname.text", "#editNicknameFormNickname");
 	});
 	
 	// 모달이 떠 있을 때는 Enter → 폼 제출 막기
 	$(document).on("keydown.modalBlock", function(e) {
-	   if ($("#editNickNameModal").length > 0 && e.key === "Enter") {
+	   if ($("#editNicknameModal").length > 0 && e.key === "Enter") {
 	       e.preventDefault();
 	       e.stopImmediatePropagation();
 	       return false;
@@ -207,7 +344,7 @@ function showEditNicknameModal(onConfirm, onCancel) {
 
     $("#modalCancelBtn, #modalXBtn").on("click", function() {
         if (onCancel) onCancel();
-        closeModal("#editNickNameModal");
+        closeModal("#editNicknameModal");
     });
 
 }

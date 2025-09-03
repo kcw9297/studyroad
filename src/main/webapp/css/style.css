@@ -36,7 +36,7 @@ main, .main {flex:1;}
 
 .flex{display:flex; gap:5px; align-items:center; justify-content:center; width:100%;}
 .flex.input{flex:1;}
-.flex select{cursor:pointer; }
+.flex select{cursor:pointer;}
 .zipcode{padding:8px; font-size:14px; background:#ffffff; color:#000000; border:1px solid #000000; border-radius:10px; cursor:pointer; white-space:nowrap;}
 .zipcode:hover{background:#F0F0F0;}
 .check{padding:10px; font-size:14px; background:#ffffff; color:#6A4AE0; border:1px solid #6A4AE0; border-radius:10px; cursor:pointer; white-space:nowrap;}
@@ -59,8 +59,9 @@ main, .main {flex:1;}
 
 
 /* 홈페이지 */
-.banner{display:flex; position:relative; overflow:hidden; width:100%; max-width:1300px; aspect-ratio:1000/180; margin-bottom:20px;}
-.slides img {width:100%; height:100%;}
+.banner{position:relative; overflow:hidden; width:100%; max-width:1300px; aspect-ratio:1000/180; margin-bottom:20px;}
+.slides {display:flex; height:100%; transition:transform 0.6s ease;}
+.slides img {width:100%; height:100%; object-fit:cover; flex-shrink:0;}
 .banner button{position:absolute; top:50%; transform:translateY(-50%); color:#000000; background:none; border:none; font-size:100px; opacity:0.5; padding:0 20px; cursor:pointer;}
 .banner .prev{left:10px;}
 .banner .next{right:10px;}
@@ -109,7 +110,7 @@ main, .main {flex:1;}
 .board-list li{display:grid; gap:5px; grid-template-columns:50px 50px 50px 1fr 100px 80px 80px 100px; align-items:center; text-align:center; padding:12px 8px; border-bottom:1px solid #CCCCCC;}
 .board-list div{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; word-break:break-all;}
 
-.list-title{display:flex; align-items:center; margin:0 10px; align-items:center;}
+.list-title{display:flex; align-items:center; margin:0 10px;}
 .board-notice{background-color:#FAFAFA;}
 .notice-list{color:#6A4AE0;}
 .board-post{background-color:#ffffff;}
@@ -120,8 +121,27 @@ main, .main {flex:1;}
 .pagination button{color:#666666; font-size:16px; background:none; border:none; cursor:pointer;}
 .pagination button:hover{color:#6A4AE0; font-weight:700;}
 .board-new{display:flex; justify-content:flex-end;}
-.board-new button{font-size:16px; color:#ffffff; background:#6A4AE0; border-radius:10px; border:none; padding:10px 20px; cursor:pointer;}
+.board-new button{font-size:16px; color:#ffffff; background:#6A4AE0; border-radius:3px; border:none; padding:10px 20px; cursor:pointer;}
 .board-new button:hover{background:#584AAF;}
+
+
+/* 글쓰기 */
+.information{display:flex; justify-content:flex-start; flex-direction:column; font-size:18px; gap:20px; margin-top:30px}
+.information-form{display:flex; align-items:center;}
+.information-form label{min-width:80px; text-align:right; margin-right:20px;}
+.information-form input{font-size:16px; color:#000000; border:none; background:none;}
+.information-form select{padding:2px 4px; font-size:16px; border:1px solid #CCCCCC; border-radius:3px; cursor:pointer;}
+.information-form a{text-decoration:none; color:#6A4AE0; font-size:16px;}
+.information-form button{color:#6A4AE0; background:#F1EDFC; border:none; border-radius:10px; font-size:15px; padding:2px 4px; margin-right:10px; cursor:pointer;}
+.information-form button:hover{background:#D3C9F6;}
+
+.information-title{margin-top:20px; background:#F9F9F9; border-style: solid none; border-width:1px; border-color:#CCCCCC;}
+.information-title input{background:none; border:none; width:100%; height:100px; padding:20px 20px; font-size:18px; font-weight:500; box-sizing:border-box;}
+.information-content{width:100%;}
+.information-content textarea{width:100%; height:300px; border:none; border-bottom:1px solid #CCCCCC; background:none; font-size:16px; padding:10px 20px; box-sizing:border-box; resize:none;}
+.information-written{display:flex; justify-content:flex-end; gap:10px;}
+.information-written button{font-size:16px; color:#ffffff; background:#6A4AE0; border-radius:3px; border:none; padding:10px 20px; cursor:pointer;}
+.information-written button:hover{background:#584AAF;}
 
 
 /* 반응형 */

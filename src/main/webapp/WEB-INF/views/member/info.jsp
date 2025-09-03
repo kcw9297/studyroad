@@ -39,25 +39,25 @@
             </div>
         </div>
         <div class="field">
-            <label class="name" for="name">이름</label>
+            <label class="name" for="editName">이름</label>
             <div class="flex">
-            	<input class="input" id="name" name="name" type="text" placeholder="이름" value="${data.name}" readonly>
+            	<input class="input" id="editName" name="name" type="text" placeholder="이름" value="${data.name}" readonly>
             	<button class="check edit name" type="button">수정하기</button>
             </div>
         </div>
         <div class="field">
-            <label class="nickname" for="nickname">닉네임</label>
+            <label class="nickname" for="editNickname">닉네임</label>
             <div class="flex">
-                <input class="input" id="nickname" name="nickname" type="text" placeholder="닉네임" value="${data.nickname}" readonly>
+                <input class="input" id="editNickname" name="nickname" type="text" placeholder="닉네임" value="${data.nickname}" readonly>
                 <button class="check edit nickname" type="button">수정하기</button>
             </div>
         </div>
         <div class="field">
-            <label class="addr" for="address">주소</label>
+            <label class="addr" for="editAddress">주소</label>
             <div class="address-input">
-                <input class="input" id="address" name="address" type="text" placeholder="상세주소" value="${data.address}" readonly>
+                <input class="input" id="editAddress" name="address" type="text" placeholder="상세주소" value="${data.address}" readonly>
                 <div class="flex">
-                    <input class="input" name="code" type="text" placeholder="우편번호" value="${data.zipcode}" readonly>
+                    <input class="input" id="editZipcode" name="zipcode" type="text" placeholder="우편번호" value="${data.zipcode}" readonly>
                     <button class="check edit address" type="button">수정하기</button>
                 </div>
             </div>
