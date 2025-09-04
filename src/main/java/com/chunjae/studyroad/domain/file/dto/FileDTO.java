@@ -47,9 +47,10 @@ public class FileDTO {
         private String originalName;
         private String storedName;
 
-        public Store(Long postId, String originalName) {
+        public Store(Long postId, String originalName, String storedName) {
             this.postId = postId;
             this.originalName = originalName;
+
         }
 
         /**

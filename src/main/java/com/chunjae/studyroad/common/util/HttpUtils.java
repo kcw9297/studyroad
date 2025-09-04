@@ -21,38 +21,9 @@ public class HttpUtils {
 	// 메소드 상수
 	public static final String POST = "POST";
 	public static final String GET = "GET";
-	
-	// 파라미터 상수
-	public static final String BODY = "body";
-	public static final String CATEGORIES = "categories";
-	public static final String GRADES = "grades";
-	
-	public static final List<Integer> LIST_GRADES = List.of(1, 2, 3);
-	
-	public static final Map<String, String> BOARD_TYPES = 
-			Map.of("1", "공지사항", "2", "뉴스", "3", "문제공유", "4", "커뮤니티");
-	
-	public static final Map<String, String> CATEGORY_NOTICE = 
-			Map.of("101", "점검", "102", "행사", "103", "설문", "104", "안내");
-	
-	public static final Map<String, String> CATEGORY_NEWS = 
-			Map.of("201", "사회", "202", "경제", "203", "IT", "204", "과학");
-	
-	public static final Map<String, String> CATEGORY_PROBLEM = 
-			Map.of("301", "국어", "302", "영어", "303", "수학", "304", "탐구");
-	
-	public static final Map<String, String> CATEGORY_COMMUNITY = 
-			Map.of("401", "일상", "402", "고민", "403", "입시", "404", "진로");
-	
-	public static final Map<String, String> BOARD_ORDERS =
-			Map.of("LIKE", "추천순", "VIEW_COUNT", "조회순", "LATEST", "최신순");
-	
-	public static final Map<String, String> COMMENT_ORDERS =
-			Map.of("LIKE", "추천순", "OLDEST", "오래된순", "LATEST", "최신순");
-	
-	public static final Map<String, String> SEARCH_OPTION = 
-			Map.of("NICKNAME", "작성자", "TITLE", "제목", "CONTENT", "본문", "TITLE_CONTENT", "제목+본문");
-	
+
+
+
 
 	// 생성자 접근 제한
 	private HttpUtils() {}
@@ -81,22 +52,41 @@ public class HttpUtils {
     	request.setAttribute("minLengthPassword", ValidationUtils.MIN_LANGTH_PASSWORD);
     	request.setAttribute("maxLengthPassword", ValidationUtils.MAX_LANGTH_PASSWORD);
     	request.setAttribute("minLengthAddress", ValidationUtils.MIN_LANGTH_ADDRESS);
-    	request.setAttribute("maxLengthAddress", ValidationUtils.MAX_LANGTH_ADDRESS);
+    	request.setAttribute("maxLengthTitle", ValidationUtils.MAX_LANGTH_TITLE);
+    	request.setAttribute("maxLengthContentPost", ValidationUtils.MAX_LANGTH_CONTENT_POST);
+    	request.setAttribute("maxLengthContentComment", ValidationUtils.MAX_LANGTH_CONTENT_COMMENT);
+    	request.setAttribute("maxSizeFile", ValidationUtils.MAX_SIZE_FILE);
+    	request.setAttribute("maxCountFile", ValidationUtils.MAX_COUNT_FILE);
 	}
 	
 	
 	/**
 	 * 게시글 작성에 필요한 상수 삽입
 	 * @param request	서블릿 요청 객체
-	 */
+\	 */
 	public static void setPostConstantAttributes(HttpServletRequest request, String boardType) {
 		
 		switch (boardType.toUpperCase()) {
-			case "1" : request.setAttribute(CATEGORIES, CATEGORY_NOTICE); break;
-			case "2" : request.setAttribute(CATEGORIES, CATEGORY_NEWS); break;
-			case "3" : request.setAttribute(CATEGORIES, CATEGORY_PROBLEM); request.setAttribute(GRADES, LIST_GRADES); break;
-			case "4" : request.setAttribute(CATEGORIES, CATEGORY_COMMUNITY); break;
+			case "1" : request.setAttribute("categories", ValidationUtils.CATEGORY_NOTICE); break;
+			case "2" : request.setAttribute("categories", ValidationUtils.CATEGORY_NEWS); break;
+			case "3" : request.setAttribute("categories", ValidationUtils.CATEGORY_PROBLEM);
+			case "4" : request.setAttribute("categories", ValidationUtils.CATEGORY_COMMUNITY); break;
 		}
+		
+		request.setAttribute("grades", ValidationUtils.LIST_GRADES);
+		request.setAttribute("searchOptions", ValidationUtils.OPTION_SEARCH);
+		request.setAttribute("postOrders", ValidationUtils.ORDER_POST);
+		request.setAttribute("commentOrders", ValidationUtils.ORDER_COMMENT);
+	}
+	
+	
+	/**
+	 * 게시글 목록, 카테고리 등 항시 필요한 기본 상수 삽입
+	 * @param request	서블릿 요청 객체
+	 */
+	public static void setDefaultConstantAttributes(HttpServletRequest request) {
+		
+		request.setAttribute("boardTypes", ValidationUtils.BOARD_TYPES);
 	}
 	
 	
@@ -256,7 +246,7 @@ public class HttpUtils {
 	public static void setBodyAttribute(HttpServletRequest request, String jspPath) {
 		
 		try {
-			request.setAttribute(BODY, jspPath);
+			request.setAttribute("body", jspPath);
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
@@ -303,6 +293,29 @@ public class HttpUtils {
 			System.out.printf("[HttpUtils] 로그인 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
 			throw new ControllerException(e);
 		}
+	}
+	
+	
+	
+	/**
+	 * 입력 파라미터 Part 중 파일 Part 만 조회
+	 * @param request	서블릿 요청 객체
+	 * @param fieldName	페이지(JSP)에서 파일을 받아올 때 사용했던 name 속성 값 (ex. file)
+	 * @return List		업로드한 파일 목록 반환
+	 */
+	public static List<Part> getFileParts(HttpServletRequest request, String fieldName) {
+
+		try {
+			return request.getParts()
+					.stream()
+					.filter(part -> Objects.equals(part.getName(), fieldName) && part.getSize() >= 0)
+					.toList();	
+			
+		} catch (Exception e) {
+			System.out.printf("[getFileParts] 파일 목록을 불러오는데 실패했습니다! : %s\n", e);
+			throw new ControllerException(e);
+		}
+
 	}
 	
 	

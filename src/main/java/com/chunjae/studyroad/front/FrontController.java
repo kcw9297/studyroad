@@ -29,8 +29,8 @@ import jakarta.servlet.annotation.*;
 @WebServlet(urlPatterns = {"*.do"})
 @MultipartConfig(
 		fileSizeThreshold = 1*1024*1024,	// RAM 저장 범위 : 1MB (초과 시 임시파일 사용)
-		maxFileSize = 5*1024*1024, 			// 최대 허용 범위 : 5MB
-		maxRequestSize = 15*1024*1024		// 모든 파일을 합쳐 15MB 초과 불가능
+		maxFileSize = ValidationUtils.MAX_SIZE_FILE,
+		maxRequestSize = ValidationUtils.MAX_SIZE_FILE * ValidationUtils.MAX_COUNT_FILE
 )
 public class FrontController extends HttpServlet {
 	
@@ -64,12 +64,11 @@ public class FrontController extends HttpServlet {
             // 만약 파일 전시 요청이 아니면 URL 로그 출력
             if (!path.startsWith("/file/display.do"))
             	System.out.printf("[FrontController] request path = %s\n", path);
- 
             
             // [2] 필요 파라미터 삽입
             LoginMember loginMember = SessionUtils.getLoginMember(request);
             if (Objects.nonNull(loginMember)) request.setAttribute("loginMember", loginMember);
-            
+            HttpUtils.setDefaultConstantAttributes(request);
             
             // [3] 요청한 URL에 따라 적절한 컨트롤러에 연결
             // 비동기 요청

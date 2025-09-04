@@ -22,6 +22,7 @@
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/style.css'/>">
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/modal.css'/>">
 	<link rel="stylesheet" type="text/css" href="<c:url value='/css/validation.css'/>">
+	<link rel="stylesheet" type="text/css" href="<c:url value='/css/file.css'/>">
 </head>
 
 	<body>

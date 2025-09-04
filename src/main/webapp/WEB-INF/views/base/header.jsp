@@ -36,10 +36,9 @@
         	<a href="/"> <img src="/file/display.do?fileName=logo1.png&type=BASE" width="250" height="57"/> </a>
         </div>
         <div class="header-menu">
-            <a class="link" href="#">공지사항</a>
-            <a class="link" href="#">뉴스</a>
-            <a class="link" href="#">문제공유</a>
-            <a class="link" href="#">커뮤니티</a>
+        	<c:forEach var="entry" items="${boardTypes}">
+        		<a class="link" href="/post/list.do?boardType=${entry.key}&page=1">${entry.value}</a>
+        	</c:forEach>
         </div>
     </div>
 </header>

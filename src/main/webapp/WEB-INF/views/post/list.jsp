@@ -10,26 +10,44 @@
 
 
 <form class="container option" method="get">
-	<div class="board-search">
-		<select name="category">
-			<option value="">선택</option>
-			<option value="국어">국어</option>
-			<option value="영어">영어</option>
-			<option value="수학">수학</option>
-			<option value="탐구">탐구</option>
-		</select>
-		<div class="search-box">
-			<input id="title" name="title" type="search" placeholder="두 글자 이상 입력하세요">
-			<button type="submit"><img src="/file/display.do?fileName=search.png&type=BASE" width="20" height="20"/></button>
+	<fieldset>
+		<div class="board-search">
+			<select name="category">
+				<option value="">선택</option>
+				<c:forEach var="entry" items="${categories}">
+					<option value="${entry.key}">${entry.value}</option>
+				</c:forEach>
+			</select>
+			<div class="search-box">
+				<input id="title" name="title" type="search" placeholder="두 글자 이상 입력하세요">
+				<button type="submit"><img src="/file/display.do?fileName=search.png&type=BASE" width="20" height="20"/></button>
+			</div>
 		</div>
-	</div>
-	<div class="board-category">
-		<button>전체</button>
-		<button>국어</button>
-		<button>영어</button>
-		<button>수학</button>
-		<button>탐구</button>
-	</div>
+		<div class="board-category">
+			<ul>
+				<li>
+					<input type="radio" name="category" value="" id="category-all" checked>
+					<label for="category-all">전체</label>
+				</li>
+				<li>
+					<input type="radio" name="category" value="국어" id="category-ko">
+					<label for="category-ko">국어</label>
+				</li>
+				<li>
+					<input type="radio" name="category" value="영어" id="category-eng">
+					<label for="category-eng">영어</label>
+				</li>
+				<li>
+					<input type="radio" name="category" value="수학" id="category-math">
+					<label for="category-math">수학</label>
+				</li>
+				<li>
+					<input type="radio" name="category" value="탐구" id="category-sci">
+					<label for="category-sci">탐구</label>
+				</li>
+			</ul>
+		</div>
+	</fieldset>
 	<div class="board-order">
 		<div class="order-text">
 		<p>게시글</p>
@@ -38,13 +56,19 @@
 		<div class="order-buttons">
 			<select name="grade">
 				<option value="">선택</option>
-				<option value="고1">고1</option>
-				<option value="고2">고2</option>
-				<option value="고3">고3</option>
+				<c:forEach var="grade" items="${grades}">
+			        <option value="${grade}">고${grade}</option>
+			    </c:forEach>
 			</select>
-			<button>추천순</button>
-			<button>조회순</button>
-			<button>최신순</button>
+			<div class="order-count">
+			    <c:forEach var="entry" items="${postOrders}">
+			        <span class="order-post">
+			            <input type="radio" id="order-${entry.key}" name="board-post" value="${entry.key}"
+			                <c:if test="${entry.key == 'LATEST'}">checked</c:if>>
+			            <label for="order-${entry.key}">${entry.value}</label>
+			        </span>
+			    </c:forEach>
+			</div>
 		</div>
 	</div>
 </form>
@@ -123,16 +147,16 @@
 		</li>
 	</ul>
 	<div class="pagination">
-	    <button><<</button>
-	    <button><</button>
-	    <button>1</button>
-	    <button>2</button>
-	    <button>3</button>
-	    <button>4</button>
-	    <button>5</button>
-	    <button>></button>
-    	<button>>></button>
-	</div>
+	    <span><<</span>
+	    <span><</span>
+	    <span>1</span>
+	    <span>2</span>
+	    <span>3</span>
+	    <span>4</span>
+	    <span>5</span>
+	    <span>></span>
+    	<span>>></span>
+		</div>
 		<div class="board-new">
     	<button type="button" onclick="location.href='/post/write.do?boardType=${boardType}'">글쓰기</button>
     </div>
