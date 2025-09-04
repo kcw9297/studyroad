@@ -16,7 +16,7 @@ public class HttpUtils {
 	
 	// 에러 페이지에서 사용 상수
 	private static final String ALERT_MESSAGE = "alertMessage";
-	private static final String REDIRECT_URL = "redirectUrl";
+	private static final String REDIRECT_URL = "redirectURL";
 	
 	// 메소드 상수
 	public static final String POST = "POST";
@@ -52,6 +52,7 @@ public class HttpUtils {
     	request.setAttribute("minLengthPassword", ValidationUtils.MIN_LANGTH_PASSWORD);
     	request.setAttribute("maxLengthPassword", ValidationUtils.MAX_LANGTH_PASSWORD);
     	request.setAttribute("minLengthAddress", ValidationUtils.MIN_LANGTH_ADDRESS);
+    	request.setAttribute("maxLengthAddress", ValidationUtils.MAX_LANGTH_ADDRESS);
     	request.setAttribute("maxLengthTitle", ValidationUtils.MAX_LANGTH_TITLE);
     	request.setAttribute("maxLengthContentPost", ValidationUtils.MAX_LANGTH_CONTENT_POST);
     	request.setAttribute("maxLengthContentComment", ValidationUtils.MAX_LANGTH_CONTENT_COMMENT);

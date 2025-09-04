@@ -1,6 +1,7 @@
 package com.chunjae.studyroad.domain.file.model;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
 
@@ -27,12 +28,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void storeAll(List<FileDTO.Store> requests) {
+    public void store(List<FileDTO.Store> requests) {
     	 fileDAO.saveAll(requests);
     }
 
     @Override
-    public void replaceAll(List<FileDTO.Replace> requests) {
-    	
+    public void remove(List<Long> fileIds) {
+    	fileDAO.deleteAllByIds(fileIds);
     }
 }

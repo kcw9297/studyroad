@@ -18,7 +18,6 @@ $(document).ready(function() {
 	// 유효성 검사
 	if (!checkCategory() || !checkGrade() || 
 		!checkTitle() || !checkPostContent() || !checkPostFile()) return;		
-	printLog();
 	
 	
 	// 로그인 요청

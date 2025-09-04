@@ -17,11 +17,13 @@ public class FileDTO {
         private Long fileId;
         private Long postId;
         private String originalName;
+        private String storedName;
 
-        public Info(Long fileId, Long postId, String originalName) {
+        public Info(Long fileId, Long postId, String originalName, String storedName) {
             this.fileId = fileId;
             this.postId = postId;
             this.originalName = originalName;
+            this.storedName = storedName;
         }
 
         public Long getFileId() {
@@ -34,6 +36,10 @@ public class FileDTO {
 
         public String getOriginalName() {
             return originalName;
+        }
+        
+        public String getStoredName() {
+            return storedName;
         }
     }
 
@@ -50,7 +56,7 @@ public class FileDTO {
         public Store(Long postId, String originalName, String storedName) {
             this.postId = postId;
             this.originalName = originalName;
-
+            this.storedName = storedName;
         }
 
         /**
@@ -78,14 +84,14 @@ public class FileDTO {
     /**
      * 파일 DTO - 변경된 파일 대체 요청
      */
-    public static class Replace {
+    public static class Edit {
 
     	private Long postId;
         private Long fileId;
         private String originalName;
         private boolean removed;	// 파일 삭제여부 (true - 삭제됨)
 
-        public Replace(Long postId, Long fileId, String originalName, boolean removed) {
+        public Edit(Long postId, Long fileId, String originalName, boolean removed) {
             this.postId = postId;
             this.fileId = fileId;
             this.originalName = originalName;
