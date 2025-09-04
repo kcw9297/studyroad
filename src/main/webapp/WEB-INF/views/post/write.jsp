@@ -11,8 +11,8 @@
 	let maxLengthContent = ${maxLengthContentPost};
 	let maxSizeFile = ${maxSizeFile};
 	let maxCountFile = ${maxCountFile}; 
-	let boardType = ${boardType}; 
-	let memberStatus = ${loginMember.status};
+	let boardType = "${boardType}"; 
+	let memberStatus = "${loginMember.status}";
 </script>
 
 <form class="container information" id="writePostForm" method="post" enctype="multipart/form-data">
@@ -22,7 +22,7 @@
 	</div>
 	
 	<%--  관리자는 분류를 공지사항 에서만 선택 가능 --%>
-	<c:if test="${status != 'ADMIN' || boardType == 1 || boardType == 2 }">
+	<c:if test="${memberStatus != 'ADMIN' || boardType == 1 || boardType == 2 }">
 		<div class="information-form">
 			<label for="category">분류</label>
 			<select id="category" name="category">
@@ -40,8 +40,8 @@
 			<label for="grade">학년</label>
 			<select id="grade" name="grade">
 				<option value="">선택</option>
-				<c:forEach var="grade" items="${grades}">
-			        <option value="${grade}"<c:if test="${grade == data.grade}">checked</c:if>>고${grade}</option>
+							<c:forEach var="grade" items="${grades}">
+			        <option value="${grade}">고${grade}</option>
 			    </c:forEach>
 			</select>
 		</div>
@@ -54,16 +54,16 @@
 	</div>
 
 	<div class="information-title">
-		<input id="title" name="title" type="text" value="${data.title}" placeholder="제목">
+		<input id="title" name="title" type="text" placeholder="제목">
 	</div>
 
 	<div class="information-content">
-		<input type="hidden" id="content" name="content" value="${data.title}">
+		<input type="hidden" id="content" name="content">
 		<iframe id="editorFrame" src="/editor.do"style="width:100%; height:800px; border:none;"></iframe>
 	</div>
 
 	<div class="information-written">
-		<button type="submit">수정</button>
-		<button type="button" onclick="location.href='/post/info.do?boardType=${boardType}&postId=${postId}'">취소</button>
+		<button type="submit">등록</button>
+		<button type="button" onclick="location.href='/post/list.do?boardType=${boardType}&page=1'">취소</button>
 	</div>
 </form>

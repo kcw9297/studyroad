@@ -111,7 +111,7 @@ public class PostControllerImpl implements PostController {
 				return;
 			}
 
-			// [2] 파라미터 출력
+			// [2] 파라미터 삽입
 			String boardType = request.getParameter("boardType");
 			request.setAttribute("boardType", boardType);
 			HttpUtils.setPostConstantAttributes(request, boardType);
@@ -154,12 +154,15 @@ public class PostControllerImpl implements PostController {
 			
 			// [3] service 조회
 			PostDTO.Info postInfo = postService.getInfo(postId);
+			List<FileDTO.Info> files = fileService.getInfos(postId);
+			postInfo.setPostFiles(files);
 
 			// [4] 파라미터 삽입
 			request.setAttribute("boardType", boardType);
 			request.setAttribute("postId", postId);
 			request.setAttribute("data", postInfo);
 			HttpUtils.setPostConstantAttributes(request, boardType);
+			HttpUtils.setValidationConstantAttributes(request);
 
 			// [4] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/edit.jsp");
@@ -218,9 +221,7 @@ public class PostControllerImpl implements PostController {
 		}
 	}
 
-  
-  
-  
+
   
 	@Override
 	public void postWriteAPI(HttpServletRequest request, HttpServletResponse response) {
@@ -230,11 +231,12 @@ public class PostControllerImpl implements PostController {
 
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
+			
+			
 			String title = request.getParameter("title");
-
 			String boardType = request.getParameter("boardType");
 			String category = request.getParameter("category");
-			int grade = Integer.parseInt(strGrade);
+			int grade = Integer.parseInt(request.getParameter("grade"));
 			String content = request.getParameter("content");
 			String strNotice = request.getParameter("notice");
 			Boolean notice = Boolean.parseBoolean(strNotice);
@@ -245,13 +247,14 @@ public class PostControllerImpl implements PostController {
 
 			// [3-2] 파일 저장
 			List<Part> fileParts = HttpUtils.getFileParts(request, "file");
-			List<FileDTO.Store> fileStores = fileParts.stream().map(part -> {
-				File file = FileUtils.storeFile(FileUtils.DIR_POST, part);
-				return new FileDTO.Store(postId, FileUtils.getOriginalFileName(part), file.getName());
-			}).toList();
+			List<FileDTO.Store> fileStores = 
+					fileParts.stream().map(part -> {
+						File file = FileUtils.storeFile(FileUtils.DIR_POST, part);
+						return new FileDTO.Store(postId, FileUtils.getOriginalFileName(part), file.getName());
+					}).toList();
 
 			// [3-3] service - 게시글 내 파일 정보 저장
-			fileService.storeAll(fileStores);
+			fileService.store(fileStores);
 
 			// [4] JSON 응답 반환
 			// String.format("/post/info.do?postId=", postId)
@@ -275,27 +278,81 @@ public class PostControllerImpl implements PostController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			String strPostId = request.getParameter("postId");
 			long postId = Long.parseLong(strPostId);
+
+			
+			for (Part part : request.getParts()) {
+	            System.out.println("=== Part 정보 ===");
+	            System.out.println("Name          : " + part.getName());
+	            System.out.println("SubmittedName : " + part.getSubmittedFileName());
+	            System.out.println("Size          : " + part.getSize());
+	            System.out.println("ContentType   : " + part.getContentType());
+
+	            // 일반 필드라면 값까지 출력
+	            if (part.getSubmittedFileName() == null) {
+	                String value = request.getParameter(part.getName());
+	                System.out.println("Value         : " + value);
+	            }
+			}
+			
+
+			// [3-1] 파일 삭제
+			// 새롭게 등록한 파일 생성 & 삭제된 파일 삭제
+			List<Part> fileParts = HttpUtils.getFileParts(request, "file");
+			
+			// 삭제 대상 파일
+			Map<String, String> removedFiles = 
+					JSONUtils.toDataMap(request.getParameter("removeFiles"), String.class, String.class);
+			
+			
+			// 저장소 내 파일 삭제
+			removedFiles.values().forEach(storedName -> {
+				System.out.println(storedName);
+				FileUtils.removeFile(FileUtils.DIR_POST, storedName);
+			});
+			
+			
+			// DB 내 파일정보 삭제
+			List<Long> fileIds = removedFiles.keySet().stream().map(Long::parseLong).toList();
+			fileService.remove(fileIds);
+			
+		
+			// [3-2] 새롭게 등록한 파일 등록
+			// 파일 저장
+			List<FileDTO.Store> fileStores = 
+					fileParts.stream()
+					.filter(part -> part.getSize() > 0 && Objects.nonNull(part.getSubmittedFileName()) && !part.getSubmittedFileName().isEmpty())
+					.map(part -> {
+						File file = FileUtils.storeFile(FileUtils.DIR_POST, part);
+						return new FileDTO.Store(postId, FileUtils.getOriginalFileName(part), file.getName());
+					}).toList();	
+			
+
+			// DB 내 파일정보 저장
+			fileService.store(fileStores);
+			
+
+			// [4] 게시글 정보 갱신
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			String title = request.getParameter("title");
-
 			String category = request.getParameter("category");
-			int grade = Integer.parseInt(strGrade);
+			int grade = Integer.parseInt(request.getParameter("grade"));
 			String content = request.getParameter("content");
 			PostDTO.Edit edit = new PostDTO.Edit(postId, memberId, title, category, grade, content);
 			postService.edit(edit);
-
-			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+	
+			
+			// [5] JSON 응답 반환
+			APIResponse rp = APIResponse.success("게시글 수정을 완료했습니다");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
-			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
 			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp = APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			APIResponse rp = APIResponse.error("게시글 수정에 실패했습니다. 잠시 후에 시도해 주세요", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	
 	@Override
 	public void postRemoveAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {

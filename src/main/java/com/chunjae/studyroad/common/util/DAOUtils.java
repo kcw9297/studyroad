@@ -24,8 +24,8 @@ public class DAOUtils {
     public static final String SQL_MEMBER_UPDATE_PASSWORD_BY_EMAIL = "UPDATE member SET password = ? WHERE email = ?";
     public static final String SQL_MEMBER_UPDATE_ADDRESS = "UPDATE member SET zipcode = ?, address = ? WHERE member_id = ?";
     public static final String SQL_MEMBER_UPDATE_STATUS = "UPDATE member SET status = ? WHERE member_id = ? AND status = ?";
-    public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name, size, ext) VALUES (?, ?, ?, ?, ?)";
-    public static final String SQL_FILE_FIND_BY_POSTID = "SELECT file_id, post_id, original_name FROM file where post_id = ?";
+    public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name) VALUES (?, ?, ?)";
+    public static final String SQL_FILE_FIND_BY_POSTID = "SELECT file_id, post_id, original_name, stored_name FROM file where post_id = ?";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
     public static final String SQL_POST_FIND_BY_ID = "SELECT p.post_id, p.title, p.board_type, p.category, p.grade, p.content, p.written_at, p.edited_at, p.views, p.status, p.is_notice, p.likeCount, p.commentCount, m.member_id, m.name, m.nickname, m.email, m.password, m.zipcode, m.address, m.joined_at, m.quited_at, m.ban_end_at, m.status FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.post_id = ?";
     public static final String SQL_POST_SAVE = "INSERT INTO post(member_id, title, board_type, category, grade, content, is_notice) VALUES (?, ?, ?, ?, ?, ?, ?)";

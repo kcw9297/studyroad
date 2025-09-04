@@ -18,10 +18,10 @@ public class FileUtils {
 
     // 파일 상수
     private static final String FILE_PATH = "C:/KCW/project/pro_1_imgs";	// 파일이 저장된 기본 주소
-    public static final String DIR_BASE = "base";          // 기본 파일이 저장된 디렉토리명
-    public static final String DIR_POST = "post";          // 게시글 파일이 저장된 디렉토리명
+    public static final String DIR_BASE = "base"; // 기본 이미지 저장 디렉토리명
+    public static final String DIR_POST = "post"; 
     public static final String EMPTY_IMAGE = "empty.png";  // 현재 이미지가 존재하지 않을 때 출력
-
+    
     // 생성자 접근 제한
     private FileUtils() {}
 
@@ -108,6 +108,7 @@ public class FileUtils {
     public static File storeFile(String type, Part filePart) {
 
         try {
+
             // [1] 파일을 저장할 디렉토리 확인
             File storeDir = new File(String.format("%s/%s", FILE_PATH, type));
             if (!storeDir.exists()) storeDir.mkdirs();
@@ -199,6 +200,11 @@ public class FileUtils {
             throw new FileException(e);
         }
     }
+    
+    
+    
+    
+    
 
 }
 

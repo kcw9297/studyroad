@@ -29,7 +29,7 @@
 		        ['table', ['table']],
 		        ['para', ['ul', 'ol', 'paragraph']],
 		        ['height', ['height']],
-		        ['insert',['link']], //'picture','link','video'에서 이미지와 비디오는 당장 제외하였음
+		        ['insert',['link']], //이미지와 비디오는 당장 제외하였음
 		        ['view', ['fullscreen', 'help']]
 		      ],
 		      fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
@@ -81,28 +81,6 @@
 	  }
 	</style>
 
-    <script>
-        $(document).ready(function() {
-            $('#summernote').summernote({
-                focus: true,
-                lang: "ko-KR",
-                placeholder: '본문을 입력해 주세요',
-                toolbar: [
-                    ['fontname', ['fontname']],
-                    ['fontsize', ['fontsize']],
-                    ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
-                    ['color', ['forecolor','color']],
-                    ['table', ['table']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['height', ['height']],
-                    ['insert',['picture','link','video']],
-                    ['view', ['fullscreen', 'help']]
-                ],
-                fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
-                fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
-            });
-        });
-    </script>
 </head>
 
 <body>

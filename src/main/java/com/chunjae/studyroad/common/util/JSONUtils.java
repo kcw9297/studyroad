@@ -76,5 +76,28 @@ public class JSONUtils {
             throw new UtilsException(e);
         }
     }
+    
+    
+    /**
+     * JSON → Map 변환 지원 메소드
+     * @param json          변환 대상 JSON 문자열
+     * @param keyClass      Map의 key 타입 클래스
+     * @param valueClass    Map의 value 타입 클래스
+     * @return              변환된 Map 객체 반환 (제네릭 타입)
+     * @throws UtilsException JSON → 데이터 변환에 실패 시
+     */
+    public static <K, V> Map<K, V> toDataMap(String json, Class<K> keyClass, Class<V> valueClass) {
+        try {
+            // 1. Map 타입으로 반환할 수 있도록 자바타입 객체 선언
+            JavaType type = mapper.getTypeFactory().constructMapType(Map.class, keyClass, valueClass);
+
+            // 2. Map으로 매핑한 데이터 반환
+            return mapper.readValue(json, type);
+
+        } catch (Exception e) {
+            System.out.printf("[JSONUtils] JSON → Map 변환에 실패했습니다! 원인 : %s\n", e);
+            throw new UtilsException(e);
+        }
+    }
 	
 }

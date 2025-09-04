@@ -64,7 +64,8 @@ class FileDAOImpl implements FileDAO {
 				infos.add(new FileDTO.Info(
 						rs.getLong("file_id"),
 						rs.getLong("post_id"),
-						rs.getString("original_name")
+						rs.getString("original_name"),
+						rs.getString("stored_name")
 				));
 
 			return infos;

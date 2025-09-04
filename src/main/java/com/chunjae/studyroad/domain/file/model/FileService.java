@@ -19,13 +19,13 @@ public interface FileService {
      * 파일 저장
      * @param requests   파일 저장요청 DTO List
      */
-    void storeAll(List<FileDTO.Store> requests);
+    void store(List<FileDTO.Store> requests);
 
 
     /**
-     * 파일 대체 (새롭게 등록한 파일을 생성하고, 삭제 처리한 파일은 삭제)
-     * @param requests   파일 대체요청 DTO List
+     * 파일 삭제
+     * @param fileIds	삭제대상 파일번호 List   
      */
-    void replaceAll(List<FileDTO.Replace> requests);
+    void remove(List<Long> fileIds);
 
 }

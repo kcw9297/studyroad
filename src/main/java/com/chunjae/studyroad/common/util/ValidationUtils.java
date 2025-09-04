@@ -35,7 +35,6 @@ public class ValidationUtils {
 	public static final int MAX_COUNT_FILE = 3; // 최대 등록가능 파일 개수 3개
 	
 	
-	
 	public static final List<Integer> LIST_GRADES = List.of(1, 2, 3);
 	
 	public static final Map<String, String> BOARD_TYPES = new LinkedHashMap<>() {{
@@ -44,6 +43,7 @@ public class ValidationUtils {
 	    put("3", "문제공유");
 	    put("4", "커뮤니티");
 	}};
+	
 
 	public static final Map<String, String> CATEGORY_NOTICE = new LinkedHashMap<>() {{
 	    put("101", "점검");
