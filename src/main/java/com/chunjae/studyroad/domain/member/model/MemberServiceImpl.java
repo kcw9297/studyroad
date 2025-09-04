@@ -145,5 +145,5 @@ public class MemberServiceImpl implements MemberService {
 	        System.out.println("회원 탈퇴 복구 실패");
 	    }	
 	}
-
+	
 }

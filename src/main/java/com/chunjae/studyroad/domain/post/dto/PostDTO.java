@@ -140,6 +140,10 @@ public class PostDTO {
             this.grades = grades;
             this.order = order;
         }
+        
+        public Search(String boardType) {
+        	this.boardType = boardType;
+        }
 
         public String getKeyword() {
             return keyword;

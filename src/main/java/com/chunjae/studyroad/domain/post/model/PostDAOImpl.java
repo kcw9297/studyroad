@@ -88,8 +88,8 @@ class PostDAOImpl implements PostDAO {
 		try (Connection connection = dataSource.getConnection()) {
 			
 			// [1] 파라미터 세팅
-			StringBuilder sbCountSql = new StringBuilder("SELECT COUNT(p.post_id) FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST'");
-			StringBuilder sbPageSql = new StringBuilder("SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST'") ;
+			StringBuilder sbCountSql = new StringBuilder("SELECT COUNT(p.post_id) FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
+			StringBuilder sbPageSql = new StringBuilder("SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
 			
 			
 			PostDTO.Search params = request.getData();
@@ -215,14 +215,14 @@ class PostDAOImpl implements PostDAO {
 				case "OLDEST": sbPageSql.append(" ORDER BY written_at ASC"); break;
 			    case "LATEST": sbPageSql.append(" ORDER BY written_at DESC"); break;
 			    case "LIKE": sbPageSql.append(" ORDER BY like_count DESC"); break;
-			    default: sbPageSql.append(" ORDER BY written_at ASC"); break;
+			    default: sbPageSql.append(" ORDER BY written_at DESC"); break;
 			}
 			
 			int size = request.getSize();
 			int page = request.getPage();
 			sbPageSql.append(" LIMIT ? OFFSET ?");
         	paramsListPage.add(size);
-        	paramsListPage.add((page-1)*size);
+        	paramsListPage.add(page*size);
 			
 			
 			// 페이징 결과 DTO
@@ -307,6 +307,124 @@ class PostDAOImpl implements PostDAO {
 			return new Page.Response<>(data, request.getPage(), 5, request.getSize(), dataCount);
 		}
 	}
+	
+	
+    @Override
+    public List<PostDTO.Info> home(String boardType) {
+
+		try (Connection connection = dataSource.getConnection()) {
+			
+			// [1] 파라미터 세팅
+			String homeSql = "SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false AND board_type = ? ORDER BY written_at DESC LIMIT 5";
+			
+			
+			
+			try (PreparedStatement pstmt = connection.prepareStatement(homeSql)) {
+				if (boardType != null && !boardType.isEmpty()) {
+				    switch(boardType) {
+				        case "1": pstmt.setString(1, "공지사항"); break;
+				        case "2": pstmt.setString(1, "뉴스"); break;
+				        case "3": pstmt.setString(1, "문제공유"); break;
+				        case "4": pstmt.setString(1, "커뮤니티"); break;
+				    }
+				}
+				
+				try	(ResultSet rs = pstmt.executeQuery()) {
+					List<PostDTO.Info> data = new ArrayList<>();
+					
+					while (rs.next())
+						data.add(new PostDTO.Info(
+								rs.getLong("post_id"),
+								rs.getString("title"),
+								rs.getString("board_type"),
+								rs.getString("category"),
+								rs.getInt("grade"),
+								rs.getString("content"),
+								rs.getTimestamp("written_at"),
+								rs.getTimestamp("edited_at"),
+								rs.getLong("views"),
+								rs.getString(10),
+								rs.getBoolean("is_notice"),
+								rs.getLong("likeCount"),
+								rs.getLong("commentCount"),
+							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
+						));
+
+					return data;
+				}
+			}
+	
+		} catch (SQLException e) {
+
+			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			throw new DAOException(e);
+			
+		} catch (Exception e) {
+			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			throw new DAOException(e);
+		}
+    	
+    }
+	
+	
+    @Override
+    public List<PostDTO.Info> notice(String boardType) {
+
+		try (Connection connection = dataSource.getConnection()) {
+			
+			// [1] 파라미터 세팅
+			String homeSql = "SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = true AND board_type = ? ORDER BY written_at DESC";
+			
+			
+			
+			try (PreparedStatement pstmt = connection.prepareStatement(homeSql)) {
+				if (boardType != null && !boardType.isEmpty()) {
+				    switch(boardType) {
+				        case "1": pstmt.setString(1, "공지사항"); break;
+				        case "2": pstmt.setString(1, "뉴스"); break;
+				        case "3": pstmt.setString(1, "문제공유"); break;
+				        case "4": pstmt.setString(1, "커뮤니티"); break;
+				    }
+				}
+				
+				try	(ResultSet rs = pstmt.executeQuery()) {
+					List<PostDTO.Info> data = new ArrayList<>();
+					
+					while (rs.next())
+						data.add(new PostDTO.Info(
+								rs.getLong("post_id"),
+								rs.getString("title"),
+								rs.getString("board_type"),
+								rs.getString("category"),
+								rs.getInt("grade"),
+								rs.getString("content"),
+								rs.getTimestamp("written_at"),
+								rs.getTimestamp("edited_at"),
+								rs.getLong("views"),
+								rs.getString(10),
+								rs.getBoolean("is_notice"),
+								rs.getLong("likeCount"),
+								rs.getLong("commentCount"),
+							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
+						));
+
+					return data;
+				}
+				
+			}
+			
+			
+		} catch (SQLException e) {
+
+			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			throw new DAOException(e);
+			
+		} catch (Exception e) {
+			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			throw new DAOException(e);
+		}
+    	
+    }
 
 
     @Override
