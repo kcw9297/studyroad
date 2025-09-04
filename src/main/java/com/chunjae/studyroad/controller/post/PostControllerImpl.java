@@ -175,13 +175,29 @@ public class PostControllerImpl implements PostController {
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 
-	        String strPostId = request.getParameter("postId");
-	        long postId = Long.parseLong(strPostId);
-	        String order = request.getParameter("order");
+
+			String keyword = request.getParameter("keyword");
+			String option = request.getParameter("option");
+			String boardType = request.getParameter("boardType");
+			String[] arrayCategories = request.getParameterValues("categories");
+			List<String> categories;
+			if (arrayCategories == null || arrayCategories.length == 0) {
+				categories = new ArrayList<>();
+			} else {
+				categories = Arrays.asList(arrayCategories);
+			}
+			String[] arrayGrades = request.getParameterValues("grades");
+			List<String> grades;
+			if (arrayGrades == null || arrayGrades.length == 0) {
+				grades = new ArrayList<>();
+			} else {
+				grades = Arrays.asList(arrayGrades);
+			}
+			String order = request.getParameter("order");
 	        String strPage= request.getParameter("page");
 	        int page = Integer.parseInt(strPage);
 	        
-			Page.Request<PostDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 10);
+			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
 	        
 	        
 			// [3] service 조회
@@ -190,7 +206,7 @@ public class PostControllerImpl implements PostController {
 			
 			// [4] JSON 응답 반환
 	        
-	        APIResponse rp = APIResponse.success("요청에 성공했습니다!", commentInfo);
+	        APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
@@ -221,8 +237,11 @@ public class PostControllerImpl implements PostController {
 	        Boolean notice = Boolean.parseBoolean(strNotice);
 	        PostDTO.Write write = new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
 			
+	        List<FileDTO.Store> files = request.getP("files"); 파일이랑 같이 
+	        
 			// [3] service 조회
-	        long postWrite = postService.write(write);
+	        postService.write(write);
+	        fileService.storeAll(files); 파일이랑 같이 저ㅏ장
 			
 			
 			// [4] JSON 응답 반환
@@ -257,7 +276,7 @@ public class PostControllerImpl implements PostController {
 	        PostDTO.Edit edit = new PostDTO.Edit(postId, memberId, title, category, grade, content);
 
 			postService.edit(edit);
-			
+			파일이랑 같이 수정
 			
 			// [3] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");

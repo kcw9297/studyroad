@@ -49,7 +49,7 @@ public class CommentControllerImpl implements CommentController {
 	        String strPage= request.getParameter("page");
 	        int page = Integer.parseInt(strPage);
 	        
-			Page.Request<CommentDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 10);
+			Page.Request<CommentDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 1);
 	        
 	        
 			// [3] service 조회

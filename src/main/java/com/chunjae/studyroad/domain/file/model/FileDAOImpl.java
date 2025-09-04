@@ -83,8 +83,6 @@ class FileDAOImpl implements FileDAO {
 				pstmt.setLong(1, request.getPostId());
 				pstmt.setString(2, request.getOriginalName());
 				pstmt.setString(3, request.getStoredName());
-				pstmt.setLong(4, request.getSize());
-				pstmt.setString(5, request.getExt());
 
 				// 배치에 추가
 				pstmt.addBatch();
