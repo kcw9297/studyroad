@@ -50,6 +50,14 @@ public class FileDTO {
         public Store(Long postId, String originalName, String storedName) {
             this.postId = postId;
             this.originalName = originalName;
+
+        }
+
+        /**
+         * 파일정보 추가
+         * @param storedName    실제로 저장되는 파일명 (UUID)
+         */
+        public void setFileInfo(String storedName) {
             this.storedName = storedName;
         }
 
@@ -64,7 +72,6 @@ public class FileDTO {
         public String getStoredName() {
             return storedName;
         }
-
     }
 
     

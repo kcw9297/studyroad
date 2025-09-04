@@ -99,21 +99,21 @@ class MemberDAOImpl implements MemberDAO {
 	
 	private MemberDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
 		
-		try (ResultSet resultSet = pstmt.executeQuery()) {
+		try (ResultSet rs = pstmt.executeQuery()) {
 			
-			return resultSet.next() ? 
+			return rs.next() ? 
 					new MemberDTO.Info(
-							resultSet.getLong("member_id"),
-							resultSet.getString("name"),
-							resultSet.getString("nickname"),
-							resultSet.getString("email"),
-							resultSet.getString("password"),
-							resultSet.getString("zipcode"),
-							resultSet.getString("address"),
-							resultSet.getTimestamp("joined_at"),
-							resultSet.getTimestamp("quited_at"),
-							resultSet.getTimestamp("ban_end_at"),
-							resultSet.getString("status")
+							rs.getLong("member_id"),
+							rs.getString("name"),
+							rs.getString("nickname"),
+							rs.getString("email"),
+							rs.getString("password"),
+							rs.getString("zipcode"),
+							rs.getString("address"),
+							rs.getTimestamp("joined_at"),
+							rs.getTimestamp("quited_at"),
+							rs.getTimestamp("ban_end_at"),
+							rs.getString("status")
 				    ) : null;
 		}
 	}

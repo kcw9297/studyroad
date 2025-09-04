@@ -28,11 +28,11 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void storeAll(List<FileDTO.Store> requests) {
-    	
+    	 fileDAO.saveAll(requests);
     }
 
     @Override
-    public void replaceAll(FileDTO.Replace requests) {
-
+    public void replaceAll(List<FileDTO.Replace> requests) {
+    	
     }
 }

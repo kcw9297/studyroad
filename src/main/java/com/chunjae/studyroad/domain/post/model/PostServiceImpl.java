@@ -40,18 +40,7 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public Page.Response<PostDTO.Info> getList(Page.Request<PostDTO.Search> request) {
-	    Page.Response<CommentDTO.Info> pageResponse = postDAO.search(request);
-	    List<CommentDTO.Info> data = pageResponse.getData();
-	    List<Long> parentIds = data.stream().map(CommentDTO.Info::getCommentId).toList();
-
-	    List<CommentDTO.Info> childes = commentDAO.findAllChildByParentIds(parentIds);
-
-	    // 그룹화
-	    Map<Long, List<CommentDTO.Info>> group =
-	            childes.stream().collect(Collectors.groupingBy(CommentDTO.Info::getParentId));
-
-	    data.forEach(dto -> dto.setChildComments(group.getOrDefault(dto.getCommentId(), List.of())));
-		return pageResponse;
+	    return postDAO.search(request);
     }
 
 
