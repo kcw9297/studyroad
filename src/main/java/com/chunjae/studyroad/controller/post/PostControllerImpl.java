@@ -1,6 +1,7 @@
 package com.chunjae.studyroad.controller.post;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
@@ -170,18 +171,34 @@ public class PostControllerImpl implements PostController {
 	public void getListAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, "GET");
+//			HttpUtils.checkMethod(request, "GET");
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 
-	        String strPostId = request.getParameter("postId");
-	        long postId = Long.parseLong(strPostId);
-	        String order = request.getParameter("order");
+
+			String keyword = request.getParameter("keyword");
+			String option = request.getParameter("option");
+			String boardType = request.getParameter("boardType");
+			String[] arrayCategories = request.getParameterValues("categories");
+			List<String> categories;
+			if (arrayCategories == null || arrayCategories.length == 0) {
+				categories = new ArrayList<>();
+			} else {
+				categories = Arrays.asList(arrayCategories);
+			}
+			String[] arrayGrades = request.getParameterValues("grades");
+			List<Integer> grades;
+			if (arrayGrades == null || arrayGrades.length == 0) {
+				grades = new ArrayList<>();
+			} else {
+			    grades = Arrays.stream(arrayGrades).map(Integer::parseInt).collect(Collectors.toList());
+			}
+			String order = request.getParameter("order");
 	        String strPage= request.getParameter("page");
-	        int page = Integer.parseInt(strPage);
+	        int page = (strPage != null) ? Integer.parseInt(strPage) : 1; 
 	        
-			Page.Request<PostDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 10);
+			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
 	        
 	        
 			// [3] service 조회
@@ -190,13 +207,15 @@ public class PostControllerImpl implements PostController {
 			
 			// [4] JSON 응답 반환
 	        
-	        APIResponse rp = APIResponse.success("요청에 성공했습니다!", commentInfo);
+	        APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
 			// [예외 발생] 오류 응답 반환
 		} catch (Exception e) {
+
 			System.out.printf("[getListAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
@@ -215,14 +234,16 @@ public class PostControllerImpl implements PostController {
 			String title = request.getParameter("title");
 	        String boardType = request.getParameter("boardType");
 	        String category = request.getParameter("category");
-	        String grade = request.getParameter("grade");
+	        String strGrade = request.getParameter("grade");
+	        int grade = Integer.parseInt(strGrade);
 	        String content = request.getParameter("content");
 	        String strNotice = request.getParameter("notice");
 	        Boolean notice = Boolean.parseBoolean(strNotice);
 	        PostDTO.Write write = new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
 			
+	       
 			// [3] service 조회
-	        long postWrite = postService.write(write);
+	        postService.write(write);
 			
 			
 			// [4] JSON 응답 반환
@@ -252,12 +273,12 @@ public class PostControllerImpl implements PostController {
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			String title = request.getParameter("title");
 	        String category = request.getParameter("category");
-	        String grade = request.getParameter("grade");
+	        String strGrade = request.getParameter("grade");
+	        int grade = Integer.parseInt(strGrade);
 	        String content = request.getParameter("content");
 	        PostDTO.Edit edit = new PostDTO.Edit(postId, memberId, title, category, grade, content);
 
 			postService.edit(edit);
-			
 			
 			// [3] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");

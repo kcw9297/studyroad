@@ -42,9 +42,9 @@ class CommentDAOImpl implements CommentDAO {
 			int size = request.getSize();
 			String order;
 			switch(params.getOrder()) {
-				case "oldest": order = "written_at ASC"; break;
-			    case "latest": order = "written_at DESC"; break;
-			    case "like": order = "like_count DESC"; break;
+				case "OLDEST": order = "written_at ASC"; break;
+			    case "LATEST": order = "written_at DESC"; break;
+			    case "LIKE": order = "like_count DESC"; break;
 			    default: order = "written_at ASC"; break;
 			}
 			

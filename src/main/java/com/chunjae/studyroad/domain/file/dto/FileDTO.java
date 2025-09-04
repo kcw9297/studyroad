@@ -46,8 +46,6 @@ public class FileDTO {
         private Long postId;
         private String originalName;
         private String storedName;
-        private Long size;
-        private String ext;
 
         public Store(Long postId, String originalName) {
             this.postId = postId;
@@ -57,13 +55,9 @@ public class FileDTO {
         /**
          * 파일정보 추가
          * @param storedName    실제로 저장되는 파일명 (UUID)
-         * @param size          파일 사이즈
-         * @param ext           파일 확장자
          */
-        public void setFileInfo(String storedName, Long size, String ext) {
+        public void setFileInfo(String storedName) {
             this.storedName = storedName;
-            this.size = size;
-            this.ext = ext;
         }
 
         public Long getPostId() {
@@ -76,14 +70,6 @@ public class FileDTO {
 
         public String getStoredName() {
             return storedName;
-        }
-
-        public Long getSize() {
-            return size;
-        }
-
-        public String getExt() {
-            return ext;
         }
     }
 
