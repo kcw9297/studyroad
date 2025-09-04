@@ -54,17 +54,17 @@ class FileDAOImpl implements FileDAO {
 
 	private List<FileDTO.Info> executeAndMapToInfoDTO(PreparedStatement pstmt) throws SQLException {
 
-		try (ResultSet resultSet = pstmt.executeQuery()) {
+		try (ResultSet rs = pstmt.executeQuery()) {
 
 			// 저장할 리스트 선언
 			List<FileDTO.Info> infos = new ArrayList<>();
 
 			// 조회된 파일 정보를 모두 저장
-			while (resultSet.next())
+			while (rs.next())
 				infos.add(new FileDTO.Info(
-						resultSet.getLong("file_id"),
-						resultSet.getLong("post_id"),
-						resultSet.getString("original_name")
+						rs.getLong("file_id"),
+						rs.getLong("post_id"),
+						rs.getString("original_name")
 				));
 
 			return infos;

@@ -26,6 +26,6 @@ public interface FileService {
      * 파일 대체 (새롭게 등록한 파일을 생성하고, 삭제 처리한 파일은 삭제)
      * @param requests   파일 대체요청 DTO List
      */
-    void replaceAll(FileDTO.Replace requests);
+    void replaceAll(List<FileDTO.Replace> requests);
 
 }

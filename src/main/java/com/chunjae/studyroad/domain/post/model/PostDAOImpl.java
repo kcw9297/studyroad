@@ -61,25 +61,25 @@ class PostDAOImpl implements PostDAO {
 
     private PostDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
     	
-		try (ResultSet resultSet = pstmt.executeQuery()) {
-			return resultSet.next() ? 
+		try (ResultSet rs = pstmt.executeQuery()) {
+			return rs.next() ? 
 					
 					
 					new PostDTO.Info(
-							resultSet.getLong("post_id"),
-							resultSet.getString("title"),
-							resultSet.getString("board_type"),
-							resultSet.getString("category"),
-							resultSet.getString("grade"),
-							resultSet.getString("content"),
-							resultSet.getTimestamp("written_at"),
-							resultSet.getTimestamp("edited_at"),
-							resultSet.getLong("views"),
-							resultSet.getString(10),
-							resultSet.getBoolean("is_notice"),
-							resultSet.getLong("likeCount"),
-							resultSet.getLong("commentCount"),
-							new MemberDTO.Info(resultSet.getLong("member_id"), resultSet.getString("name"), resultSet.getString("nickname"), resultSet.getString("email"), resultSet.getString("password"), resultSet.getString("zipcode"), resultSet.getString("address"), resultSet.getTimestamp("joined_at"), resultSet.getTimestamp("quited_at"), resultSet.getTimestamp("ban_end_at"), resultSet.getString(24))
+							rs.getLong("post_id"),
+							rs.getString("title"),
+							rs.getString("board_type"),
+							rs.getString("category"),
+							rs.getInt("grade"),
+							rs.getString("content"),
+							rs.getTimestamp("written_at"),
+							rs.getTimestamp("edited_at"),
+							rs.getLong("views"),
+							rs.getString(10),
+							rs.getBoolean("is_notice"),
+							rs.getLong("likeCount"),
+							rs.getLong("commentCount"),
+							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("name"), rs.getString("nickname"), rs.getString("email"), rs.getString("password"), rs.getString("zipcode"), rs.getString("address"), rs.getTimestamp("joined_at"), rs.getTimestamp("quited_at"), rs.getTimestamp("ban_end_at"), rs.getString(24))
 				    ) : null;
 		}
 	}
@@ -90,34 +90,154 @@ class PostDAOImpl implements PostDAO {
 		try (Connection connection = dataSource.getConnection()) {
 			
 			// [1] 파라미터 세팅
-		
+			StringBuilder sbCountSql = new StringBuilder("SELECT COUNT(p.post_id) FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST'");
+			StringBuilder sbPageSql = new StringBuilder("SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST'") ;
+			
+			
 			PostDTO.Search params = request.getData();
+
+			List<Object> paramsListCount = new ArrayList<>();
+			List<Object> paramsListPage = new ArrayList<>();
 			
 			String keyword = params.getKeyword();
-			params.getOption();
-			
-			params.getBoardType();
-			params.getCategories();
-			params.getGrades();
-			
-			int page = request.getPage();
-			int size = request.getSize();
-			String order;
-			switch(params.getOrder()) {
-				case "oldest": order = "written_at ASC"; break;
-			    case "latest": order = "written_at DESC"; break;
-			    case "like": order = "like_count DESC"; break;
-			    default: order = "written_at ASC"; break;
+			String option = params.getOption();
+			if (keyword != null && !keyword.isEmpty()) {
+			    switch(option) {
+			        case "NICKNAME": 
+			        	sbCountSql.append(" AND nickname LIKE ?");
+			        	paramsListCount.add("%" + keyword + "%");
+			        	sbPageSql.append(" AND nickname LIKE ?");
+			        	paramsListPage.add("%" + keyword + "%");
+			            break;
+			        case "TITLE":
+			        	sbCountSql.append(" AND title LIKE ?");
+			        	paramsListCount.add("%" + keyword + "%");
+			        	sbPageSql.append(" AND title LIKE ?");
+			        	paramsListPage.add("%" + keyword + "%");
+			            break;
+			        case "CONTENT":
+			        	sbCountSql.append(" AND content LIKE ?");
+			        	paramsListCount.add("%" + keyword + "%");
+			        	sbPageSql.append(" AND content LIKE ?");
+			        	paramsListPage.add("%" + keyword + "%");
+			            break;
+			        case "TITLE_CONTENT":
+			        	sbCountSql.append(" AND (title LIKE ? OR content LIKE ?)");
+			        	paramsListCount.add("%" + keyword + "%");
+			        	paramsListCount.add("%" + keyword + "%");
+			        	sbPageSql.append(" AND (title LIKE ? OR content LIKE ?)");
+			        	paramsListPage.add("%" + keyword + "%");
+			        	paramsListPage.add("%" + keyword + "%");
+			            break;
+			        default:
+			        	sbCountSql.append(" AND title LIKE ?");
+			        	paramsListCount.add("%" + keyword + "%");
+			        	sbPageSql.append(" AND title LIKE ?");
+			        	paramsListPage.add("%" + keyword + "%");
+			            break;
+			    }
 			}
+			String boardType = params.getBoardType();
+			if (boardType != null && !boardType.isEmpty()) {
+				sbCountSql.append(" AND board_type = ?");
+				sbPageSql.append(" AND board_type = ?");
+			    switch(boardType) {
+			        case "1": 
+			        	paramsListCount.add("공지사항");
+			        	paramsListPage.add("공지사항");
+			            break;
+			        case "2":
+			        	paramsListCount.add("뉴스");
+			        	paramsListPage.add("뉴스");
+			            break;
+			        case "3":
+			        	paramsListCount.add("문제공유");
+			        	paramsListPage.add("문제공유");
+			            break;
+			        case "4":
+			        	paramsListCount.add("커뮤니티");
+			        	paramsListPage.add("커뮤니티");
+			            break;
+			    }
+			}
+			List<String> categories = params.getCategories();
+			if (categories != null && !categories.isEmpty()) {
+				sbCountSql.append(" AND category IN (");
+				sbPageSql.append(" AND category IN (");
+			    
+			    String placeholdersCount = String.join(",", Collections.nCopies(categories.size(), "?"));
+			    sbCountSql.append(placeholdersCount).append(")");
+			    String placeholdersPage = String.join(",", Collections.nCopies(categories.size(), "?"));
+			    sbPageSql.append(placeholdersPage).append(")");
+			    
+			    for (String category : categories) {
+			    	switch(category) {
+
+				        case "101": paramsListCount.add("점검"); paramsListPage.add("점검"); break;
+				        case "102": paramsListCount.add("행사"); paramsListPage.add("행사"); break;
+				        case "103": paramsListCount.add("설문"); paramsListPage.add("설문"); break;
+				        case "104": paramsListCount.add("안내"); paramsListPage.add("안내"); break;
+
+				        case "201": paramsListCount.add("사회"); paramsListPage.add("사회"); break;
+				        case "202": paramsListCount.add("경제"); paramsListPage.add("경제"); break;
+				        case "203": paramsListCount.add("IT"); paramsListPage.add("IT"); break;
+				        case "204": paramsListCount.add("과학"); paramsListPage.add("과학"); break;
+
+				        case "301": paramsListCount.add("국어"); paramsListPage.add("국어"); break;
+				        case "302": paramsListCount.add("영어"); paramsListPage.add("영어"); break;
+				        case "303": paramsListCount.add("수학"); paramsListPage.add("수학"); break;
+				        case "304": paramsListCount.add("탐구"); paramsListPage.add("탐구"); break;
+
+				        case "401": paramsListCount.add("일상"); paramsListPage.add("일상"); break;
+				        case "402": paramsListCount.add("고민"); paramsListPage.add("고민"); break;
+				        case "403": paramsListCount.add("입시"); paramsListPage.add("입시"); break;
+				        case "404": paramsListCount.add("진로"); paramsListPage.add("진로"); break;
+			    	}
+			    }
+			}
+			List<Integer> grades = params.getGrades();
+			if (grades != null && !grades.isEmpty()) {
+				if (!grades.contains(0)) { // 0이 포함되어있으면 전체가 선택되게
+					sbCountSql.append(" AND grade IN (");
+			        String placeholdersCount = String.join(",", Collections.nCopies(grades.size(), "?"));
+			        sbCountSql.append(placeholdersCount).append(")");
+			        sbPageSql.append(" AND grade IN (");
+			        String placeholdersPage = String.join(",", Collections.nCopies(grades.size(), "?"));
+			        sbPageSql.append(placeholdersPage).append(")");
+
+			        for (Integer grade : grades) {
+			        	paramsListCount.add(grade);
+			        	paramsListPage.add(grade);
+			        }
+			    }
+			}
+			String order = params.getOrder();
+			if (order == null) order = "OLDEST";
+			switch(order) {
+				case "OLDEST": sbPageSql.append(" ORDER BY written_at ASC"); break;
+			    case "LATEST": sbPageSql.append(" ORDER BY written_at DESC"); break;
+			    case "LIKE": sbPageSql.append(" ORDER BY like_count DESC"); break;
+			    default: sbPageSql.append(" ORDER BY written_at ASC"); break;
+			}
+			
+			int size = request.getSize();
+			int page = request.getPage();
+			sbPageSql.append(" LIMIT ? OFFSET ?");
+        	paramsListPage.add(size);
+        	paramsListPage.add((page-1)*size);
+			
 			
 			// 페이징 결과 DTO
 			Integer dataCount;
 
-			String countSql = "SELECT COUNT(post_id) FROM post WHERE status = 'EXIST'";
 			
 			// [2-1] 카운팅 쿼리
+			String countSql = sbCountSql.toString();
 			try (PreparedStatement pstmt = connection.prepareStatement(countSql)) {
 
+				for (int i = 0; i < paramsListCount.size(); i++) {
+					pstmt.setObject(i + 1, paramsListCount.get(i));
+				}
 				
 				// 카운팅 쿼리 수행
 				dataCount = executeAndGetDataCount(pstmt);
@@ -126,16 +246,15 @@ class PostDAOImpl implements PostDAO {
 			
 			
 
-			String pageSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? AND parent_id IS NULL ORDER BY "+order+" LIMIT ? OFFSET ?" ;
 			
 			// [2-2] 페이징 쿼리
+			String pageSql = sbPageSql.toString();
 			try (PreparedStatement pstmt = connection.prepareStatement(pageSql)) {
 
-				// 파라미터 삽입
-				
-				pstmt.setLong(1, params.getPostId());
-				pstmt.setInt(2, size);
-				pstmt.setInt(3, (page-1)*size);
+				for (int i = 0; i < paramsListPage.size(); i++) {
+					pstmt.setObject(i + 1, paramsListPage.get(i));
+				}
+
 				
 				// SQL 수행 + 결과 DTO 생성 후 반환
 				return executeAndMapToSearchDTO(pstmt, request, dataCount);
@@ -143,6 +262,7 @@ class PostDAOImpl implements PostDAO {
 			
 			
 		} catch (SQLException e) {
+
 			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
 			throw new DAOException(e);
 			
@@ -171,15 +291,19 @@ class PostDAOImpl implements PostDAO {
 			
 			while (rs.next())
 				data.add(new PostDTO.Info(
-					rs.getLong("comment_id"),
-					rs.getLong("post_id"),
-					rs.getLong("parent_id"),
-					rs.getString("content"),
-					rs.getTimestamp("written_at"),
-					rs.getTimestamp("edited_at"),
-					rs.getLong("mention_id"),
-					rs.getString("status"),
-					rs.getLong("likeCount"),
+						rs.getLong("post_id"),
+						rs.getString("title"),
+						rs.getString("board_type"),
+						rs.getString("category"),
+						rs.getInt("grade"),
+						rs.getString("content"),
+						rs.getTimestamp("written_at"),
+						rs.getTimestamp("edited_at"),
+						rs.getLong("views"),
+						rs.getString(10),
+						rs.getBoolean("is_notice"),
+						rs.getLong("likeCount"),
+						rs.getLong("commentCount"),
 					new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
 				));
 			return new Page.Response<>(data, request.getPage(), 5, request.getSize(), dataCount);
@@ -197,7 +321,7 @@ class PostDAOImpl implements PostDAO {
 	    		pstmt.setString(2, request.getTitle());
 	    		pstmt.setString(3, request.getBoardType());
 	    		pstmt.setString(4, request.getCategory());
-	    		pstmt.setString(5, request.getGrade());
+	    		pstmt.setInt(5, request.getGrade());
 	    		pstmt.setString(6, request.getContent());
 	    		pstmt.setBoolean(7, request.getNotice());
 				
@@ -234,7 +358,7 @@ class PostDAOImpl implements PostDAO {
 				// [1] 파라미터 세팅
 	    		pstmt.setString(1, request.getTitle());
 	    		pstmt.setString(2, request.getCategory());
-	    		pstmt.setString(3, request.getGrade());
+	    		pstmt.setInt(3, request.getGrade());
 	    		pstmt.setString(4, request.getContent());
 	    		pstmt.setLong(5, request.getPostId());
 	    		pstmt.setLong(6, request.getMemberId());

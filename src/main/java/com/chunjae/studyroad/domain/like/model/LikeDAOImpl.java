@@ -44,8 +44,8 @@ class LikeDAOImpl implements LikeDAO {
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
-				try (ResultSet resultSet = pstmt.executeQuery()) {
-		            return resultSet.next();
+				try (ResultSet rs = pstmt.executeQuery()) {
+		            return rs.next();
 		        }
 				
 			} catch (SQLException e) {

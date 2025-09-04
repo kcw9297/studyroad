@@ -20,7 +20,7 @@ public class PostDTO {
         private String title;
         private String boardType;
         private String category;
-        private String grade;
+        private Integer grade;
         private String content;
         private Date writtenAt;
         private Date editedAt;
@@ -32,7 +32,7 @@ public class PostDTO {
         private MemberDTO.Info member;  	// 게시글 작성회원 정보
         private List<FileDTO.Info> files;	// 게시글 내 업로드된 파일 정보
 
-        public Info(Long postId, String title, String boardType, String category, String grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, Long commentCount, MemberDTO.Info member) {
+        public Info(Long postId, String title, String boardType, String category, Integer grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, Long commentCount, MemberDTO.Info member) {
             this.postId = postId;
             this.title = title;
             this.boardType = boardType;
@@ -74,7 +74,7 @@ public class PostDTO {
             return category;
         }
 
-        public String getGrade() {
+        public Integer getGrade() {
             return grade;
         }
 
@@ -129,10 +129,10 @@ public class PostDTO {
         private String option;              // 검색 항목(제목, 본문, 사용자, ...)
         private String boardType;           // 선택 게시판 (공지사항, 뉴스, 문제공유, 커뮤니티)
         private List<String> categories;    // 선택 카테고리 (일상, 입시, ...)
-        private List<String> grades;       // 선택 학년 (1학년, 2학년, ...)
+        private List<Integer> grades;       // 선택 학년 (1학년, 2학년, ...)
         private String order;               // 정렬 기준 (추천순, 조회순, 최신순, ...)
 
-        public Search(String keyword, String option, String boardType, List<String> categories, List<String> grades, String order) {
+        public Search(String keyword, String option, String boardType, List<String> categories, List<Integer> grades, String order) {
         	this.keyword = keyword;
             this.option = option;
             this.boardType = boardType;
@@ -157,7 +157,7 @@ public class PostDTO {
             return categories;
         }
 
-        public List<String> getGrades() {
+        public List<Integer> getGrades() {
             return grades;
         }
 
@@ -176,11 +176,11 @@ public class PostDTO {
         private String title;
         private String boardType;
         private String category;
-        private String grade;
+        private Integer grade;
         private String content;
         private Boolean isNotice;
 
-        public Write(Long memberId, String title, String boardType, String category, String grade, String content, Boolean isNotice) {
+        public Write(Long memberId, String title, String boardType, String category, Integer grade, String content, Boolean isNotice) {
             this.memberId = memberId;
             this.title = title;
             this.boardType = boardType;
@@ -206,7 +206,7 @@ public class PostDTO {
             return category;
         }
 
-        public String getGrade() {
+        public Integer getGrade() {
             return grade;
         }
 
@@ -229,10 +229,10 @@ public class PostDTO {
         private Long memberId;
         private String title;
         private String category;
-        private String grade;
+        private Integer grade;
         private String content;
 
-        public Edit(Long postId, Long memberId, String title, String category, String grade, String content) {
+        public Edit(Long postId, Long memberId, String title, String category, Integer grade, String content) {
             this.postId = postId;
             this.memberId = memberId;
             this.title = title;
@@ -257,7 +257,7 @@ public class PostDTO {
             return category;
         }
 
-        public String getGrade() {
+        public Integer getGrade() {
             return grade;
         }
 

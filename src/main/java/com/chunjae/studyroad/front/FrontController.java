@@ -80,6 +80,7 @@ public class FrontController extends HttpServlet {
                 else if (path.startsWith("/api/member/find/password.do")) memberController.postFindPasswordAPI(request, response);
                 else if (path.startsWith("/api/login.do")) loginController.postLoginAPI(request, response);
                 else if (path.startsWith("/api/logout.do")) loginController.postLogoutAPI(request, response);
+                else if (path.startsWith("/api/post/list.do")) postController.getListAPI(request, response);
                 else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
                 else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
                 else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
