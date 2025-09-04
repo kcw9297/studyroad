@@ -28,9 +28,71 @@ public class ValidationUtils {
 	public static final int MAX_LANGTH_PASSWORD = 20;
 	public static final int MIN_LANGTH_ADDRESS = 20;
 	public static final int MAX_LANGTH_ADDRESS = 100;
+	public static final int MAX_LANGTH_TITLE = 30;
+	public static final int MAX_LANGTH_CONTENT_POST = 20; //2000
+	public static final int MAX_LANGTH_CONTENT_COMMENT = 20; // 100W
+	public static final int MAX_SIZE_FILE = 5*1024*1024; // 한 파일당 최대 5MB 초과불가
+	public static final int MAX_COUNT_FILE = 3; // 최대 등록가능 파일 개수 3개
 	
 	
 	
+	public static final List<Integer> LIST_GRADES = List.of(1, 2, 3);
+	
+	public static final Map<String, String> BOARD_TYPES = new LinkedHashMap<>() {{
+	    put("1", "공지사항");
+	    put("2", "뉴스");
+	    put("3", "문제공유");
+	    put("4", "커뮤니티");
+	}};
+
+	public static final Map<String, String> CATEGORY_NOTICE = new LinkedHashMap<>() {{
+	    put("101", "점검");
+	    put("102", "행사");
+	    put("103", "설문");
+	    put("104", "안내");
+	}};
+
+	public static final Map<String, String> CATEGORY_NEWS = new LinkedHashMap<>() {{
+	    put("201", "사회");
+	    put("202", "경제");
+	    put("203", "IT");
+	    put("204", "과학");
+	}};
+
+	public static final Map<String, String> CATEGORY_PROBLEM = new LinkedHashMap<>() {{
+	    put("301", "국어");
+	    put("302", "영어");
+	    put("303", "수학");
+	    put("304", "탐구");
+	}};
+
+	public static final Map<String, String> CATEGORY_COMMUNITY = new LinkedHashMap<>() {{
+	    put("401", "일상");
+	    put("402", "고민");
+	    put("403", "입시");
+	    put("404", "진로");
+	}};
+
+	public static final Map<String, String> ORDER_POST = new LinkedHashMap<>() {{
+	    put("LIKE", "추천순");
+	    put("VIEW_COUNT", "조회순");
+	    put("LATEST", "최신순");
+	}};
+
+	public static final Map<String, String> ORDER_COMMENT = new LinkedHashMap<>() {{
+	    put("LIKE", "추천순");
+	    put("OLDEST", "오래된순");
+	    put("LATEST", "최신순");
+	}};
+
+	public static final Map<String, String> OPTION_SEARCH = new LinkedHashMap<>() {{
+	    put("NICKNAME", "작성자");
+	    put("TITLE", "제목");
+	    put("CONTENT", "본문");
+	    put("TITLE_CONTENT", "제목+본문");
+	}};
+	
+
 	public static String getShortUUID() {
 
         // 랜덤 문자열 생성
@@ -69,6 +131,15 @@ public class ValidationUtils {
 	
 	public static boolean isNumberString(String str) {
 		return Objects.nonNull(str) && str.matches("^[0-9]+$");
+	}
+	
+	
+	public static String getBoardType(String boardType) {
+		
+		if (Objects.nonNull(boardType) && BOARD_TYPES.containsKey(boardType))
+			return boardType;
+		
+		else return null;
 	}
 
 }

@@ -28,7 +28,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public void storeAll(List<FileDTO.Store> requests) {
-
+    	
     }
 
     @Override

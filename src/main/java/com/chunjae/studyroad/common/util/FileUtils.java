@@ -7,6 +7,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import com.chunjae.studyroad.common.exception.FileException;
+
 
 
 /**
@@ -52,10 +54,16 @@ public class FileUtils {
      * @return Boolean      저장에 성공한 경우 true, 실패한 경우 false 반환
      */
     public static Boolean removeFile(String type, String fileName) {
-
-        File file = getStoredFile(type, fileName);
-        if(file.exists()) return file.delete();
-        else return false; // 파일이 존재하지 않는 경우
+    
+        try {
+            File file = getStoredFile(type, fileName);
+            if(file.exists()) return file.delete();
+            else return false; // 파일이 존재하지 않는 경우
+        	
+        } catch (Exception e) {
+        	System.out.printf("[removeFile] - 파일 삭제 실패! 확인 요망. : %s\n", e);
+            throw new FileException(e);
+        }
     }
 
 
@@ -82,18 +90,22 @@ public class FileUtils {
 
             // write 결과 flush
             bos.flush();
+            
+        } catch (Exception e) {
+        	System.out.printf("[getOriginalFileName] - 파일명 조회 실패! 확인 요망. : %s\n", e);
+            throw new FileException(e);
         }
+
     }
 
 
     /**
      * 파일 저장 수행
      * @param type              저장할 파일 유형 (현재는 BOARD 가 유일)
-     * @param originalFileName  원본 파일 이름
      * @param filePart          파일 정보가 포함된 Part 객체
-     * @return Boolean          파일 저장 성공여부 반환
+     * @return File          	파일 저장 성공 시, 저장된 파일 반환
      */
-    public static Boolean storeFile(String type, String originalFileName, Part filePart) {
+    public static File storeFile(String type, Part filePart) {
 
         try {
             // [1] 파일을 저장할 디렉토리 확인
@@ -102,12 +114,14 @@ public class FileUtils {
 
 
             // [2] 저장할 파일객체 생성 & 파일 저장 수행
+            String originalFileName = getOriginalFileName(filePart);
             File storeFile = createStoreFile(storeDir, originalFileName);
-            store(storeFile, filePart);
-            return true;    // 파일 저장에 성공 시, true
+ 
+            return store(storeFile, filePart);
 
         } catch (Exception e) {
-            return false;
+        	System.out.printf("[storeFile] - 파일 저장 실패! 확인 요망. : %s\n", e);
+            throw new FileException(e);
         }
     }
 
@@ -122,7 +136,7 @@ public class FileUtils {
         // 파일 객체 생성
         File storeFile = ext.length() == 0 ? 
         		new File(storeDir, fileName) : // 확장자가 없는 경우
-        		new File(storeDir, String.format("%s.%s", fileName, ext));
+        		new File(storeDir, String.format("%s%s", fileName, ext));
   		
         // 중복 시 새로운 문자열로 생성		
         while (storeFile.exists()) {
@@ -133,7 +147,7 @@ public class FileUtils {
         	// 새로운 파일 객체 생성
         	storeFile = ext.length() == 0 ? 
             		new File(storeDir, fileName) : // 확장자가 없는 경우
-                	new File(storeDir, String.format("%s.%s", fileName, ext));
+                	new File(storeDir, String.format("%s%s", fileName, ext));
         }
         
         // 생성된 파일 반환
@@ -143,7 +157,7 @@ public class FileUtils {
 
 
 
-    private static void store(File storeFile, Part filePart) throws IOException {
+    private static File store(File storeFile, Part filePart) throws IOException {
 
         try (InputStream is = filePart.getInputStream();
              FileOutputStream fos = new FileOutputStream(storeFile)) {
@@ -157,6 +171,7 @@ public class FileUtils {
 
             // write 결과 flush
             fos.flush();
+            return storeFile;
         }
     }
 
@@ -168,14 +183,21 @@ public class FileUtils {
      */
     public static String getOriginalFileName(Part filePart) {
 
-        String header = filePart.getHeader("content-disposition");
-        for (String cd : header.split(";")) {
-            if(cd.trim().startsWith("filename")) {
-                String fileName = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-                return fileName.substring(fileName.lastIndexOf('/') + 1).substring(fileName.lastIndexOf('\\') + 1);
+        try {
+        	String header = filePart.getHeader("content-disposition");
+            for (String cd : header.split(";")) {
+                if(cd.trim().startsWith("filename")) {
+                    String fileName = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
+                    return fileName.substring(fileName.lastIndexOf('/') + 1).substring(fileName.lastIndexOf('\\') + 1);
+                }
             }
+            
+            return null;
+            
+        } catch (Exception e) {
+        	System.out.printf("[getOriginalFileName] - 파일명 조회 실패! 확인 요망. : %s\n", e);
+            throw new FileException(e);
         }
-        return null;
     }
 
 }

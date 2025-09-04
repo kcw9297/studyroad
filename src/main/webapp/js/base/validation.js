@@ -285,6 +285,108 @@ function checkAddress(textType, zipcodeType = "#zipcode", addressType = "#addres
 }
 
 
+// 특정 필드 검증 - 분류 선택
+function checkCategory(fieldType = "#category") {
+
+	const category = $(fieldType).val();
+			
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(category)) {
+		showAlertModal("분류를 선택해 주세요");
+		$(fieldType).focus();
+		return false;
+	}
+
+	return true;
+}
+
+
+// 특정 필드 검증 - 학년 선택
+function checkGrade(fieldType = "#grade") {
+
+	const grade = $(fieldType).val();
+			
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(grade)) {
+		showAlertModal("학년을 선택해 주세요");
+		$(fieldType).focus();
+		return false;
+	}
+
+	return true;
+}
+
+
+// 특정 필드 검증 - 게시글 제목
+function checkTitle(fieldType = "#title") {
+
+	const title = $(fieldType).val();
+		
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(title)) {
+		showAlertModal("제목을 입력해 주세요");
+		$(fieldType).focus();
+		return false;
+	}
+	
+	// 유효성 검사
+	const errorMessage = checkMaxLength("제목은", title, maxLengthTitle);
+	if (errorMessage) {
+		showAlertModal(errorMessage);
+		$(fieldType).focus();
+		return false;
+	}
+	
+
+	return true;
+}
+
+
+// 특정 필드 검증 - 게시글 본문
+function checkPostContent(fieldType = "#content") {
+
+	const content = $(fieldType).val();
+		
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(content)) {
+		showAlertModal("본문을 입력해 주세요");
+		$(fieldType).focus();
+		return false;
+	}
+	
+	// 유효성 검사
+	let pureText = $("<div>").html(content).text();
+
+	const errorMessage = checkMaxLength("본문은", pureText, maxLengthContent);
+	if (errorMessage) {
+		showAlertModal(errorMessage);
+		$(fieldType).focus();
+		return false;
+	}
+
+	return true;
+}
+
+
+// 특정 필드 검증 - 파일
+function checkPostFile(fieldType = "#uploadFileList") {
+
+	const emptyFile = $(fieldType + " .file-item")
+	      .filter(function () {
+	        const status = $(this).data("status");
+	        return status === -1; // 파일 미선택 상태
+  	});
+
+    if (emptyFile.length > 0) {
+      showAlertModal("등록되지 않은 파일이 있습니다.<br>파일을 선택하거나 삭제해주세요.");
+	  $(fieldType).focus();
+      return false;
+    }
+  
+  return true;
+}
+
+
 // 안내 텍스트 영역에 오류 메세지 삽입
 function insertErrorMessage(type, message) {
 	$(type).removeClass("field-success").addClass("field-error").text(message);
