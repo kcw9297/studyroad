@@ -72,20 +72,37 @@ public class PostControllerImpl implements PostController {
 
 			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
 				return;
-
-			// [1] 페이지 조회 - 존재하지 않으면 1
-			int page = ValidationUtils.getPage(request.getParameter("page"));
+		
+			String keyword = request.getParameter("keyword");
+			String option = request.getParameter("option");
 			String boardType = request.getParameter("boardType");
-
-			/*
-			 * PostDTO.Info post = postService.getInfo(postId); List<FileDTO.Info> files =
-			 * fileService.getInfos(postId); post.setPostFiles(files);
-			 * 
-			 * request.setAttribute("data", post);
-			 */
-
-			System.out.println(boardType);
+			String[] arrayCategories = request.getParameterValues("categories");
+			List<String> categories;
+			if (arrayCategories == null || arrayCategories.length == 0) {
+				categories = new ArrayList<>();
+			} else {
+				categories = Arrays.asList(arrayCategories);
+			}
+			String[] arrayGrades = request.getParameterValues("grades");
+			List<Integer> grades;
+			if (arrayGrades == null || arrayGrades.length == 0) {
+				grades = new ArrayList<>();
+			} else {
+			    grades = Arrays.stream(arrayGrades).map(Integer::parseInt).collect(Collectors.toList());
+			}
+			String order = request.getParameter("order");
+			int page = ValidationUtils.getPage(request.getParameter("page"));
+	        
+			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
+	        
+	        
+			// [3] service 조회
+			
+			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
+			
+			
 			request.setAttribute("boardType", boardType);
+			request.setAttribute("page", pageResponse);
 			HttpUtils.setPostConstantAttributes(request, boardType);
 
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
@@ -178,36 +195,44 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.checkMethod(request, "GET");
 
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String keyword = request.getParameter("keyword");
-			String option = request.getParameter("option");
+
 			String boardType = request.getParameter("boardType");
-			String[] arrayCategories = request.getParameterValues("categories");
-			List<String> categories;
-			if (arrayCategories == null || arrayCategories.length == 0) {
-				categories = new ArrayList<>();
-			} else {
-				categories = Arrays.asList(arrayCategories);
-			}
-			String[] arrayGrades = request.getParameterValues("grades");
-			List<Integer> grades;
-			if (arrayGrades == null || arrayGrades.length == 0) {
-				grades = new ArrayList<>();
-			} else {
-			    grades = Arrays.stream(arrayGrades).map(Integer::parseInt).collect(Collectors.toList());
-			}
-			String order = request.getParameter("order");
-	        String strPage= request.getParameter("page");
-	        int page = (strPage != null) ? Integer.parseInt(strPage) : 1; 
-	        
-			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
 	        
 	        
 			// [3] service 조회
-			Page.Response<PostDTO.Info> PostInfo = postService.getList(search); 
+			List<PostDTO.Info> PostInfo = postService.getNoticeList(boardType); 
 			
 			// [4] JSON 응답 반환
 	        
-	    APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+
+		} catch (Exception e) {
+
+			System.out.printf("[getListAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
+			APIResponse rp = APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
+			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+
+	@Override
+	public void getHomeAPI(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
+			HttpUtils.checkMethod(request, "GET");
+
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			String boardType = request.getParameter("boardType");
+	        
+	        
+	        
+			// [3] service 조회
+			List<PostDTO.Info> PostInfo = postService.getLatestList(boardType); 
+			
+			// [4] JSON 응답 반환
+	        
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
 		} catch (Exception e) {
@@ -234,6 +259,7 @@ public class PostControllerImpl implements PostController {
 
 			String boardType = request.getParameter("boardType");
 			String category = request.getParameter("category");
+			String strGrade = request.getParameter("grade");
 			int grade = Integer.parseInt(strGrade);
 			String content = request.getParameter("content");
 			String strNotice = request.getParameter("notice");
@@ -277,8 +303,8 @@ public class PostControllerImpl implements PostController {
 			long postId = Long.parseLong(strPostId);
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			String title = request.getParameter("title");
-
 			String category = request.getParameter("category");
+			String strGrade = request.getParameter("grade");
 			int grade = Integer.parseInt(strGrade);
 			String content = request.getParameter("content");
 			PostDTO.Edit edit = new PostDTO.Edit(postId, memberId, title, category, grade, content);
