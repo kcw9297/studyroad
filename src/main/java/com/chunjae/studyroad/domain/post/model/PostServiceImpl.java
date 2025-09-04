@@ -45,8 +45,14 @@ public class PostServiceImpl implements PostService {
 
 
 	@Override
-	public Page.Response<PostDTO.Info> getLatestList(Page.Request<PostDTO.Search> request) {
-		return null;
+	public List<PostDTO.Info> getLatestList(String boardType) {
+		return postDAO.home(boardType);
+	}
+
+
+	@Override
+	public List<PostDTO.Info> getNoticeList(String boardType) {
+		return postDAO.notice(boardType);
 	}
 
 

@@ -94,6 +94,7 @@ public class ReportControllerImpl implements ReportController {
 			// [3] service
 	        switch (status) {
 		        case "accept": reportService.accept(reportId); break;
+		        정지기간처리
 		        case "reject": reportService.reject(reportId); break;
 	        }
 			

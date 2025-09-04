@@ -38,6 +38,12 @@ public interface PostController {
 
 
     /**
+     * [GET] /api/post/home.do
+     */
+    void getHomeAPI(HttpServletRequest request, HttpServletResponse response);
+
+
+    /**
      * [POST] /api/post/write.do
      */
     void postWriteAPI(HttpServletRequest request, HttpServletResponse response);

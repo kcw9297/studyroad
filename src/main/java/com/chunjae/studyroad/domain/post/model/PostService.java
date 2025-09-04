@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.domain.post.model;
 
+import java.util.List;
+
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
@@ -26,10 +28,18 @@ public interface PostService {
 
     /**
      * 최근 게시글 검색
-     * @param request   게시글 페이징 검색요청 DTO
+     * @param boardType 게시판 정보
      * @return Info     검색된 페이징된 게시글정보 DTO 반환
      */
-    Page.Response<PostDTO.Info> getLatestList(Page.Request<PostDTO.Search> request);
+    List<PostDTO.Info> getLatestList(String boardType);
+
+
+    /**
+     * 알림 게시글 리스트
+     * @param boardType 게시판 정보
+     * @return Info     검색된 페이징된 게시글정보 DTO 반환
+     */
+    List<PostDTO.Info> getNoticeList(String boardType);
 
 
     /**

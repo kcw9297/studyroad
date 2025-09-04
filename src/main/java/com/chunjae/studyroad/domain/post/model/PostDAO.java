@@ -24,6 +24,22 @@ public interface PostDAO {
      * @return Info     검색된 페이징된 게시글정보 DTO 반환
      */
     Page.Response<PostDTO.Info> search(Page.Request<PostDTO.Search> request);
+    
+    
+    /**
+     * 홈 화면 최근 게시글
+     * @param boardType 게시판 정보
+     * @return Info     게시글정보 DTO 반환
+     */
+    List<PostDTO.Info> home(String boardType);
+    
+    
+    /**
+     * 알림 게시글
+     * @param boardType 게시판 정보
+     * @return Info     알림 게시글정보 DTO 반환
+     */
+    List<PostDTO.Info> notice(String boardType);
 
 
     /**
