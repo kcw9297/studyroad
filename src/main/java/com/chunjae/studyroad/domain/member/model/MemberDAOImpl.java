@@ -81,7 +81,7 @@ class MemberDAOImpl implements MemberDAO {
 			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_NICKNAME)) {
 				
 				// [1] 파라미터 세팅
-			pstmt.setString(1, nickname);
+				pstmt.setString(1, nickname);
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 				return Optional.ofNullable(mapToInfo(pstmt));
