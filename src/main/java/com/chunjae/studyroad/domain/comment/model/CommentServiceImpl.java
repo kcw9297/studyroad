@@ -58,18 +58,17 @@ public class CommentServiceImpl implements CommentService {
 
 
 	@Override
-	public void write(CommentDTO.Write request) {
+	public Long write(CommentDTO.Write request) {
 		try {
       
-      Long commentId = commentDAO.save(request)
+			Long commentId = commentDAO.save(request);
       
 			if (!Objects.nonNull(commentId)) {
 				throw new BusinessException("댓글 작성 실패했습니다");
 			} else {
-        return commentId;
-      }
+				return commentId;
+			}
 
-  
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
