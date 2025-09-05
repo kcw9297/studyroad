@@ -14,12 +14,6 @@ public interface ReportController {
 
 
     /**
-     * [GET] /report/submit.do
-     */
-    void getSubmitView(HttpServletRequest request, HttpServletResponse response);
-
-
-    /**
      * [POST] /api/report/submit.do
      */
     void postSubmitAPI(HttpServletRequest request, HttpServletResponse response);

@@ -1,10 +1,12 @@
 package com.chunjae.studyroad.domain.member.model;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.QuitException;
 import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
@@ -54,6 +56,14 @@ public class MemberServiceImpl implements MemberService {
 		
 		MemberDTO.Info memberInfo = 
 				memberDAO.findByEmail(email).orElseThrow(() -> new BusinessException("가입한 이메일이 존재하지 않습니다"));
+
+		if(Objects.equals("QUITED", memberInfo.getStatus()) && memberInfo.getQuitedAt() != null) {
+			if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) {
+				throw new QuitException("계정을 복구하시겠습니까?");
+			}else {
+				throw new BusinessException("탈퇴 처리된 계정입니다");
+			}
+		}
 
 
 		if(!Objects.equals(password, memberInfo.getPassword())) 

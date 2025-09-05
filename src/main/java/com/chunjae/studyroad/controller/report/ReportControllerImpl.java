@@ -47,7 +47,6 @@ public class ReportControllerImpl implements ReportController {
 			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
 				return;
 		
-			
 			/*
 			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
 	        
@@ -61,19 +60,17 @@ public class ReportControllerImpl implements ReportController {
 			HttpUtils.setPostConstantAttributes(request, boardType);
 			\*/
 
-			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
+			List<ReportDTO.Info> data = reportService.getList(); 
+			request.setAttribute("data", data);
+
+
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/report/list.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 
 		} catch (Exception e) {
 			System.out.printf("view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
-	}
-
-
-	@Override
-	public void getSubmitView(HttpServletRequest request, HttpServletResponse response) {
-		
 	}
 
 

@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.post.dto;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
@@ -23,8 +24,8 @@ public class PostDTO {
         private String categoryName;
         private Integer grade;
         private String content;
-        private Date writtenAt;
-        private Date editedAt;
+        private Timestamp writtenAt;
+        private Timestamp editedAt;
         private Long views;
         private String status;
         private Boolean isNotice;
@@ -33,7 +34,7 @@ public class PostDTO {
         private MemberDTO.Info member;  	// 게시글 작성회원 정보
         private List<FileDTO.Info> files;	// 게시글 내 업로드된 파일 정보
 
-        public Info(Long postId, String title, String boardType, String category, Integer grade, String content, Date writtenAt, Date editedAt, Long views, String status, Boolean isNotice, Long likeCount, Long commentCount, MemberDTO.Info member) {
+        public Info(Long postId, String title, String boardType, String category, Integer grade, String content, Timestamp writtenAt, Timestamp editedAt, Long views, String status, Boolean isNotice, Long likeCount, Long commentCount, MemberDTO.Info member) {
             this.postId = postId;
             this.title = title;
             this.boardType = boardType;
@@ -96,11 +97,11 @@ public class PostDTO {
             return content;
         }
 
-        public Date getWrittenAt() {
+        public Timestamp getWrittenAt() {
             return writtenAt;
         }
 
-        public Date getEditedAt() {
+        public Timestamp getEditedAt() {
             return editedAt;
         }
 

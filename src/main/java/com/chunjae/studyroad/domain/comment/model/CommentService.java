@@ -15,12 +15,20 @@ public interface CommentService {
      */
     Page.Response<CommentDTO.Info> getList(Page.Request<CommentDTO.Search> request);
 
+    /**
+     * 댓글 정보
+     * @param commentId  댓글번호 (PK)
+     * @return Info     댓글정보 DTO 반환
+     */
+    CommentDTO.Info getInfo(Long commentId);
+
 
     /**
      * 댓글 작성
      * @param request   댓글 작성요청 DTO
+     * @return Long     작성된 댓글번호 반환
      */
-    void write(CommentDTO.Write request);
+    Long write(CommentDTO.Write request);
 
 
     /**

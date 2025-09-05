@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.report.dto;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -17,9 +18,9 @@ public class ReportDTO {
         private String targetType;
         private String reason;
         private String status;
-        private Date reportedAt;
+        private Timestamp reportedAt;
 
-        public Info(Long reportId, Long targetId, String targetType, String reason, String status, Date reportedAt) {
+        public Info(Long reportId, Long targetId, String targetType, String reason, String status, Timestamp reportedAt) {
             this.reportId = reportId;
             this.targetId = targetId;
             this.targetType = targetType;
@@ -48,7 +49,7 @@ public class ReportDTO {
             return status;
         }
 
-        public Date getReportedAt() {
+        public Timestamp getReportedAt() {
             return reportedAt;
         }
     }
