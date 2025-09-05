@@ -1,11 +1,19 @@
 package com.chunjae.studyroad.controller.report;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
+import com.chunjae.studyroad.domain.post.dto.PostDTO;
 import com.chunjae.studyroad.domain.report.dto.ReportDTO;
 import com.chunjae.studyroad.domain.report.model.*;
 
@@ -33,7 +41,33 @@ public class ReportControllerImpl implements ReportController {
 
 	@Override
 	public void getListView(HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+
+			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
+				return;
 		
+			
+			
+			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
+	        여기다가 페이징하기 신고리스트
+	        
+			// [3] service 조회
+			
+			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
+			
+			
+			request.setAttribute("boardType", boardType);
+			request.setAttribute("page", pageResponse);
+			HttpUtils.setPostConstantAttributes(request, boardType);
+
+			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
+			HttpUtils.forwardPageFrame(request, response);
+
+		} catch (Exception e) {
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+		}
 	}
 
 
@@ -94,7 +128,6 @@ public class ReportControllerImpl implements ReportController {
 			// [3] service
 	        switch (status) {
 		        case "accept": reportService.accept(reportId); break;
-		        정지기간처리
 		        case "reject": reportService.reject(reportId); break;
 	        }
 			

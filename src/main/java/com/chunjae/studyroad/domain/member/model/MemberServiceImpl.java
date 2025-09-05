@@ -55,6 +55,10 @@ public class MemberServiceImpl implements MemberService {
 		if(!password.equals(memberInfo.getPassword())) 
 			throw new ServiceException("비밀번호가 일치하지 않습니다");
 		
+		스테이터스 퀴티드이고 퀴티드앳이 안지난상태처리
+		
+		퀴티드앳이 지난상태
+		
 		
 		LoginMember loginMember = 
 				new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus());

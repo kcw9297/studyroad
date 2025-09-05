@@ -284,8 +284,8 @@ public class MemberControllerImpl implements MemberController {
 	        commentService.quit(memberId); 
 	        likeService.quit(memberId); 
 	        reportService.quit(memberId); 
-	        유예기간 처리
-			
+	        
+	        
 			
 			// [4] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
