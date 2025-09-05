@@ -387,6 +387,33 @@ function checkPostFile(fieldType = "#uploadFileList") {
 }
 
 
+// 특정 필드 검증 - 게시글 본문
+function checkCommentContent(fieldType = "#content") {
+
+	const content = $(fieldType).val();
+		
+	// 빈 값이면 기본 안내문 삽입
+	if (isNullOrEmpty(content)) {
+		showAlertModal("본문을 입력해 주세요");
+		$(fieldType).focus();
+		return false;
+	}
+	
+	// 유효성 검사
+	let pureText = $("<div>").html(content).text();
+
+	const errorMessage = checkMaxLength("본문은", pureText, maxLengthContent);
+	if (errorMessage) {
+		showAlertModal(errorMessage);
+		$(fieldType).focus();
+		return false;
+	}
+
+	return true;
+}
+
+
+
 // 안내 텍스트 영역에 오류 메세지 삽입
 function insertErrorMessage(type, message) {
 	$(type).removeClass("field-success").addClass("field-error").text(message);

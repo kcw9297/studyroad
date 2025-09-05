@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.report.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.dto.Page;
@@ -45,7 +46,7 @@ public class ReportServiceImpl implements ReportService {
 	@Override
 	public Page.Response<ReportDTO.Info> search(Page.Request<ReportDTO.Search> request){
 		try {
-			return null;
+			return reportDAO.list();
 			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
@@ -58,7 +59,7 @@ public class ReportServiceImpl implements ReportService {
 			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "search", e);
 			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 		}
-	}
+
 
 
 	@Override

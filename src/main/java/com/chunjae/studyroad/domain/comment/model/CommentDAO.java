@@ -1,6 +1,7 @@
 package com.chunjae.studyroad.domain.comment.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
@@ -24,6 +25,14 @@ public interface CommentDAO {
      * @return Info     조회된 자식 댓글정보 DTO 반환
      */
     List<CommentDTO.Info> findAllChildByParentIds(List<Long> commentIds);
+    
+    
+    /**
+     * 댓글 작성
+     * @param commentId  댓글번호
+     * @return Info     댓글정보 DTO 반환
+     */
+    Optional<CommentDTO.Info> findbyId(Long commentId);
     
     
     /**

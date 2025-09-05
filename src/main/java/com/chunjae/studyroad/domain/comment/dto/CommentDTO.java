@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.comment.dto;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
@@ -22,15 +23,15 @@ public class CommentDTO {
         private Long postId;
         private Long parentId;
         private String content;
-        private Date writtenAt;
-        private Date editedAt;
+        private Timestamp writtenAt;
+        private Timestamp editedAt;
         private Long mentionId;
         private String status;
         private Long likeCount;
         private List<Info> childes;     // 현재 댓글의 자식 댓글 (부모 댓글인 경우 존재)
         private MemberDTO.Info member;  // 댓글을 작성한 회원정보 DTO
 
-        public Info(Long commentId, Long postId, Long parentId, String content, Date writtenAt, Date editedAt, Long mentionId, String status, Long likeCount, MemberDTO.Info member) {
+        public Info(Long commentId, Long postId, Long parentId, String content, Timestamp writtenAt, Timestamp editedAt, Long mentionId, String status, Long likeCount, MemberDTO.Info member) {
             this.commentId = commentId;
             this.postId = postId;
             this.parentId = parentId;
@@ -67,11 +68,11 @@ public class CommentDTO {
             return content;
         }
 
-        public Date getWrittenAt() {
+        public Timestamp getWrittenAt() {
             return writtenAt;
         }
 
-        public Date getEditedAt() {
+        public Timestamp getEditedAt() {
             return editedAt;
         }
 

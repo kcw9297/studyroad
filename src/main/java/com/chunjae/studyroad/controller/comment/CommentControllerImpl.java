@@ -1,12 +1,11 @@
 package com.chunjae.studyroad.controller.comment;
 
-import java.util.Objects;
-
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
+import com.chunjae.studyroad.common.util.SessionUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.comment.model.*;
 import com.chunjae.studyroad.domain.post.model.*;
@@ -89,8 +88,7 @@ public class CommentControllerImpl implements CommentController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 	        String strPostId = request.getParameter("postId");
 	        long postId = Long.parseLong(strPostId);
-	        String strMemberId = request.getParameter("memberId");
-	        long memberId = Long.parseLong(strMemberId);
+			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 	        String strParentId = request.getParameter("parentId");
 	        Long parentId = (strParentId == null || strParentId.isBlank()) ? null : Long.parseLong(strParentId);
 	        String strMentionId = request.getParameter("mentionId");
@@ -99,12 +97,13 @@ public class CommentControllerImpl implements CommentController {
 	        CommentDTO.Write write = new CommentDTO.Write(postId, memberId, parentId, mentionId, content);
 	 
 	        // [3] service
-	        commentService.write(write);
+	        Long commentId = commentService.write(write);
+	        CommentDTO.Info info = commentService.getInfo(commentId);
 	        postService.comment(postId);
 			
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			APIResponse rp = APIResponse.success("요청에 성공했습니다!", info);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		

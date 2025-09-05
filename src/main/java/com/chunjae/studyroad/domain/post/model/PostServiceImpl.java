@@ -50,11 +50,11 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-    public PostDTO.Info getInfo(Long postId) {
+  public PostDTO.Info getInfo(Long postId) {		
+		
 		try {
-			return postDAO.findById(postId).orElse(null);
+			return postDAO.findById(postId).orElseThrow(() -> new BusinessException("게시글이 존재하지 않습니다"));
 
-			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			

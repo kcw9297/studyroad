@@ -183,10 +183,11 @@ input, textarea, select, button {font-family:inherit;}
 .article-system img{vertical-align:sub;}
 
 /* 게시글 내용 */
-.article-content{display:flex; flex-direction:column; gap:50px; background:white; padding:30px 20px; border-bottom:1px solid var(--gray-line);}
+.article-content{display:flex; flex-direction:column; gap:3px; background:white; padding:30px 20px; border-bottom:1px solid var(--gray-line);}
 .article-text{align-items:center; font-size:var(--large); margin-bottom:60px;}
 .article-file{font-size:var(--medium); color:var(--gray-text); cursor:pointer;}
 .article-file img{vertical-align:sub; margin-right:5px;}
+.article-file:hover{text-decoration:underline;}
 
 /* 시스템-댓글, 추천, 신고 */
 .article-comment{color:var(--gray-text);}
