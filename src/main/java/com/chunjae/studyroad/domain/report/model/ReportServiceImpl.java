@@ -3,6 +3,10 @@ package com.chunjae.studyroad.domain.report.model;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.dto.Page;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.report.dto.ReportDTO;
 
 /**
@@ -22,42 +26,101 @@ public class ReportServiceImpl implements ReportService {
 	
 	// 이미 생성한 인스턴스 제공
 	public static ReportServiceImpl getInstance() {
-		return INSTANCE;
+		try {
+			return INSTANCE;
+			
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "ReportServiceImpl", "ReportServiceImpl", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "ReportServiceImpl", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 	@Override
 	public Page.Response<ReportDTO.Info> search(Page.Request<ReportDTO.Search> request){
-		return null;
+		try {
+			return null;
+			
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "ReportServiceImpl", "search", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "search", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 
 	@Override
 	public void submit(ReportDTO.Submit request) {
-		if (Objects.nonNull(reportDAO.save(request))) {
-	        System.out.println("신고 제출 성공");
-	    } else {
-	        System.out.println("신고 제출 실패");
-	    }	
+		try {
+			if (!Objects.nonNull(reportDAO.save(request))) {
+				throw new BusinessException("신고 제출 실패하셨습니다");
+
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "ReportServiceImpl", "submit", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "submit", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}	
 	}
 
 
 	@Override
 	public void accept(Long reportId) {
-		if (Objects.equals(reportDAO.updateStatus(reportId, "ACCEPT"), 1)) {
-	        System.out.println("신고 수락 성공");
-	    } else {
-	        System.out.println("신고 수락 실패");
-	    }	
+		try {
+			if (!Objects.equals(reportDAO.updateStatus(reportId, "ACCEPT"), 1)) {
+				throw new BusinessException("신고 수락 실패하셨습니다");
+
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "ReportServiceImpl", "accept", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "accept", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}	
 	}
 
 
 	@Override
 	public void reject(Long reportId) {
-		if (Objects.equals(reportDAO.updateStatus(reportId, "REJECT"), 1)) {
-	        System.out.println("신고 거절 성공");
-	    } else {
-	        System.out.println("신고 거절 실패");
-	    }	
+		try {
+			if (Objects.equals(reportDAO.updateStatus(reportId, "REJECT"), 1)) {
+				throw new BusinessException("신고 거절 실패하셨습니다");
+
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "ReportServiceImpl", "reject", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "reject", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}	
 	}
 
 

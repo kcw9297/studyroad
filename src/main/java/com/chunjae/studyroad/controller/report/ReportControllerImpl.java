@@ -50,7 +50,7 @@ public class ReportControllerImpl implements ReportController {
 			
 			
 			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
-	        여기다가 페이징하기 신고리스트
+	        
 	        
 			// [3] service 조회
 			
