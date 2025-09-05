@@ -11,6 +11,7 @@ import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
+import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
 /**
  * 게시글 DB 로직 관리
@@ -63,8 +64,6 @@ class CommentDAOImpl implements CommentDAO {
 				dataCount = executeAndGetDataCount(pstmt);
 			}
 
-			
-			
 
 			String pageSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE post_id = ? AND parent_id IS NULL ORDER BY "+order+" LIMIT ? OFFSET ?" ;
 			
@@ -172,6 +171,52 @@ class CommentDAOImpl implements CommentDAO {
 			throw new DAOException(e);
 		}
 	}
+	
+	
+	
+		
+	@Override
+	public Optional<CommentDTO.Info> findbyId(Long commentId) {
+		try (Connection connection = dataSource.getConnection();
+		     PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_FIND_BY_ID)) {
+				
+				// [1] 파라미터 세팅
+				pstmt.setLong(1, commentId);
+				
+				// [2] SQL 수행 + 결과 DTO 생성 후 반환
+
+	   			return Optional.ofNullable(mapToInfo(pstmt));
+				
+			} catch (SQLException e) {
+				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				throw new DAOException(e);
+				
+			} catch (Exception e) {
+				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				throw new DAOException(e);
+			}
+	}
+
+    private CommentDTO.Info mapToInfo(PreparedStatement pstmt) throws SQLException {
+    	
+		try (ResultSet rs = pstmt.executeQuery()) {
+			return rs.next() ? 
+
+					new CommentDTO.Info(
+							rs.getLong("comment_id"),
+							rs.getLong("post_id"),
+							rs.getLong("parent_id"),
+							rs.getString("content"),
+							rs.getTimestamp("written_at"),
+							rs.getTimestamp("edited_at"),
+							rs.getLong("mention_id"),
+							rs.getString(8),
+							rs.getLong("likeCount"),
+							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("name"), rs.getString("nickname"), rs.getString("email"), rs.getString("password"), rs.getString("zipcode"), rs.getString("address"), rs.getTimestamp("joined_at"), rs.getTimestamp("quited_at"), rs.getTimestamp("ban_end_at"), rs.getString(20))
+				    ) : null;
+		}
+	}
+	
 		
 		
 		

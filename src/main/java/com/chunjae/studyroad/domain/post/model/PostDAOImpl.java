@@ -61,6 +61,7 @@ class PostDAOImpl implements PostDAO {
     	
 		try (ResultSet rs = pstmt.executeQuery()) {
 			return rs.next() ? 
+
 					
 					
 					new PostDTO.Info(

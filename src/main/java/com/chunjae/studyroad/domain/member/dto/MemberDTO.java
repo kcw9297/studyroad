@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.member.dto;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -71,9 +72,9 @@ public class MemberDTO {
          private String password;
          private String zipcode;
          private String address;
-         private Date joinedAt;
-         private Date quitedAt;
-         private Date banEndAt;
+         private Timestamp joinedAt;
+         private Timestamp quitedAt;
+         private Timestamp banEndAt;
          private String status;
 
          public Info(Long memberId, String nickname, String email) {
@@ -82,7 +83,7 @@ public class MemberDTO {
              this.email = email;
          }
          
-         public Info(Long memberId, String name, String nickname, String email, String password, String zipcode, String address, Date joinedAt, Date quitedAt, Date banEndAt, String status) {
+         public Info(Long memberId, String name, String nickname, String email, String password, String zipcode, String address, Timestamp joinedAt, Timestamp quitedAt, Timestamp banEndAt, String status) {
              this.memberId = memberId;
              this.name = name;
              this.nickname = nickname;
@@ -134,15 +135,15 @@ public class MemberDTO {
              return address;
          }
 
-         public Date getJoinedAt() {
+         public Timestamp getJoinedAt() {
              return joinedAt;
          }
 
-         public Date getQuitedAt() {
+         public Timestamp getQuitedAt() {
              return quitedAt;
          }
 
-         public Date getBanEndAt() {
+         public Timestamp getBanEndAt() {
              return banEndAt;
          }
 

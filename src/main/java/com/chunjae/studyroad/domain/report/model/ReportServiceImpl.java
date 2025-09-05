@@ -1,5 +1,6 @@
 package com.chunjae.studyroad.domain.report.model;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.chunjae.studyroad.common.dto.Page;
@@ -26,8 +27,8 @@ public class ReportServiceImpl implements ReportService {
 	}
 
 	@Override
-	public Page.Response<ReportDTO.Info> search(Page.Request<ReportDTO.Search> request){
-		return null;
+	public List<ReportDTO.Info> getList() {
+		return reportDAO.list();
 	}
 
 
