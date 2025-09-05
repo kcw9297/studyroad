@@ -182,33 +182,9 @@ public class MemberControllerImpl implements MemberController {
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
-			String type = request.getParameter("type");
-			System.out.printf("type = %s\n", type);
-			switch (type) {
-				case "name":
-					String name = request.getParameter("name");
-					memberService.editName(MemberDTO.Edit.editName(memberId, name));
-					break;
-					
-				case "nickname":
-					String nickname = request.getParameter("nickname");
-					memberService.editNickname(MemberDTO.Edit.editNickname(memberId, nickname));
-					break;
-
-				case "password":
-					String password = request.getParameter("password");
-					memberService.editPassword(MemberDTO.Edit.editPassword(memberId, password));
-					break;
-
-				case "address":
-					String zipcode = request.getParameter("zipcode");
-					String address = request.getParameter("address");
-					memberService.editAddress(MemberDTO.Edit.editAddress(memberId, zipcode, address));
-					break;
-					
-				default:
-					throw new ServletException("잘못된 요청입니다. 다시 시도해 주세요");
-			}
+			
+			editAllType(request, memberId);
+			
 			
 			// [3] JSON 응답 반환
 			APIResponse rp = APIResponse.success("회원정보 수정을 완료했습니다");
@@ -220,6 +196,35 @@ public class MemberControllerImpl implements MemberController {
 			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
 			APIResponse rp =  APIResponse.error("수정 요청에 실패했습니다. 잠시 후에 시도해 주세요.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	private void editAllType(HttpServletRequest request, long memberId) {
+		String type = request.getParameter("type");
+		switch (type) {
+			case "name":
+				String name = request.getParameter("name");
+				memberService.editName(MemberDTO.Edit.editName(memberId, name));
+				break;
+				
+			case "nickname":
+				String nickname = request.getParameter("nickname");
+				memberService.editNickname(MemberDTO.Edit.editNickname(memberId, nickname));
+				break;
+
+			case "password":
+				String password = request.getParameter("password");
+				memberService.editPassword(MemberDTO.Edit.editPassword(memberId, password));
+				break;
+
+			case "address":
+				String zipcode = request.getParameter("zipcode");
+				String address = request.getParameter("address");
+				memberService.editAddress(MemberDTO.Edit.editAddress(memberId, zipcode, address));
+				break;
+				
+			default:
+				throw new ServletException("잘못된 요청입니다. 다시 시도해 주세요");
 		}
 	}
 

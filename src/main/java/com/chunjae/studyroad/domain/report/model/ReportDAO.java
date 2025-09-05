@@ -1,5 +1,7 @@
 package com.chunjae.studyroad.domain.report.model;
 
+import java.util.List;
+
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.report.dto.ReportDTO;
 
@@ -10,10 +12,9 @@ public interface ReportDAO {
 
     /**
      * 신고 검색
-     * @param request   신고 페이징 검색요청 DTO
      * @return Info     검색된 페이징된 신고정보 DTO 반환
      */
-    Page.Response<ReportDTO.Info> search(Page.Request<ReportDTO.Search> request);
+    List<ReportDTO.Info> list();
 
 
     /**

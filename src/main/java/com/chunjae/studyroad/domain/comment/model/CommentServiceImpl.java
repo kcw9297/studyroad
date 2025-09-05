@@ -44,14 +44,16 @@ public class CommentServiceImpl implements CommentService {
 		return pageResponse;
     }
 
+	@Override
+	public CommentDTO.Info getInfo(Long commentId){
+	   return commentDAO.findbyId(commentId).orElse(null);
+    }
+	
+
 
 	@Override
-	public void write(CommentDTO.Write request) {
-		if (Objects.nonNull(commentDAO.save(request))) {
-	        System.out.println("댓글 작성 성공");
-	    } else {
-	        System.out.println("댓글 작성 실패");
-	    }	
+	public Long write(CommentDTO.Write request) {
+		return commentDAO.save(request);
 	}
 
 
