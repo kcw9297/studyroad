@@ -5,8 +5,9 @@ import java.io.*;
 
 import jakarta.servlet.http.*;
 
-import com.chunjae.studyroad.common.exception.ControllerException;
+import com.chunjae.studyroad.common.exception.ServletException;
 import com.chunjae.studyroad.common.constant.StatusCode;
+import com.chunjae.studyroad.common.dto.APIResponse;
 
 
 /**
@@ -21,8 +22,6 @@ public class HttpUtils {
 	// 메소드 상수
 	public static final String POST = "POST";
 	public static final String GET = "GET";
-
-
 
 
 	// 생성자 접근 제한
@@ -111,9 +110,37 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
+	
+	
+	public static void writeBusinessErrorJSON(HttpServletResponse response, String alertMessage) {
+			
+		try {
+			APIResponse rp =  APIResponse.error(alertMessage, StatusCode.CODE_INPUT_ERROR);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);	
+			
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	public static void writeServerErrorJSON(HttpServletResponse response) {
+		
+		try {
+			APIResponse rp =  APIResponse.error("오류가 발생했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
 	
 	
 	/**
@@ -140,7 +167,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] HTTP 요청 내 JSON 문자열 추출에 실패했습니다! 원인 : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
 	
@@ -165,7 +192,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
     }
 	
@@ -178,7 +205,7 @@ public class HttpUtils {
 	 */
 	public static void checkMethod(HttpServletRequest request, String targetMethod) {
 		if (!Objects.equals(request.getMethod(), targetMethod)) {
-			throw new ControllerException();
+			throw new ServletException();
 		}
 			
     }
@@ -215,7 +242,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] 에러 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
 
@@ -234,7 +261,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
 	
@@ -251,7 +278,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
 	
@@ -266,7 +293,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] HOME reditect 수행에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
 	
@@ -292,7 +319,7 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] 로그인 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 	}
 	
@@ -314,10 +341,14 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[getFileParts] 파일 목록을 불러오는데 실패했습니다! : %s\n", e);
-			throw new ControllerException(e);
+			throw new ServletException(e);
 		}
 
 	}
+	
+	
+	
+	
 	
 	
 	

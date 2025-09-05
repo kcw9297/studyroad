@@ -5,8 +5,9 @@ import java.util.*;
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
-import com.chunjae.studyroad.common.exception.ControllerException;
+import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.exception.ServletException;
 import com.chunjae.studyroad.common.mail.MailSender;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.domain.comment.model.*;
@@ -59,6 +60,10 @@ public class MemberControllerImpl implements MemberController {
 			// [3] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/join.jsp");
 			HttpUtils.forwardPageFrame(request, response);
+			
+		} catch (BusinessException e) {
+			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 			
 		} catch (Exception e) {
 			System.out.printf("view forward 실패! 원인 : %s\n", e);
@@ -119,21 +124,11 @@ public class MemberControllerImpl implements MemberController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String name = request.getParameter("name");
-	        String nickname = request.getParameter("nickname");
-	        String email = request.getParameter("email");
-	        String password = request.getParameter("password");
-	        String zipcode = request.getParameter("zipcode");
-	        String address = request.getParameter("address");
-	        MemberDTO.Join join = new MemberDTO.Join(name, nickname, email, password, zipcode, address);
+			MemberDTO.Join memberJoin = createJoinDTO(request);
 			
-	        System.out.printf(
-	        	    "회원가입 입력 값 => 이름: %s, 닉네임: %s, 이메일: %s, 비밀번호: %s, 우편번호: %s, 주소: %s%n",
-	        	    name, nickname, email, password, zipcode, address
-	        	);
 	        
 			// [3] service 조회
-	        MemberDTO.Info memberInfo = memberService.join(join); 
+	        MemberDTO.Info memberInfo = memberService.join(memberJoin); 
 			
 			
 			// [4] JSON 응답 반환
@@ -151,6 +146,30 @@ public class MemberControllerImpl implements MemberController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	// 가입 DTO 생성
+	private MemberDTO.Join createJoinDTO(HttpServletRequest request) {
+
+		String name = request.getParameter("name");
+        String nickname = request.getParameter("nickname");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String zipcode = request.getParameter("zipcode");
+        String address = request.getParameter("address");
+        
+        
+        System.out.printf(
+        	    "회원가입 입력 값 => 이름: %s, 닉네임: %s, 이메일: %s, 비밀번호: %s, 우편번호: %s, 주소: %s%n",
+        	    name, nickname, email, password, zipcode, address
+        	);
+        
+        return new MemberDTO.Join(name, nickname, email, password, zipcode, address);
+	}
+	
+	
+	
+	
 
 	
 	@Override
@@ -188,7 +207,7 @@ public class MemberControllerImpl implements MemberController {
 					break;
 					
 				default:
-					new ControllerException("잘못된 요청입니다. 다시 시도해 주세요");
+					throw new ServletException("잘못된 요청입니다. 다시 시도해 주세요");
 			}
 			
 			// [3] JSON 응답 반환
@@ -284,8 +303,6 @@ public class MemberControllerImpl implements MemberController {
 	        commentService.quit(memberId); 
 	        likeService.quit(memberId); 
 	        reportService.quit(memberId); 
-	        
-	        
 			
 			// [4] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");

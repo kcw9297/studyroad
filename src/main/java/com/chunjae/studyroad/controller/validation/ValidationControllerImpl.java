@@ -4,8 +4,8 @@ import java.util.Objects;
 
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
-import com.chunjae.studyroad.common.exception.ControllerException;
-import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.exception.ServletException;
+import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.mail.MailSender;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
@@ -51,7 +51,7 @@ public class ValidationControllerImpl implements ValidationController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
-		} catch (ServiceException e) {
+		} catch (BusinessException e) {
 			System.out.printf("[postExistMemberAPI] - 비즈니스 예외 발생!: %s\n", e);
 			APIResponse rp =  APIResponse.error(e.getMessage(), StatusCode.CODE_INPUT_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);
@@ -79,7 +79,7 @@ public class ValidationControllerImpl implements ValidationController {
         	memberService.checkNicknameDuplication(nickname);
         
         // 정상 입력값이 없는 경우 예외 발생
-        else throw new ControllerException("올바른 오쳥 값이 입력되지 않았습니다");
+        else throw new ServletException("올바른 오쳥 값이 입력되지 않았습니다");
     }
    
 

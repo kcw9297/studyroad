@@ -9,6 +9,14 @@ import java.util.*;
  */
 public class ValidationUtils {
 	
+	// 검증 실패 예외 메세지
+	public static final String EX_MESSAGE_SERVICE = "[%s][%s] Service 계층에서 기타 예외 발생! 원인 : %s\n";
+	public static final String EX_MESSAGE_SERVICE_BUSINESS = "[%s][%s] 비즈니스 예외 발생! : %s\n";
+	public static final String EX_MESSAGE_DAO = "[%s][%s] DAO 계층에서 기타 예외 발생! 원인 : %s\n";
+	public static final String EX_MESSAGE_DAO_SQL = "[%s][%s] SQL 처리 실패! 원인 = %s\n";
+	public static final String EX_MESSAGE_CONTROLLER = "[%s][%s] Controller 계층에서 기타 예외 발생! 원인 : %s\n";
+	
+	
 	// 패턴
 	public static final String PATTERN_EMAIL = "^(?=.{1,60}$)[A-Za-z0-9]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 	public static final String PATTERN_PASSWORD = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*()])[A-Za-z0-9!@#$%^&*()]{6,20}$";

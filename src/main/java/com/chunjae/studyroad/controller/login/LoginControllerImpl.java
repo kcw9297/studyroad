@@ -5,11 +5,14 @@ import java.util.Objects;
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
 import com.chunjae.studyroad.common.util.TimeUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 import com.chunjae.studyroad.domain.member.model.MemberService;
 import com.chunjae.studyroad.domain.member.model.MemberServiceImpl;
@@ -84,15 +87,15 @@ public class LoginControllerImpl implements LoginController {
 			
 		
 			// 오류 응답 반환
-		} catch (ServiceException e) {
-			System.out.printf("[postLoginAPI] - 비즈니스 예외 발생!: %s\n", e);
-			APIResponse rp =  APIResponse.error(e.getMessage(), StatusCode.CODE_INPUT_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);
-		
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postLoginAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("오류가 발생했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "LoginControllerImpl", "postLoginAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
     	
     }
