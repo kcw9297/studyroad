@@ -11,7 +11,6 @@ import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
-import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
 /**
  * 게시글 DB 로직 관리

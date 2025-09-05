@@ -1,7 +1,6 @@
 package com.chunjae.studyroad.domain.file.model;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
@@ -31,17 +30,14 @@ public class FileServiceImpl implements FileService {
     @Override
     public void store(List<FileDTO.Store> requests) {
     	 if(!Objects.equals(requests.size(),fileDAO.saveAll(requests).size())) {
-    	 throw new BusinessException("파일 업로드 실패하셨습니다");
+    		 throw new BusinessException("파일 업로드에 실패했습니다");
     	 }
  }
 
     @Override
     public void remove(List<Long> fileIds) {
     	if(!Objects.equals(fileIds.size(),fileDAO.deleteAllByIds(fileIds))) {
-       	 throw new BusinessException("파일 삭제 실패하셨습니다");
-       	 }
-    	
-    	
-    	
+       	 	throw new BusinessException("파일 삭제에 실패했습니다");
+       	 }	
     }
 }
