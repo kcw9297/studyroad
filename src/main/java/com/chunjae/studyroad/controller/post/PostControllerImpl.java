@@ -80,37 +80,18 @@ public class PostControllerImpl implements PostController {
 			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
 				return;
 		
-			String keyword = request.getParameter("keyword");
-			String option = request.getParameter("option");
-			String boardType = request.getParameter("boardType");
-			String[] arrayCategories = request.getParameterValues("categories");
-			List<String> categories;
-			if (arrayCategories == null || arrayCategories.length == 0) {
-				categories = new ArrayList<>();
-			} else {
-				categories = Arrays.asList(arrayCategories);
-			}
-			String[] arrayGrades = request.getParameterValues("grades");
-			List<Integer> grades;
-			if (arrayGrades == null || arrayGrades.length == 0) {
-				grades = new ArrayList<>();
-			} else {
-			    grades = Arrays.stream(arrayGrades).map(Integer::parseInt).collect(Collectors.toList());
-			}
-			String order = request.getParameter("order");
 			int page = ValidationUtils.getPage(request.getParameter("page"));
-	        
-			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
-	        
+			int size = 10;
+			Page.Request<PostDTO.Search> search = new Page.Request<>(search(request), page, size);
 	        
 			// [3] service 조회
 			
 			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
 			
 			
-			request.setAttribute("boardType", boardType);
+			request.setAttribute("boardType", request.getParameter("boardType"));
 			request.setAttribute("page", pageResponse);
-			HttpUtils.setPostConstantAttributes(request, boardType);
+			HttpUtils.setPostConstantAttributes(request, request.getParameter("boardType"));
 
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
 			HttpUtils.forwardPageFrame(request, response);
@@ -119,6 +100,31 @@ public class PostControllerImpl implements PostController {
 			System.out.printf("view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
+	}
+	
+	//검색할때 필요한 정보를 객체로 만들어서 전달하는 메소드
+	private PostDTO.Search search(HttpServletRequest request) {
+		
+		String keyword = request.getParameter("keyword");
+		String option = request.getParameter("option");
+		String boardType = request.getParameter("boardType");
+		String[] arrayCategories = request.getParameterValues("categories");
+		List<String> categories;
+		if (arrayCategories == null || arrayCategories.length == 0) {
+			categories = new ArrayList<>();
+		} else {
+			categories = Arrays.asList(arrayCategories);
+		}
+		String[] arrayGrades = request.getParameterValues("grades");
+		List<Integer> grades;
+		if (arrayGrades == null || arrayGrades.length == 0) {
+			grades = new ArrayList<>();
+		} else {
+		    grades = Arrays.stream(arrayGrades).map(Integer::parseInt).collect(Collectors.toList());
+		}
+		String order = request.getParameter("order");
+		return new PostDTO.Search(keyword, option, boardType, categories, grades, order);
+		
 	}
 
 	@Override
@@ -235,8 +241,6 @@ public class PostControllerImpl implements PostController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			String boardType = request.getParameter("boardType");
 	        
-	        
-	        
 			// [3] service 조회
 			List<PostDTO.Info> PostInfo = postService.getLatestList(boardType); 
 			
@@ -262,18 +266,8 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			long memberId = SessionUtils.getLoginMember(request).getMemberId();
+			PostDTO.Write write = write(request);
 			
-			
-			String title = request.getParameter("title");
-			String boardType = request.getParameter("boardType");
-			String category = request.getParameter("category");
-			int grade = Integer.parseInt(request.getParameter("grade"));
-			String content = request.getParameter("content");
-			String strNotice = request.getParameter("notice");
-			Boolean notice = Boolean.parseBoolean(strNotice);
-			PostDTO.Write write = new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
-
 			// [3-1] service - 게시글 작성
 			long postId = postService.write(write);
 
@@ -299,6 +293,18 @@ public class PostControllerImpl implements PostController {
 					StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	private PostDTO.Write write(HttpServletRequest request) {
+		long memberId = SessionUtils.getLoginMember(request).getMemberId();
+		String title = request.getParameter("title");
+		String boardType = request.getParameter("boardType");
+		String category = request.getParameter("category");
+		int grade = Integer.parseInt(request.getParameter("grade"));
+		String content = request.getParameter("content");
+		String strNotice = request.getParameter("notice");
+		Boolean notice = Boolean.parseBoolean(strNotice);
+		return new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
 	}
 
 	@Override

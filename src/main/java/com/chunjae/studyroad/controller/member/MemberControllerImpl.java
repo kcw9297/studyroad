@@ -179,9 +179,7 @@ public class MemberControllerImpl implements MemberController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			long memberId = SessionUtils.getLoginMember(request).getMemberId();
-			
-			editAllType(request, memberId);
+			editAllType(request);
 			
 			
 			// [3] JSON 응답 반환
@@ -197,7 +195,8 @@ public class MemberControllerImpl implements MemberController {
 		}
 	}
 	
-	private void editAllType(HttpServletRequest request, long memberId) {
+	private void editAllType(HttpServletRequest request) {
+		long memberId = SessionUtils.getLoginMember(request).getMemberId();
 		String type = request.getParameter("type");
 		switch (type) {
 			case "name":

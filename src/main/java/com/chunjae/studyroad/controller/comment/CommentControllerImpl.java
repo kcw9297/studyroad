@@ -42,13 +42,10 @@ public class CommentControllerImpl implements CommentController {
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 
-	        String strPostId = request.getParameter("postId");
-	        long postId = Long.parseLong(strPostId);
-	        String order = request.getParameter("order");
-	        String strPage= request.getParameter("page");
-	        int page = Integer.parseInt(strPage);
-	        
-			Page.Request<CommentDTO.Search> search = new Page.Request<>(new CommentDTO.Search(postId, order), page, 1);
+
+	        int page = Integer.parseInt(request.getParameter("page"));
+	        int size = 1;
+			Page.Request<CommentDTO.Search> search = new Page.Request<>(list(request), page, size);
 	        
 	        
 			// [3] service 조회
@@ -68,6 +65,13 @@ public class CommentControllerImpl implements CommentController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
     }
+	
+	private CommentDTO.Search list(HttpServletRequest request) {
+		String strPostId = request.getParameter("postId");
+        long postId = Long.parseLong(strPostId);
+        String order = request.getParameter("order");
+        return new CommentDTO.Search(postId, order);  
+	}
 
 
 	@Override
@@ -86,19 +90,13 @@ public class CommentControllerImpl implements CommentController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-	        String strPostId = request.getParameter("postId");
-	        long postId = Long.parseLong(strPostId);
-			long memberId = SessionUtils.getLoginMember(request).getMemberId();
-	        String strParentId = request.getParameter("parentId");
-	        Long parentId = (strParentId == null || strParentId.isBlank()) ? null : Long.parseLong(strParentId);
-	        String strMentionId = request.getParameter("mentionId");
-	        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
-			String content = request.getParameter("content");
-	        CommentDTO.Write write = new CommentDTO.Write(postId, memberId, parentId, mentionId, content);
+	        CommentDTO.Write write = write(request);
 	 
 	        // [3] service
 	        Long commentId = commentService.write(write);
 	        CommentDTO.Info info = commentService.getInfo(commentId);
+	        
+	        Long postId = Long.parseLong(request.getParameter("postId"));
 	        postService.comment(postId);
 			
 			
@@ -114,6 +112,18 @@ public class CommentControllerImpl implements CommentController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	private CommentDTO.Write write(HttpServletRequest request) {
+		String strPostId = request.getParameter("postId");
+        long postId = Long.parseLong(strPostId);
+		long memberId = SessionUtils.getLoginMember(request).getMemberId();
+        String strParentId = request.getParameter("parentId");
+        Long parentId = (strParentId == null || strParentId.isBlank()) ? null : Long.parseLong(strParentId);
+        String strMentionId = request.getParameter("mentionId");
+        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
+		String content = request.getParameter("content");
+       return new CommentDTO.Write(postId, memberId, parentId, mentionId, content);
+	}
 
 
 	@Override
@@ -124,16 +134,10 @@ public class CommentControllerImpl implements CommentController {
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 
 			
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-	        String strCommentId = request.getParameter("commentId");
-	        long commentId = Long.parseLong(strCommentId);
-	        String strMentionId = request.getParameter("mentionId");
-	        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
-	        String content = request.getParameter("content");
-	        CommentDTO.Edit edit = new CommentDTO.Edit(commentId, mentionId, content);
+			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성=
+	        CommentDTO.Edit edit = edit(request);
 
 			commentService.edit(edit);
-			
 			
 			// [3] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
@@ -146,6 +150,15 @@ public class CommentControllerImpl implements CommentController {
 			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+	}
+	
+	private CommentDTO.Edit edit(HttpServletRequest request){
+		String strCommentId = request.getParameter("commentId");
+        long commentId = Long.parseLong(strCommentId);
+        String strMentionId = request.getParameter("mentionId");
+        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
+        String content = request.getParameter("content");
+        return new CommentDTO.Edit(commentId, mentionId, content);
 	}
 
 
