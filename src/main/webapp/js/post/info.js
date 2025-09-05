@@ -140,8 +140,3 @@ function reportComment(commentId) {
   // AJAX 요청 -> /api/comment/report.do?replyId=...
 }
 
-
-// 부모 댓글의 자식 컨테이너(.comment-child) 찾기
-function getChildBox(parentId) {
-  return $(`.container.reply-list [data-comment-id="${parentId}"] .reply-child`);
-}

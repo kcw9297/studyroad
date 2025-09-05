@@ -48,11 +48,6 @@
 	</div>
 </article>
 
-<div class="container article-button">
-	<button type="button" onclick="location.href='/post/list.do?boardType=${boardType}&page=1'">목록</button>
-</div>
-
-
 <div class="container reply">
 	<div class="reply-top">
 		<div class="reply-count">
@@ -64,8 +59,9 @@
 		</div>
 	</div>
 	<fieldset class="reply-comment">
-		<textarea id="content" name="content" class="content" placeholder="댓글은 최대 ${maxLengthContentComment}byte 까지 입력 가능합니다."></textarea>
+		<textarea id="content" name="content" placeholder="댓글은 최대 ${maxLengthContentComment}byte 까지 입력 가능합니다."></textarea>
 		<button type="button" class="write parent">등록</button>
 	</fieldset>
 </div>
+
 <ul class="container reply-list"></ul>
