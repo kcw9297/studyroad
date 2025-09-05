@@ -23,6 +23,9 @@ public class ValidationUtils {
 	public static final String PATTERN_NAME = "^[가-힣]{2,10}$";
 	public static final String PATTERN_NICKNAME = "^[가-힣a-zA-Z0-9]{2,20}$";
 	public static final String PATTERN_ZIPCODE = "^[0-9]{5}$";
+	public static final String PATTERN_DATE = "yy.MM.dd";
+	public static final String PATTERN_TIME = "HH:mm";
+	public static final String PATTERN_DATE_TIME = "yy.MM.dd. HH:mm";
 	
 	
 	// 제한 길이
@@ -149,5 +152,22 @@ public class ValidationUtils {
 		
 		else return null;
 	}
-
+	
+	
+	public static String getCategoryName(String boardType, String category) {
+		
+		// 게시판 유형이 정해진 것 이외의 값이면 null
+		if (Objects.isNull(boardType)) return null;
+		
+		System.out.printf("boardType = %s, category = %s\n", boardType, category);
+		
+		// 카테고리 타입 별 조회 후 반환
+		switch (boardType) {
+			case "1": return CATEGORY_NOTICE.getOrDefault(category, null);
+			case "2": return CATEGORY_NEWS.getOrDefault(category, null);
+			case "3": return CATEGORY_PROBLEM.getOrDefault(category, null);
+			case "4": return CATEGORY_COMMUNITY.getOrDefault(category, null);
+			default: return null;
+		}
+	}
 }

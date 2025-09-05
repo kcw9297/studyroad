@@ -157,7 +157,7 @@ public class MemberControllerImpl implements MemberController {
         String password = request.getParameter("password");
         String zipcode = request.getParameter("zipcode");
         String address = request.getParameter("address");
-        
+ 
         
         System.out.printf(
         	    "회원가입 입력 값 => 이름: %s, 닉네임: %s, 이메일: %s, 비밀번호: %s, 우편번호: %s, 주소: %s%n",
@@ -166,9 +166,7 @@ public class MemberControllerImpl implements MemberController {
         
         return new MemberDTO.Join(name, nickname, email, password, zipcode, address);
 	}
-	
-	
-	
+
 	
 
 	

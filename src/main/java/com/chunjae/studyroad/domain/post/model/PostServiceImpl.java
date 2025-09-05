@@ -8,7 +8,11 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 import com.chunjae.studyroad.common.dto.Page;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.DAOUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
@@ -33,8 +37,22 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
-    public PostDTO.Info getInfo(Long postId) {
-		return postDAO.findById(postId).orElse(null);
+    public PostDTO.Info getInfo(Long postId) {		
+		
+		try {
+			return postDAO.findById(postId).orElseThrow(() -> new BusinessException("게시글이 존재하지 않습니다"));
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "PostServiceImpl", "getInfo", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "PostServiceImpl", "getInfo", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 

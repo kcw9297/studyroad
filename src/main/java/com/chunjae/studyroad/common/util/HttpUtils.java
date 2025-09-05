@@ -87,6 +87,9 @@ public class HttpUtils {
 	public static void setDefaultConstantAttributes(HttpServletRequest request) {
 		
 		request.setAttribute("boardTypes", ValidationUtils.BOARD_TYPES);
+		request.setAttribute("date", ValidationUtils.PATTERN_DATE);
+		request.setAttribute("time", ValidationUtils.PATTERN_TIME);
+		request.setAttribute("dateTime", ValidationUtils.PATTERN_DATE_TIME);
 	}
 	
 	
@@ -127,6 +130,35 @@ public class HttpUtils {
 			throw new ServletException(e);
 		}
 	}
+	
+	
+	public static void writeInupuErrorJSON(HttpServletResponse response, Map<String, String> errors) {
+		
+		try {
+			APIResponse rp =  APIResponse.errorField("입력 값을 다시 확인해 주세요", StatusCode.CODE_INPUT_ERROR, errors);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);	
+			
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	
+	public static void writeForbiddenErrorJSON(HttpServletResponse response) {
+		
+		try {
+			APIResponse rp =  APIResponse.error("잘못된 접근입니다", StatusCode.CODE_ACCESS_ERROR);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_FORBIDDEN);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
 	
 	
 	public static void writeServerErrorJSON(HttpServletResponse response) {

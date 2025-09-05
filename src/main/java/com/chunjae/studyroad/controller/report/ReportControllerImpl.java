@@ -47,11 +47,22 @@ public class ReportControllerImpl implements ReportController {
 			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
 				return;
 		
+			/*
+			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
+	        
+			// [3] service 조회
 			
+			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
+			
+			
+			request.setAttribute("boardType", boardType);
+			request.setAttribute("page", pageResponse);
+			HttpUtils.setPostConstantAttributes(request, boardType);
+			\*/
+
 			List<ReportDTO.Info> data = reportService.getList(); 
-			
-			
 			request.setAttribute("data", data);
+
 
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/report/list.jsp");
 			HttpUtils.forwardPageFrame(request, response);

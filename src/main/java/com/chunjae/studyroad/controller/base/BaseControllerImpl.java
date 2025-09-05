@@ -27,11 +27,12 @@ public class BaseControllerImpl implements BaseController {
 
         try {
             // [1] 파일 객체 생성
-            File file = getFile(request);
+            File file = getMemberFile(request);
 
             // [2] 응답 설정
-            String encodedFileName = FileUtils.encodeToUTF8(request.getParameter("fileName"));
-            response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", encodedFileName));
+            String originalName = FileUtils.encodeToUTF8(request.getParameter("originalName"));
+            
+            response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", originalName));
             response.setContentType("application/octet-stream");
             response.setContentLengthLong(file.length());
 
@@ -75,7 +76,7 @@ public class BaseControllerImpl implements BaseController {
     }
 
 
-    // 파일 조회 - 파일명 & 파일 디렉토리명 조회 후 파일 생성
+    // 파일 조회 - 파일명 & 파일 디렉토리명 조회 후 파일 객체 생성
     private static File getFile(HttpServletRequest request) {
     	
     	// 파일 파라미터
@@ -84,6 +85,18 @@ public class BaseControllerImpl implements BaseController {
         
         // 파일 객체 생성 및 반환
         return FileUtils.getStoredFile(type, fileName);
+    }
+    
+    
+    // 파일 조회 - 회원이 업로드한 파일 조회 후 파일 객체 생성
+    private static File getMemberFile(HttpServletRequest request) {
+    	
+    	// 파일 파라미터
+        String type = request.getParameter("type").toLowerCase();
+        String storedName = request.getParameter("storedName");
+        
+        // 파일 객체 생성 및 반환
+        return FileUtils.getStoredFile(type, storedName);
     }
     
     
