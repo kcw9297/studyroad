@@ -48,9 +48,8 @@ public class ReportControllerImpl implements ReportController {
 				return;
 		
 			
-			
+			/*
 			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
-	        여기다가 페이징하기 신고리스트
 	        
 			// [3] service 조회
 			
@@ -60,6 +59,7 @@ public class ReportControllerImpl implements ReportController {
 			request.setAttribute("boardType", boardType);
 			request.setAttribute("page", pageResponse);
 			HttpUtils.setPostConstantAttributes(request, boardType);
+			\*/
 
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
 			HttpUtils.forwardPageFrame(request, response);

@@ -8,7 +8,7 @@
 <%-- 서버에서 내려준 변수 --%>
 <script>
 	let maxLengthTitle = ${maxLengthTitle};
-	let maxLengthContent = ${maxLengthContentPost};
+	let maxLengthContent = ${maxLengthContentComment};
 	let maxSizeFile = ${maxSizeFile};
 	let maxCountFile = ${maxCountFile}; 
 	let boardType = "${boardType}"; 

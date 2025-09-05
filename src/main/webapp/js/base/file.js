@@ -9,7 +9,7 @@ function initFileUpload(options = {}) {
       const fileItem = $(`
         <div class="file-item" data-status="2" data-file-id="${file.fileId}">
           <img src="/file/display.do?fileName=delete2.png&type=BASE" class="delete-file"/>
-          <a href="/file/display.do?fileName=${file.storedName}&type=POST" class="file-label">
+          <a href="#" class="file-label">
             ${file.originalName}
           </a>
           <input type="file" class="hidden-file" name="file">
@@ -37,6 +37,11 @@ function initFileUpload(options = {}) {
     // 라벨 클릭 → 파일 선택창
     .on("click", ".file-label", function (e) {
       e.preventDefault();
+	  
+	  // 기존 파일은 파일 선택창 비활성화
+	  const status = parent.data("status");
+	  if (status === 2) return;
+	  
       $(this).siblings(".hidden-file").click();
     })
     // 파일 선택 이벤트
@@ -47,7 +52,7 @@ function initFileUpload(options = {}) {
         parent.find(".file-label").text(file.name);
         parent.data("status", 1);
       } else {
-        parent.find(".file-label").text("파일업로드");
+        parent.find(".file-label").text("파일을 선택해 주세요");
         parent.data("status", -1);
       }
     });
@@ -69,6 +74,7 @@ function initFileUpload(options = {}) {
       showAlertModal(`파일은 최대 ${maxFiles}개까지만 추가할 수 있습니다.`);
       return;
     }
+	
 
     const fileItem = $(`
       <div class="file-item" data-status="-1">

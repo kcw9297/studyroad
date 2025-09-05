@@ -52,7 +52,7 @@ public class MailSender {
 
         } catch (Exception e) {
             System.out.printf("MailSender 초기화를 위한 mail.properties 읽기에 실패했습니다! 원인 : %s\n", e);
-            throw new InitException(e);
+            throw new MailException(e);
         }
     }
 

@@ -41,24 +41,33 @@ public class PostControllerImpl implements PostController {
 
 		try {
 
-			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
-				return;
-
-			// [1] PK 조회 - 존재하지 않으면 목록으로 redirect
+			// [1] 검증 - 만약 조회에 필요한 정보가 없으면, 홈으로 보냄
 			Long postId = ValidationUtils.getId(request.getParameter("postId"));
-			if (Objects.isNull(postId))
-				response.sendRedirect("/post/list.do?page=1");
+			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
+			if (Objects.isNull(postId) || Objects.isNull(boardType)) HttpUtils.redirectHome(response);
 
-			// [2] service 조회
+			
+			// [2-1] service 조회 - 게시글 정보 조회
 			PostDTO.Info post = postService.getInfo(postId);
+			post.setCategoryName(ValidationUtils.getCategoryName(boardType, post.getCategory()));
+			
+			 
+			// [2-2] service 조회 - 게시글 내 파일 정보 조회
 			List<FileDTO.Info> files = fileService.getInfos(postId);
 			post.setPostFiles(files);
 
+			
+			// [3] 파라미터 삽입
 			request.setAttribute("data", post);
-
+			request.setAttribute("postId", postId);
+			HttpUtils.setValidationConstantAttributes(request);
+			
+			
+			// [4] view 출력
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/info.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 
+			
 		} catch (Exception e) {
 			System.out.printf("view forward 실패! 원인 : %s\n", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
