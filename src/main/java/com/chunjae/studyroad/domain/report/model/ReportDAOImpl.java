@@ -103,7 +103,7 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_POST_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 

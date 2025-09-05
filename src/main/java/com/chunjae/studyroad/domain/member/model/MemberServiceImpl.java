@@ -55,8 +55,15 @@ public class MemberServiceImpl implements MemberService {
 		MemberDTO.Info memberInfo = 
 				memberDAO.findByEmail(email).orElseThrow(() -> new BusinessException("가입한 이메일이 존재하지 않습니다"));
 		
+  
+		스테이터스 퀴티드이고 퀴티드앳이 안지난상태처리
+		
+		퀴티드앳이 지난상태
+		
+
 		if(!Objects.equals(password, memberInfo.getPassword())) 
 			throw new BusinessException("비밀번호가 일치하지 않습니다");
+
 		
 		LoginMember loginMember = 
 				new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus());

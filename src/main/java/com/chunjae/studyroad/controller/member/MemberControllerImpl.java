@@ -304,7 +304,6 @@ public class MemberControllerImpl implements MemberController {
 	        likeService.quit(memberId); 
 	        reportService.quit(memberId); 
 			
-			
 			// [4] JSON 응답 반환
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);

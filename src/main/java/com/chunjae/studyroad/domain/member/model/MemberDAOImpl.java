@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.sql.*;
 import java.sql.*;
+import java.time.LocalDateTime;
 
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
@@ -267,8 +268,12 @@ class MemberDAOImpl implements MemberDAO {
 				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_STATUS)) {
 				
 				pstmt.setString(1, afterStatus);
-				pstmt.setLong(2, memberId);
-				pstmt.setString(3, beforeStatus);
+				switch(afterStatus) {
+					case "QUITED": pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().plusDays(7)));
+					case "ACTIVE": pstmt.setNull(2, java.sql.Types.TIMESTAMP);
+				}
+				pstmt.setLong(3, memberId);
+				pstmt.setString(4, beforeStatus);
 
 				return pstmt.executeUpdate();
 				
@@ -281,8 +286,4 @@ class MemberDAOImpl implements MemberDAO {
 				throw new DAOException(e);
 			}
 	}
-
-
-	
-	
 }

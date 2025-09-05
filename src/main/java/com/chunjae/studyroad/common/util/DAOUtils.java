@@ -23,7 +23,7 @@ public class DAOUtils {
     public static final String SQL_MEMBER_UPDATE_PASSWORD = "UPDATE member SET password = ? WHERE member_id = ?";
     public static final String SQL_MEMBER_UPDATE_PASSWORD_BY_EMAIL = "UPDATE member SET password = ? WHERE email = ?";
     public static final String SQL_MEMBER_UPDATE_ADDRESS = "UPDATE member SET zipcode = ?, address = ? WHERE member_id = ?";
-    public static final String SQL_MEMBER_UPDATE_STATUS = "UPDATE member SET status = ? WHERE member_id = ? AND status = ?";
+    public static final String SQL_MEMBER_UPDATE_STATUS = "UPDATE member SET status = ?, quited_at = ? WHERE member_id = ? AND status = ?";
     public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name) VALUES (?, ?, ?)";
     public static final String SQL_FILE_FIND_BY_POSTID = "SELECT file_id, post_id, original_name, stored_name FROM file where post_id = ?";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
