@@ -7,6 +7,12 @@ import java.util.stream.Collectors;
 
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
+import com.chunjae.studyroad.common.dto.LoginMember;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.util.ValidationUtils;
+import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 /**
  * 댓글 비즈니스 로직 처리
@@ -52,48 +58,114 @@ public class CommentServiceImpl implements CommentService {
 
 
 	@Override
-	public Long write(CommentDTO.Write request) {
-		return commentDAO.save(request);
+	public void write(CommentDTO.Write request) {
+		try {
+      
+      Long commentId = commentDAO.save(request)
+      
+			if (!Objects.nonNull(commentId)) {
+				throw new BusinessException("댓글 작성 실패했습니다");
+			} else {
+        return commentId;
+      }
+
+  
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "CommentServiceImpl", "write", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "CommentServiceImpl", "write", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 
 	@Override
 	public void edit(CommentDTO.Edit request) {
-		if (Objects.equals(commentDAO.update(request), 1)) {
-	        System.out.println("댓글 수정 성공");
-	    } else {
-	        System.out.println("댓글 수정 실패");
-	    }	
+		try {
+			if (!Objects.equals(commentDAO.update(request), 1)) {
+				throw new BusinessException("댓글 수정 실패하셨습니다");
+			}
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "CommentServiceImpl", "edit", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "CommentServiceImpl", "edit", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 
 	@Override
 	public void like(Long commentId) {
-		if (Objects.equals(commentDAO.updateLikeCount(commentId, 1L), 1)) {
-	        System.out.println("댓글 추천 성공");
-	    } else {
-	        System.out.println("댓글 추천 실패");
-	    }
+		try {
+			if (!Objects.equals(commentDAO.updateLikeCount(commentId, 1L), 1)) {
+				throw new BusinessException("댓글 추천 실패하셨습니다");
+
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "CommentServiceImpl", "like", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "CommentServiceImpl", "like", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 
 	@Override
 	public void unlike(Long commentId) {
-		if (Objects.equals(commentDAO.updateLikeCount(commentId, -1L), 1)) {
-	        System.out.println("댓글 추천 취소 성공");
-	    } else {
-	        System.out.println("댓글 추천 취소 실패");
-	    }
+		try {
+			if (!Objects.equals(commentDAO.updateLikeCount(commentId, -1L), 1)) {
+				throw new BusinessException("댓글 추천 취소 실패하셨습니다");
+			}
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "CommentServiceImpl", "unlike", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "CommentServiceImpl", "unlike", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 
 	@Override
-	public void remove(Long commentId) {
-		if (Objects.equals(commentDAO.updateStatus(commentId, "REMOVED"), 1)) {
-	        System.out.println("댓글 삭제 성공");
-	    } else {
-	        System.out.println("댓글 삭제 실패");
-	    }	
+	public void remove(Long commentId) {	
+		try {
+			if (!Objects.equals(commentDAO.updateStatus(commentId, "REMOVED"), 1)) {
+				throw new BusinessException("댓글 삭제 실패하셨습니다");
+
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "CommentServiceImpl", "remove", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "CommentServiceImpl", "remove", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
+		
 	}
 
 

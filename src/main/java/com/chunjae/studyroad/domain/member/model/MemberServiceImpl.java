@@ -27,33 +27,90 @@ public class MemberServiceImpl implements MemberService {
 	
 	// 이미 생성한 인스턴스 제공
 	public static MemberServiceImpl getInstance() {
-		return INSTANCE;
+		try {
+			return INSTANCE;
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "MemberServiceImpl", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "MemberServiceImpl", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 	
 	@Override
 	public MemberDTO.Info getInfo(Long mId) {
-		return memberDAO.findById(mId).orElseThrow(() -> new BusinessException("회원정보 조회에 실패했습니다<br>잠시 후에 다시 시도해 주세요"));
+		try {
+			return memberDAO.findById(mId).orElseThrow(() -> new BusinessException("회원정보 조회에 실패했습니다<br>잠시 후에 다시 시도해 주세요"));
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "getInfo", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "getInfo", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
+		
+		
 	}
 	
 	
 	@Override
 	public void checkEmailDuplication(String email) {
+		try {
+			if (memberDAO.findByEmail(email).isPresent())
+				throw new BusinessException("이미 가입한 이메일이 존재합니다");
+
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "checkEmailDuplication", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "checkEmailDuplication", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 		
-		if (memberDAO.findByEmail(email).isPresent())
-			throw new BusinessException("이미 가입한 이메일이 존재합니다");
 	}
 
 	
 	@Override
 	public void checkNicknameDuplication(String nickname) {
-		if (memberDAO.findByNickname(nickname).isPresent())
-			throw new BusinessException("이미 가입한 닉네임이 존재합니다");
+		try {
+			if (memberDAO.findByNickname(nickname).isPresent())
+				throw new BusinessException("이미 가입한 닉네임이 존재합니다");
+
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "checkNicknameDuplication", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "checkNicknameDuplication", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
+		
+		
 	}
 	
 	
 	@Override
 	public LoginMember login(String email, String password) {
 		
+		try {
 		MemberDTO.Info memberInfo = 
 				memberDAO.findByEmail(email).orElseThrow(() -> new BusinessException("가입한 이메일이 존재하지 않습니다"));
 
@@ -65,15 +122,39 @@ public class MemberServiceImpl implements MemberService {
 			}
 		}
 
+			MemberDTO.Info memberInfo = 
+					memberDAO.findByEmail(email).orElseThrow(() -> new BusinessException("가입한 이메일이 존재하지 않습니다"));
 
-		if(!Objects.equals(password, memberInfo.getPassword())) 
-			throw new BusinessException("비밀번호가 일치하지 않습니다");
+			if(!Objects.equals(password, memberInfo.getPassword())) 
+				throw new BusinessException("비밀번호가 일치하지 않습니다");
+      
+      
+      if(Objects.equals("QUITED", memberInfo.getStatus()) && memberInfo.getQuitedAt() != null) {
+			if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) {
+				throw new QuitException("계정을 복구하시겠습니까?");
+			}else {
+				throw new BusinessException("탈퇴 처리된 계정입니다");
+			}
+		}
 
-		
-		LoginMember loginMember = 
-				new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus());
-		
-		return loginMember;		
+			
+			LoginMember loginMember = 
+					new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus()); 
+			
+			return loginMember;		
+			
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "editName", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "editName", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
+
 	}
 
 	
@@ -82,20 +163,25 @@ public class MemberServiceImpl implements MemberService {
 		Long memberId = memberDAO.save(request);
 		return getInfo(memberId);
 	}
+  
 
 	@Override
 	public void editName(MemberDTO.Edit request) {
-		
-		try {
 			
-			if (Objects.equals(memberDAO.updateName(request), 1));
-				throw new BusinessException("이름 변경에 실패했습니다");
+		try {
 
-		} catch (DAOException | BusinessException e) {
+			if (!Objects.equals(memberDAO.updateName(request), 1)) {
+				throw new BusinessException("이름 변경에 실패했습니다");
+			}
+		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "editName", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
 		} catch (Exception e) {
-			System.out.printf("[editName] - 서비스 예외 발생! 확인 요망 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "editName", e);
 			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 		}
 
@@ -103,29 +189,70 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void editNickname(MemberDTO.Edit request) {
-		if (Objects.equals(memberDAO.updateNickname(request), 1)) {
-	        System.out.println("닉네임 수정 성공");
-	    } else {
-	        System.out.println("닉네임 수정 실패");
-	    }	
+		
+		
+		try {
+
+			if (!Objects.equals(memberDAO.updateNickname(request), 1)) {
+				throw new BusinessException("닉네임 수정에 실패했습니다");
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "editNickname", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "editNickname", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 	@Override
 	public void editPassword(MemberDTO.Edit request) {
-		if (Objects.equals(memberDAO.updatePassword(request), 1)) {
-	        System.out.println("비밀번호 수정 성공");
-	    } else {
-	        System.out.println("비밀번호 수정 실패");
-	    }	
+		
+		try {
+			if (!Objects.equals(memberDAO.updatePassword(request), 1)) {
+		      	throw new BusinessException("비밀번호 수정에 실패했습니다");
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "editPassword", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "editPassword", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
-
+		
+		
+		
+	
 	@Override
 	public void editAddress(MemberDTO.Edit request) {
-		if (Objects.equals(memberDAO.updateAddress(request), 1)) {
-	        System.out.println("주소 수정 성공");
-	    } else {
-	        System.out.println("주소 수정 실패");
-	    }	
+		
+		try {
+			if (!Objects.equals(memberDAO.updateAddress(request), 1)) {
+		        throw new BusinessException("주소 수정에 실패했습니다");
+			
+			}
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "editAddress", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "editAddress", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
+	
+	
 	}
 	
 	
@@ -169,20 +296,47 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void quit(Long memberId) {
-		if (Objects.equals(memberDAO.updateStatus(memberId, "ACTIVE", "QUITED"), 1)) {
-	        System.out.println("회원 탈퇴 성공");
-	    } else {
-	        System.out.println("회원 탈퇴 실패");
-	    }	
+	try {
+		if (!Objects.equals(memberDAO.updateStatus(memberId, "ACTIVE", "QUITED"), 1)) {
+		throw new BusinessException("회원 탈퇴에 실패했습니다");
+
+		
+		}
+	} catch (DAOException e) {
+		throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+		
+	} catch (BusinessException e) {
+		System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "quit", e);
+		throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+		
+	} catch (Exception e) {
+		System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "quit", e);
+		throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 	}
+
+
+}
 
 	@Override
 	public void recoverQuit(Long memberId) {
-		if (Objects.equals(memberDAO.updateStatus(memberId, "QUITED", "ACTIVE"), 1)) {
-	        System.out.println("회원 탈퇴 복구 성공");
-	    } else {
-	        System.out.println("회원 탈퇴 복구 실패");
-	    }	
+	try {
+		if (!Objects.equals(memberDAO.updateStatus(memberId, "QUITED", "ACTIVE"), 1)) {
+		throw new BusinessException("회원 탈퇴 복구에 실패했습니다");
+
+		}
+
+	} catch (DAOException e) {
+		throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+		
+	} catch (BusinessException e) {
+		System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "quit", e);
+		throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+		
+	} catch (Exception e) {
+		System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "quit", e);
+		throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 	}
-	
+
+
+}
 }

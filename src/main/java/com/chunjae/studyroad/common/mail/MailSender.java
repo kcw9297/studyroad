@@ -1,3 +1,4 @@
+
 package com.chunjae.studyroad.common.mail;
 
 import jakarta.mail.*;
