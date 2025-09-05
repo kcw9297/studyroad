@@ -7,6 +7,7 @@ import javax.sql.*;
 
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
 
 import java.sql.*;
@@ -130,11 +131,11 @@ class FileDAOImpl implements FileDAO {
 			return pstmt.executeUpdate();
 
 		} catch (SQLException e) {
-			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "FileDAOImpl", "deleteAllByIds" , e);
 			throw new DAOException(e);
 
 		} catch (Exception e) {
-			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "FileDAOImpl", "deleteAllByIds" , e);
 			throw new DAOException(e);
 		}
 	}
