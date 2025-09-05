@@ -265,12 +265,40 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public void quit(Long memberId) {
-		postDAO.updateStatusByMemberId(memberId, "EXIST", "QUITED");
+		
+		try {
+			postDAO.updateStatusByMemberId(memberId, "EXIST", "QUITED");
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "PostServiceImpl", "remove", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "PostServiceImpl", "remove", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 
 
 	@Override
 	public void recoverQuit(Long memberId) {
-		postDAO.updateStatusByMemberId(memberId, "QUITED", "EXIST");
+	
+		try {
+			postDAO.updateStatusByMemberId(memberId, "QUITED", "EXIST");
+
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "PostServiceImpl", "remove", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "PostServiceImpl", "remove", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
 }

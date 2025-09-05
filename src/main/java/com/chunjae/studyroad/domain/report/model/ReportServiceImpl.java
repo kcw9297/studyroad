@@ -27,24 +27,11 @@ public class ReportServiceImpl implements ReportService {
 	
 	// 이미 생성한 인스턴스 제공
 	public static ReportServiceImpl getInstance() {
-		try {
-			return INSTANCE;
-			
-		} catch (DAOException e) {
-			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
-			
-		} catch (BusinessException e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "ReportServiceImpl", "ReportServiceImpl", e);
-			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
-			
-		} catch (Exception e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "ReportServiceImpl", e);
-			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
-		}
+		return INSTANCE;
 	}
 
 	@Override
-	public Page.Response<ReportDTO.Info> search(Page.Request<ReportDTO.Search> request){
+	public List<ReportDTO.Info> getList() {
 		try {
 			return reportDAO.list();
 			
@@ -59,6 +46,7 @@ public class ReportServiceImpl implements ReportService {
 			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "ReportServiceImpl", "search", e);
 			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 		}
+	}
 
 
 
