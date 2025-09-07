@@ -28,13 +28,13 @@ $(document).ready(function() {
 	
   $("#editPostForm").on("submit", function(e) {
     e.preventDefault();
-
+	
+	if (boardType == "3" && !checkGrade()) return;	
 	
 	// 유효성 검사
-	if (!checkCategory() || !checkGrade() || 
-		!checkTitle() || !checkPostContent() || !checkPostFile()) return;		
+	if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;		
 	
-	// 로그인 요청
+	// 요청 수행
 	sendAJAX(this);
   });
 });

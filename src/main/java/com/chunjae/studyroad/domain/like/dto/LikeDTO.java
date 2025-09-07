@@ -16,7 +16,7 @@ public class LikeDTO {
 
         private Long memberId;
         private Long targetId;
-        private String targetType;
+        private String targetType; // "POST, COMMENT"
 
         public Like(Long memberId, Long targetId, String targetType) {
             this.memberId = memberId;

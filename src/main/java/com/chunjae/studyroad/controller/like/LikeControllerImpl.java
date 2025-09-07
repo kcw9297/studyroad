@@ -1,11 +1,18 @@
 package com.chunjae.studyroad.controller.like;
 
 
+import java.util.Objects;
+
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.dto.LoginMember;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.comment.model.*;
 import com.chunjae.studyroad.domain.like.dto.LikeDTO;
 import com.chunjae.studyroad.domain.like.model.*;
@@ -39,33 +46,44 @@ public class LikeControllerImpl implements LikeController {
 		try {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
-			HttpUtils.checkMethod(request, HttpUtils.POST);
+			HttpUtils.checkMethod(request, HttpUtils.POST);	
 
-			
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
+			}
+
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			String strTargetId = request.getParameter("targetId");
 			long targetId = Long.parseLong(strTargetId);
 			String targetType = request.getParameter("targetType");
 	        LikeDTO.Like like = new LikeDTO.Like(memberId, targetId, targetType);
-
 			likeService.like(like);
-			switch(targetType) {
-				case "post": postService.like(targetId); break;
-				case "comment": commentService.like(targetId); break;
+			
+			switch(targetType.toUpperCase()) {
+				case "POST": postService.like(targetId); break;
+				case "COMMENT": commentService.like(targetId); break;
 			}
 			
 			
 			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			APIResponse rp = APIResponse.success();
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postLikeAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "LikeControllerImpl", "postLikeAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
     }
 
@@ -98,10 +116,15 @@ public class LikeControllerImpl implements LikeController {
 			
 		
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postUnlikeAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "LikeControllerImpl", "postUnlikeAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
     }
 }

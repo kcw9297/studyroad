@@ -19,7 +19,7 @@ public class StatusCode {
 	
 	/**
 	 * 로그인 오류. 로그인을 할 수 없는 상태의 회원이 로그인을 시도한 경우 (= 403 FORBIDDEN)
-	 * 탈퇴처리일시가 지난 탈퇴회원 혹은 정지된 회원이 로그인 시도를 하는 경우 등
+	 * 탈퇴처리일시가 지난 탈퇴회원 혹은 정지된 회원이 로그인 시도를 하는 경우, 비로그인 사용자가 댓글 작성을 시도하는 등
 	 */
 	public static final int CODE_LOGIN_ERROR = 2;
 	

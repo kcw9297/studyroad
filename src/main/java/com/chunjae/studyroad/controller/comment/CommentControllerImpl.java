@@ -1,11 +1,18 @@
 package com.chunjae.studyroad.controller.comment;
 
+import java.util.Objects;
+
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
+import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.dto.Page;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
 import com.chunjae.studyroad.common.util.SessionUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.comment.model.*;
 import com.chunjae.studyroad.domain.post.model.*;
@@ -41,11 +48,9 @@ public class CommentControllerImpl implements CommentController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-
-
-	        int page = Integer.parseInt(request.getParameter("page"));
-	        int size = 1;
-			Page.Request<CommentDTO.Search> search = new Page.Request<>(list(request), page, size);
+	        int page = ValidationUtils.getPage(request.getParameter("page"));
+	        int size = ValidationUtils.PAGE_SIZE_COMMENT;
+			Page.Request<CommentDTO.Search> search = new Page.Request<>(mapToSearchDTO(request), page, size);
 	        
 	        
 			// [3] service 조회
@@ -53,32 +58,28 @@ public class CommentControllerImpl implements CommentController {
 			
 			
 			// [4] JSON 응답 반환
-	        
-	        APIResponse rp = APIResponse.success("요청에 성공했습니다!", commentInfo);
+	        APIResponse rp = APIResponse.success(commentInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
-		
-			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[getListAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "CommentControllerImpl", "getListAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
     }
 	
-	private CommentDTO.Search list(HttpServletRequest request) {
-		String strPostId = request.getParameter("postId");
-        long postId = Long.parseLong(strPostId);
+	private CommentDTO.Search mapToSearchDTO(HttpServletRequest request) {
+        long postId = Long.parseLong(request.getParameter("postId"));
         String order = request.getParameter("order");
+        
         return new CommentDTO.Search(postId, order);  
 	}
 
-
-	@Override
-	public void getEditAPI(HttpServletRequest request, HttpServletResponse response) {
-
-        
-    }
 
 
 	@Override
@@ -88,9 +89,16 @@ public class CommentControllerImpl implements CommentController {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
+			}
+			
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-	        CommentDTO.Write write = write(request);
+	        CommentDTO.Write write = mapToWriteDTO(request);
 	 
 	        // [3] service
 	        Long commentId = commentService.write(write);
@@ -101,27 +109,34 @@ public class CommentControllerImpl implements CommentController {
 			
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!", info);
+			APIResponse rp = APIResponse.success("댓글 작성에 성공했습니다", "/post/info.do?postId="+postId);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
-		
-			// [예외 발생] 오류 응답 반환
+
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postWriteAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "CommentControllerImpl", "postWriteAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 	
-	private CommentDTO.Write write(HttpServletRequest request) {
-		String strPostId = request.getParameter("postId");
-        long postId = Long.parseLong(strPostId);
+	
+	private CommentDTO.Write mapToWriteDTO(HttpServletRequest request) {
+
+        long postId = Long.parseLong(request.getParameter("postId"));
 		long memberId = SessionUtils.getLoginMember(request).getMemberId();
-        String strParentId = request.getParameter("parentId");
-        Long parentId = (strParentId == null || strParentId.isBlank()) ? null : Long.parseLong(strParentId);
-        String strMentionId = request.getParameter("mentionId");
-        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
 		String content = request.getParameter("content");
+		
+        String strParentId = request.getParameter("parentId");
+        String strMentionId = request.getParameter("mentionId");
+        Long parentId = strParentId == null || strParentId.isBlank() ? null : Long.parseLong(strParentId);
+        Long mentionId = strMentionId == null || strMentionId.isBlank() ? null : Long.parseLong(strMentionId);
+    
        return new CommentDTO.Write(postId, memberId, parentId, mentionId, content);
 	}
 
@@ -132,33 +147,45 @@ public class CommentControllerImpl implements CommentController {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
+			
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
+			}
 
 			
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성=
-	        CommentDTO.Edit edit = edit(request);
-
-			commentService.edit(edit);
+			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성=
+			commentService.edit(mapToEditDTO(request));
 			
-			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			
+			// [4] JSON 응답 반환
+			String boardType = request.getParameter("boardType");
+			String postId = request.getParameter("postId");
+			String responseURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			APIResponse rp = APIResponse.success("댓글을 수정했습니다", responseURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
-			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "CommentControllerImpl", "postEditAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 	
-	private CommentDTO.Edit edit(HttpServletRequest request){
-		String strCommentId = request.getParameter("commentId");
-        long commentId = Long.parseLong(strCommentId);
-        String strMentionId = request.getParameter("mentionId");
-        Long mentionId = (strMentionId == null || strMentionId.isBlank()) ? null : Long.parseLong(strMentionId);
+	
+	private CommentDTO.Edit mapToEditDTO(HttpServletRequest request){
+
+        Long commentId = Long.parseLong(request.getParameter("commentId"));
         String content = request.getParameter("content");
-        return new CommentDTO.Edit(commentId, mentionId, content);
+        return new CommentDTO.Edit(commentId, content);
 	}
 
 
@@ -168,25 +195,39 @@ public class CommentControllerImpl implements CommentController {
 			
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
+			
+			
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
+			}
+						
 
 			
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String strCommentId = request.getParameter("commentId");
-			long commentId = Long.parseLong(strCommentId);
-	        
+			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			long commentId = Long.parseLong(request.getParameter("commentId"));
 			commentService.remove(commentId);
 			
 			
-			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			// [4] JSON 응답 반환
+			String boardType = request.getParameter("boardType");
+			String postId = request.getParameter("postId");
+			String responseURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			APIResponse rp = APIResponse.success("댓글을 삭제했습니다", responseURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
-			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postRemoveAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "CommentControllerImpl", "postRemoveAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 
