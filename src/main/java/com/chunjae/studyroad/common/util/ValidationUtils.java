@@ -42,7 +42,7 @@ public class ValidationUtils {
 	public static final int MIN_LANGTH_ADDRESS = 20;
 	public static final int MAX_LANGTH_ADDRESS = 100;
 	public static final int MAX_LANGTH_TITLE = 30;
-	public static final int MAX_LANGTH_CONTENT_POST = 20; //2000
+	public static final int MAX_LANGTH_CONTENT_POST = 50; //2000
 	public static final int MAX_LANGTH_CONTENT_COMMENT = 20; // 100W
 	
 	
@@ -112,22 +112,22 @@ public class ValidationUtils {
 	}};
 
 	public static final Map<String, String> ORDER_POST = new LinkedHashMap<>() {{
-	    put("LIKE", "추천순");
-	    put("VIEW_COUNT", "조회순");
-	    put("LATEST", "최신순");
+	    put("1", "추천순");
+	    put("2", "조회순");
+	    put("3", "최신순");
 	}};
 
 	public static final Map<String, String> ORDER_COMMENT = new LinkedHashMap<>() {{
-	    put("LIKE", "추천순");
-	    put("OLDEST", "오래된순");
-	    put("LATEST", "최신순");
+	    put("1", "추천순");
+	    put("2", "오래된순");
+	    put("3", "최신순");
 	}};
 
 	public static final Map<String, String> OPTION_SEARCH = new LinkedHashMap<>() {{
-	    put("NICKNAME", "작성자");
-	    put("TITLE", "제목");
-	    put("CONTENT", "본문");
-	    put("TITLE_CONTENT", "제목+본문");
+	    put("1", "작성자");
+	    put("2", "제목");
+	    put("3", "본문");
+	    put("4", "제목+본문");
 	}};
 	
 

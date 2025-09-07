@@ -198,8 +198,9 @@ public class PostDTO {
         private Integer grade;
         private String content;
         private Boolean isNotice;
+        private Boolean isAdmin;
 
-        public Write(Long memberId, String title, String boardType, String category, Integer grade, String content, Boolean isNotice) {
+        public Write(Long memberId, String title, String boardType, String category, Integer grade, String content, Boolean isNotice, Boolean isAdmin) {
             this.memberId = memberId;
             this.title = title;
             this.boardType = boardType;
@@ -207,6 +208,7 @@ public class PostDTO {
             this.grade = grade;
             this.content = content;
             this.isNotice = isNotice;
+            this.isAdmin = isAdmin;
         }
 
         public Long getMemberId() {
@@ -233,9 +235,14 @@ public class PostDTO {
             return content;
         }
 
-        public Boolean getNotice() {
+        public Boolean isNotice() {
             return isNotice;
         }
+        
+        public Boolean isAdmin() {
+            return isAdmin;
+        }
+    
     }
 
     
