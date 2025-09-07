@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.sql.DataSource;
 
 import com.chunjae.studyroad.common.dto.Page;
+import com.chunjae.studyroad.common.exception.AccessException;
 import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.exception.ServiceException;
@@ -254,10 +255,11 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public void remove(Long postId) {
 		try {
-			if (Objects.equals(postDAO.updateStatus(postId, "REMOVED"), 1)) {
-			throw new BusinessException("게시글 삭제 실패하셨습니다");
-
+				
+			if (!Objects.equals(postDAO.updateStatus(postId, "REMOVED"), 1)) {
+				throw new BusinessException("게시글 삭제 실패하셨습니다");
 			}
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			

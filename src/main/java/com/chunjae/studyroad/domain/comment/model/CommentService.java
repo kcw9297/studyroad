@@ -54,9 +54,9 @@ public interface CommentService {
 
     /**
      * 댓글 삭제
-     * @param commentId 삭제 대상 댓글번호 (PK)
+     * @param request 삭제 요청 DTO
      */
-    void remove(Long commentId);
+    void remove(CommentDTO.Remove request);
 
 
     /**

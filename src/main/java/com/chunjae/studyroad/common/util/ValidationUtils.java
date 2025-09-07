@@ -53,6 +53,15 @@ public class ValidationUtils {
 	public static final int PAGE_SIZE_POST = 10;
 	public static final int LIMIT_POST_HOME = 5; // HOME (Index) 페이지에 표시할 게시글 개수
 	
+	// 기타 상수
+	public static final String ADMIN = "ADMIN";
+	public static final String ACTIVE = "ACTIVE";
+	public static final String BANNED = "BANNED";
+	public static final String QUITED = "QUITED";
+	
+	
+	// 검색에 요구되는 값
+	public static final List<String> LIST_BOARD_TYPES_ONLY_ADMIN = List.of("1", "2");
 	
 	public static final List<Integer> LIST_GRADES = List.of(1, 2, 3);
 	
@@ -183,7 +192,11 @@ public class ValidationUtils {
 	
 	public static String getCategoryName(String category) {
 		return CATEGORY_ALL.getOrDefault(category, null);
-		
+	}
+	
+	
+	public static boolean isNewsOrNotify(String boardType) {
+		return LIST_BOARD_TYPES_ONLY_ADMIN.contains(boardType);
 	}
 
 }

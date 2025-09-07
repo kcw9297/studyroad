@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.common.dto.LoginMember;
+import com.chunjae.studyroad.common.exception.AccessException;
 import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.exception.ServiceException;
@@ -93,12 +94,10 @@ public class CommentServiceImpl implements CommentService {
       
 			Long commentId = commentDAO.save(request);
       
-			if (!Objects.nonNull(commentId)) {
-				throw new BusinessException("댓글 작성 실패했습니다");
-			} else {
-				return commentId;
-			}
+			if (!Objects.nonNull(commentId)) throw new BusinessException("댓글 작성에 실패했습니다");
+			else return commentId;
 
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
@@ -116,9 +115,22 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void edit(CommentDTO.Edit request) {
 		try {
-			if (!Objects.equals(commentDAO.update(request), 1)) {
+			
+			// [1] 기존 댓글 조회
+			CommentDTO.Info info = commentDAO
+					.findbyId(request.getCommentId())
+					.orElseThrow(() -> new BusinessException("이미 삭제되었거나 존재하지 않는 댓글입니다"));
+		
+			
+			// [2] 검증 - 작성자가 아닌 경우 예외 반환
+			if (!Objects.equals(info.getMember().getMemberId(), request.getMemberId()))
+				throw new AccessException("접근 권한이 없습니다");
+
+			
+			// [3] - 수정 시도 후, 실패 시 예외 반환
+			if (!Objects.equals(commentDAO.update(request), 1)) 
 				throw new BusinessException("댓글 수정에 실패했습니다");
-			}
+			
 
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
@@ -137,10 +149,11 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void like(Long commentId) {
 		try {
-			if (!Objects.equals(commentDAO.updateLikeCount(commentId, 1L), 1)) {
-				throw new BusinessException("댓글 추천애 실패했습니다");
-
-			}
+			
+			if (!Objects.equals(commentDAO.updateLikeCount(commentId, 1L), 1)) 
+				throw new BusinessException("댓글 추천 처리에 실패했습니다");
+			
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
@@ -158,8 +171,9 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void unlike(Long commentId) {
 		try {
+			
 			if (!Objects.equals(commentDAO.updateLikeCount(commentId, -1L), 1)) {
-				throw new BusinessException("댓글 추천 취소에 실패했습니다");
+				throw new BusinessException("댓글 추천 취소 처리에 실패했습니다");
 			}
 
 		} catch (DAOException e) {
@@ -177,12 +191,25 @@ public class CommentServiceImpl implements CommentService {
 
 
 	@Override
-	public void remove(Long commentId) {	
+	public void remove(CommentDTO.Remove request) {	
 		try {
-			if (!Objects.equals(commentDAO.updateStatus(commentId, "REMOVED"), 1)) {
-				throw new BusinessException("댓글 삭제에 실패했습니다");
+			
+			// [1] 기존 댓글 조회
+			CommentDTO.Info info = commentDAO
+					.findbyId(request.getCommentId())
+					.orElseThrow(() -> new BusinessException("이미 삭제되었거나 존재하지 않는 댓글입니다"));
+		
+			// [2] 검증 - 관리자가 아닌데, 작성자도 아닌 경우 예외 반환
+			if (!Objects.equals(request.getStatus(), ValidationUtils.ADMIN) &&
+					!Objects.equals(info.getMember().getMemberId(), request.getMemberId()))
+				throw new AccessException("접근 권한이 없습니다");
 
-			}
+			
+			// [3] - 삭제 시도 후, 삭제 실패 시 예외 반환
+			if (!Objects.equals(commentDAO.updateStatus(request.getCommentId(), "REMOVED"), 1))
+				throw new BusinessException("댓글 삭제에 실패했습니다");
+			
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
@@ -201,6 +228,9 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public void quit(Long memberId) {
 		try {
+			
+			
+			
 			commentDAO.updateStatusByMemberId(memberId, "EXIST", "QUITED");
 
 		} catch (DAOException e) {

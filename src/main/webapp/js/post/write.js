@@ -13,11 +13,20 @@ $(document).ready(function() {
 	
   $("#writePostForm").on("submit", function(e) {
     e.preventDefault();
-
-	if (boardType == "3" && !checkGrade()) return;	
 	
-	// 유효성 검사
-	if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;		
+	if (memberStatus === "ADMIN") {
+	    if (boardType === "3" || boardType === "4") {
+	        if (!checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    } else {
+	        if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    }
+	} else {
+	    if (boardType === "3") {
+	        if (!checkGrade() || !checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    } else {
+	        if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    }
+	}
 	
 	// 요청 수행
 	sendAJAX(this);
