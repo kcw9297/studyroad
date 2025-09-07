@@ -134,8 +134,8 @@ class CommentDAOImpl implements CommentDAO {
 			StringBuilder sqlBuilder = new StringBuilder("SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id ");
 			
 			// 만약 commentIds 가 비어있으면, WHERE 조건문을 생성하지 않음
-			if (Objects.equals(commentIds.size(), 0)) sqlBuilder.append("ORDER BY c.comment_id");
-			else sqlBuilder.append(String.format("WHERE comment_id IN %s ORDER BY c.comment_id", placeholders));
+			if (commentIds.isEmpty()) sqlBuilder.append("ORDER BY c.comment_id");
+			else sqlBuilder.append(String.format("WHERE c.parent_id IN %s ORDER BY c.comment_id", placeholders));
 			String sql = sqlBuilder.toString();
 			
 			// [2] sql 수행
@@ -182,7 +182,7 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public Optional<CommentDTO.Info> findbyId(Long commentId) {
 		try (Connection connection = dataSource.getConnection();
-		     PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_FIND_BY_ID)) {
+		     PreparedStatement pstmt = connection.prepareStatement(CommentSQL.SQL_COMMENT_FIND_BY_ID)) {
 				
 				// [1] 파라미터 세팅
 				pstmt.setLong(1, commentId);
@@ -228,7 +228,7 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public Long save(CommentDTO.Write request) {
 		try (Connection connection = dataSource.getConnection();
-		     PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+		     PreparedStatement pstmt = connection.prepareStatement(CommentSQL.SQL_COMMENT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 				pstmt.setLong(1, request.getPostId());
@@ -266,7 +266,7 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public Integer update(CommentDTO.Edit request) {
     	try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_UPDATE)) {
+				 PreparedStatement pstmt = connection.prepareStatement(CommentSQL.SQL_COMMENT_UPDATE)) {
 				
 				// [1] 파라미터 세팅
 	    		pstmt.setString(1, request.getContent());
@@ -290,7 +290,7 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public Integer updateLikeCount(Long commentId, Long amount) {
     	try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_UPDATE_LIKECOUNT)) {
+				 PreparedStatement pstmt = connection.prepareStatement(CommentSQL.SQL_COMMENT_UPDATE_LIKECOUNT)) {
 				
 				// [1] 파라미터 세팅
 	    		pstmt.setLong(1, amount);
@@ -314,7 +314,7 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public Integer updateStatus(Long commentId, String status) {
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_UPDATE_STATUS)) {
+			 PreparedStatement pstmt = connection.prepareStatement(CommentSQL.SQL_COMMENT_UPDATE_STATUS)) {
 				
 				// [1] 파라미터 세팅
 				pstmt.setString(1, status);
@@ -338,7 +338,7 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(CommentSQL.SQL_COMMENT_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 

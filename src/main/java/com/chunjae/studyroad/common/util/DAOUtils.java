@@ -13,37 +13,6 @@ import com.chunjae.studyroad.common.exception.UtilsException;
  */
 public class DAOUtils {
 
-    // 사용 SQL
-    public static final String SQL_MEMBER_FIND_BY_ID = "SELECT * FROM member WHERE member_id = ?";
-    public static final String SQL_MEMBER_FIND_BY_EMAIL = "SELECT * FROM member WHERE email = ?";
-    public static final String SQL_MEMBER_FIND_BY_NICKNAME = "SELECT * FROM member WHERE nickname = ?";
-    public static final String SQL_MEMBER_SAVE = "INSERT INTO member(name, nickname, email, password, zipcode, address) VALUES (?, ?, ?, ?, ?, ?)";
-    public static final String SQL_MEMBER_UPDATE_NAME = "UPDATE member SET name = ? WHERE member_id = ?";
-    public static final String SQL_MEMBER_UPDATE_NICKNAME = "UPDATE member SET nickname = ? WHERE member_id = ?";
-    public static final String SQL_MEMBER_UPDATE_PASSWORD = "UPDATE member SET password = ? WHERE member_id = ?";
-    public static final String SQL_MEMBER_UPDATE_PASSWORD_BY_EMAIL = "UPDATE member SET password = ? WHERE email = ?";
-    public static final String SQL_MEMBER_UPDATE_ADDRESS = "UPDATE member SET zipcode = ?, address = ? WHERE member_id = ?";
-    public static final String SQL_MEMBER_UPDATE_STATUS = "UPDATE member SET status = ?, quited_at = ? WHERE member_id = ? AND status = ?";
-    public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name) VALUES (?, ?, ?)";
-    public static final String SQL_FILE_FIND_BY_POSTID = "SELECT file_id, post_id, original_name, stored_name FROM file where post_id = ?";
-    public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
-
-    public static final String SQL_COMMENT_FIND_BY_ID = "SELECT c.comment_id, c.post_id, c.parent_id, c.content, c.written_at, c.edited_at, c.mention_id, c.status, c.likeCount, m.member_id, m.name, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE c.comment_id = ?";
-    public static final String SQL_COMMENT_SAVE = "INSERT INTO comment(post_id, member_id, parent_id, mention_id, content) VALUES (?, ?, ?, ?, ?)";
-    public static final String SQL_COMMENT_UPDATE = "UPDATE comment SET content = ? WHERE comment_id = ?";
-    public static final String SQL_COMMENT_UPDATE_STATUS = "UPDATE comment SET status = ? WHERE comment_id = ?";
-    public static final String SQL_COMMENT_UPDATE_STATUS_BY_MEMBERID = "UPDATE comment SET status = ? WHERE member_id = ? AND status = ?";
-    public static final String SQL_COMMENT_UPDATE_LIKECOUNT = "UPDATE comment SET likeCount = likeCount + ? WHERE comment_id = ?";
-    public static final String SQL_REPORT_LIST = "SELECT * FROM report ORDER BY reported_at DESC";
-    public static final String SQL_REPORT_SAVE = "INSERT INTO report(member_id, target_id, target_type, reason) VALUES (?, ?, ?, ?)";
-    public static final String SQL_REPORT_UPDATE_STATUS = "UPDATE report SET status = ? WHERE report_id = ?";
-    public static final String SQL_REPORT_UPDATE_STATUS_BY_MEMBERID = "UPDATE report SET status = ? WHERE member_id = ? AND status = ?";
-    public static final String SQL_LIKE_EXISTS = "SELECT like_id FROM likes WHERE member_id = ? AND target_id = ? AND target_type = ?";
-    public static final String SQL_LIKE_SAVE = "INSERT INTO likes(member_id, target_id, target_type) VALUES (?, ?, ?)";
-    public static final String SQL_LIKE_DELETE = "DELETE FROM likes WHERE like_id = ?";
-    public static final String SQL_LIKE_UPDATE_STATUS = "UPDATE likes SET status = ? WHERE like_id = ?";
-    public static final String SQL_LIKE_UPDATE_STATUS_BY_MEMBERID = "UPDATE likes SET status = ? WHERE member_id = ? AND status = ?";
-    
     // DAO 예외 메세지
     public static final String MESSAGE_SQL_EX = "SQL 처리 실패! 오류 원인 = %s\n";
     public static final String MESSAGE_EX = "기타 오류로 DAO 오류 발생! 오류 원인 = %s\n";

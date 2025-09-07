@@ -12,7 +12,7 @@
 	const memberStatus = "${loginMember.status}";
 	const postId = ${postId};
 	const pageSizeComment = ${pageSizeComment};
-	const loginMemberId = ${empty sessionScope.loginMember ? -1 : sessionScope.loginMember.memberId};
+	const loginMemberId = ${empty loginMember ? -1 : loginMember.memberId};
 </script>
 
 <fmt:setLocale value="ko_KR" /> <%-- 한국어 시간 --%>
@@ -27,21 +27,57 @@
 		<h1 class="article-title">${data.title}</h1>
 		<div class="article-info">
 			<div class="article-member">
-				<div>${data.member.nickname}</div>
+				<div>${data.notice ? '관리자' : data.member.nickname}</div>
 				<div><fmt:formatDate value="${data.writtenAt}" pattern="${dateTime}" /></div>
 				<div>조회수 <fmt:formatNumber value="${data.views}" type="number" /></div>
 				<div class="post-like-count">추천수 <fmt:formatNumber value="${data.likeCount}" type="number" /></div>
 			</div>
-			<div class="article-system">
-				<c:if test="${data.member.memberId eq sessionScope.loginMember.memberId}">
-					<a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update"><img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정</a>
-					<a href='javascript:void(0)' class="article-remove" onclick="removePost(${data.postId})"><img src="/file/display.do?fileName=delete3.png&type=BASE" width="16" height="16"/>삭제</a>
+		<div class="article-system">
+
+		    <!-- 로그인 상태 -->
+		    <c:if test="${not empty loginMember}">
+		
+		        <!-- 수정 버튼 -->
+				<c:if test="${data.member.memberId eq loginMember.memberId}">
+				    <a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update">
+				        <img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
+				    </a>
 				</c:if>
-				<c:if test="${data.member.memberId ne sessionScope.loginMember.memberId}">
-					<a class="article-like" href='javascript:void(0)' onclick="likePost(${data.postId})"><img src="/file/display.do?fileName=recommend1.png&type=BASE" width="16" height="16"/>추천</a>
-					<a class="article-report" href='javascript:void(0)' onclick="reportPost(${data.postId})"><img src="/file/display.do?fileName=report.png&type=BASE" width="16" height="16"/>신고</a>
+				
+				<c:if test="${loginMember.status eq 'ADMIN' and (boardType ne '3' and boardType ne '4')}">
+				    <a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update">
+				        <img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
+				    </a>
 				</c:if>
-			</div>
+		
+		        <!-- 삭제 버튼 -->
+		        <c:if test="${data.member.memberId eq loginMember.memberId or loginMember.status eq 'ADMIN'}">
+		            <a href='javascript:void(0)' class="article-remove" onclick="removePost(${data.postId})">
+		                <img src="/file/display.do?fileName=delete3.png&type=BASE" width="16" height="16"/>삭제
+		            </a>
+		        </c:if>
+		
+		        <!-- 추천 버튼 -->
+		        <c:if test="${data.member.memberId ne loginMember.memberId and (boardType eq '2' or boardType eq '3' or boardType eq '4')}">
+		            <a class="article-like" href='javascript:void(0)' onclick="likePost(${data.postId})">
+		                <img src="/file/display.do?fileName=recommend1.png&type=BASE" width="16" height="16"/>추천
+		            </a>
+		        </c:if>
+		
+		        <!-- 신고 버튼 -->
+		        <c:if test="${data.member.memberId ne loginMember.memberId 
+		                     and not data.notice 
+		                     and boardType ne '1' 
+		                     and boardType ne '2'}">
+		            <a class="article-report" href='javascript:void(0)' onclick="reportPost(${data.postId})">
+		                <img src="/file/display.do?fileName=report.png&type=BASE" width="16" height="16"/>신고
+		            </a>
+		        </c:if>
+		
+		    </c:if>
+		
+		</div>
+		
 		</div>
 	</div>
 	<div class="article-content">
@@ -60,20 +96,23 @@
 	<button type="button" onclick="location.href='/post/list.do?boardType=${boardType}&page=1'">목록</button>
 </div>
 
-
-<div class="container reply">
-	<div class="reply-top">
-		<div class="reply-count">
-			<div>댓글</div>&nbsp;
-			<div>${data.commentCount}</div>
+<c:if test="${boardType ne '1' and not data.notice}">
+	<div class="container reply">
+		<div class="reply-top">
+			<div class="reply-count">
+				<div>댓글</div>&nbsp;
+				<div>${data.commentCount}</div>
+			</div>
+			<div class="reply-notice">
+				<p>규칙 위반(욕설, 비방, 도배 등)은 사전 통보 없이 삭제될 수 있습니다.</p>
+			</div>
 		</div>
-		<div class="reply-notice">
-			<p>규칙 위반(욕설, 비방, 도배 등)은 사전 통보 없이 삭제될 수 있습니다.</p>
-		</div>
+		<fieldset class="reply-comment">
+			<textarea id="content" name="content" class="content" placeholder="댓글은 최대 ${maxLengthContentComment}byte 까지 입력 가능합니다."></textarea>
+			<button type="button" class="write parent">등록</button>
+		</fieldset>
 	</div>
-	<fieldset class="reply-comment">
-		<textarea id="content" name="content" class="content" placeholder="댓글은 최대 ${maxLengthContentComment}byte 까지 입력 가능합니다."></textarea>
-		<button type="button" class="write parent">등록</button>
-	</fieldset>
-</div>
-<ul class="container reply-list"></ul>
+	<ul class="container reply-list"></ul>
+</c:if>
+
+

@@ -2,6 +2,8 @@ package com.chunjae.studyroad.common.util;
 
 import java.util.*;
 import java.io.*;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import jakarta.servlet.http.*;
 
@@ -72,8 +74,7 @@ public class HttpUtils {
 			case "3" : request.setAttribute("categories", ValidationUtils.CATEGORY_PROBLEM); break;
 			case "4" : request.setAttribute("categories", ValidationUtils.CATEGORY_COMMUNITY); break;
 		}
-		
-		request.setAttribute("allCategories", ValidationUtils.CATEGORY_ALL);
+	
 		request.setAttribute("grades", ValidationUtils.LIST_GRADES);
 		request.setAttribute("searchOptions", ValidationUtils.OPTION_SEARCH);
 		request.setAttribute("postOrders", ValidationUtils.ORDER_POST);
@@ -94,6 +95,8 @@ public class HttpUtils {
 		request.setAttribute("date", ValidationUtils.PATTERN_DATE);
 		request.setAttribute("time", ValidationUtils.PATTERN_TIME);
 		request.setAttribute("dateTime", ValidationUtils.PATTERN_DATE_TIME);
+		request.setAttribute("allCategories", ValidationUtils.CATEGORY_ALL);
+		request.setAttribute("allCategoriesJSON", JSONUtils.toJSON(ValidationUtils.CATEGORY_ALL));
 	}
 	
 	
@@ -346,13 +349,15 @@ public class HttpUtils {
 		try {
 			
 			// [1] 접근 주소정보 확인
-			String uri = request.getRequestURI();		// /member/info.do
-			String query = request.getQueryString();    // page=1&order=NEWEST
-			String fullURL = (Objects.isNull(query)) ? uri : String.format("%s?%s", uri, query);
-			
-			
-			// [2] 로그인 페이지에 리다이렉트
-			response.sendRedirect(String.format("/login.do?returnURL=%s", fullURL));
+	        String uri = request.getRequestURI();        // 예: /post/info.do
+	        String query = request.getQueryString();     // 예: boardType=4&postId=1
+	        String fullURL = (Objects.isNull(query)) ? uri : String.format("%s?%s", uri, query);
+
+	        // [2] returnURL 인코딩
+	        String encodedURL = URLEncoder.encode(fullURL, StandardCharsets.UTF_8.toString());
+
+	        // [3] 로그인 페이지로 리다이렉트
+	        response.sendRedirect(String.format("/login.do?returnURL=%s", encodedURL));
 			
 			
 		} catch (Exception e) {

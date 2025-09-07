@@ -1,8 +1,8 @@
 package com.chunjae.studyroad.controller.home;
 
-import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.util.HttpUtils;
-import com.chunjae.studyroad.domain.member.model.*;
+import com.chunjae.studyroad.common.util.ValidationUtils;
+
 
 import jakarta.servlet.http.*;
 
@@ -13,9 +13,6 @@ public class HomeControllerImpl implements HomeController {
 	
 	// BaseController 인스턴스
 	private static final HomeControllerImpl INSTACE = new HomeControllerImpl();
-	
-	// 사용 서비스
-	private final MemberService memberService = MemberServiceImpl.getInstance();
 	
 	// 생성자 접근 제한
 	private HomeControllerImpl() {}
@@ -34,8 +31,8 @@ public class HomeControllerImpl implements HomeController {
 			HttpUtils.forwardPageFrame(request, response);
 			
 		} catch (Exception e) {
-			System.out.printf("[getHomeView] - editor view forward 실패! 원인 : %s\n", e);
-			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "HomeControllerImpl", "getHomeView", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 		
 	}
