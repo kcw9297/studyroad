@@ -18,11 +18,19 @@
 <form class="container information" id="writePostForm" method="post" enctype="multipart/form-data">
 	<div class="information-form">
 		<label for="nickname">작성자</label>
-		<input id="nickname" name="nickname" type="text" value="${loginMember.nickname}" disabled/>
+		<input id="nickname" name="nickname" type="text" 
+		<c:choose>
+			<c:when test="${loginMember.status eq 'ADMIN'}">
+				value="관리자"
+			</c:when>
+			<c:otherwise>
+				value="${loginMember.nickname}"
+			</c:otherwise>
+		</c:choose>
+		disabled/>
 	</div>
 	
-	<%--  관리자는 분류를 공지사항 에서만 선택 가능 --%>
-	<c:if test="${memberStatus != 'ADMIN' || boardType == 1 || boardType == 2 }">
+	<c:if test="${loginMember.status ne 'ADMIN' or (boardType eq '1' or boardType eq '2')}">
 		<div class="information-form">
 			<label for="category">분류</label>
 			<select id="category" name="category">
@@ -34,8 +42,7 @@
 		</div>
 	</c:if>	
 
-	<%-- 학년은 문제 공유에서만 선택 가능 --%>
-	<c:if test="${boardType == 3}">
+	<c:if test="${boardType eq 3}">
 		<div class="information-form">
 			<label for="grade">학년</label>
 			<select id="grade" name="grade">

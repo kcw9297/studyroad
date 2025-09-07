@@ -170,6 +170,8 @@
 		  </c:choose>
 	</div>
 		<div class="board-new">
-    	<button type="button" onclick="location.href='/post/write.do?boardType=${boardType}'">글쓰기</button>
+		<c:if test="${(not empty loginMember and loginMember.status eq 'ADMIN' and (boardType eq '1' or boardType eq '2')) or (boardType eq '3' or boardType eq '4')}">
+			<button type="button" onclick="location.href='/post/write.do?boardType=${boardType}'">글쓰기</button>
+		</c:if>
     </div>
 </div>

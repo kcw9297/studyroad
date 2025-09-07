@@ -166,12 +166,18 @@ public class CommentDTO {
      */
     public static class Edit {
 
+    	private Long memberId;
         private Long commentId;
         private String content;
 
-        public Edit(Long commentId, String content) {
+        public Edit(Long memberId, Long commentId, String content) {
+        	this.memberId = memberId;
             this.commentId = commentId;
             this.content = content;
+        }
+        
+        public Long getMemberId() {
+            return memberId;
         }
 
         public Long getCommentId() {
@@ -180,6 +186,36 @@ public class CommentDTO {
 
         public String getContent() {
             return content;
+        }
+    }
+    
+    
+    
+    /**
+     * 댓글 DTO - 삭제 요청
+     */
+    public static class Remove {
+
+    	private Long memberId;
+        private Long commentId;
+        private String status;
+
+        public Remove(Long memberId, Long commentId, String status) {
+        	this.memberId = memberId;
+            this.commentId = commentId;
+            this.status = status;
+        }
+        
+        public Long getMemberId() {
+            return memberId;
+        }
+
+        public Long getCommentId() {
+            return commentId;
+        }
+
+        public String getStatus() {
+            return status;
         }
     }
 }

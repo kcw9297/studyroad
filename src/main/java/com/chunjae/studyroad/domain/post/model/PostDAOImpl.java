@@ -376,7 +376,7 @@ class PostDAOImpl implements PostDAO {
 	    		pstmt.setString(4, request.getCategory());
 	    		pstmt.setInt(5, request.getGrade());
 	    		pstmt.setString(6, request.getContent());
-	    		pstmt.setBoolean(7, request.getNotice());
+	    		pstmt.setBoolean(7, request.isNotice());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 
