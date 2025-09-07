@@ -45,30 +45,60 @@ $(document).ready(function() {
 	  
 	  
 	  
-  $(document).on("click", ".pagination .page-btn", function(e) {
-     e.preventDefault();
-
-     const page = $(this).data("page"); // 버튼에 data-page 넣어둠
-
+  $(document).on("click", ".post-search-button", function(e) {
+     e.preventDefault();	 
+	 
      // 현재 폼 데이터 수집
      const formData = $("#post-search-form").serializeArray();
      const params = {};
 
-     $.each(formData, function(i, field) {
-       // 값이 있는 것만 담기
-       if (field.value !== "") {
-         params[field.name] = field.value;
-       }
-     });
+	 $.each(formData, function(i, field) {
+	   if (field.value !== "") {
+	     if (params[field.name]) {
+			
+	       // 이미 있으면 배열에 추가 (카테고리는 복수개 선택 가능)
+	       if (!Array.isArray(params[field.name])) {
+	         params[field.name] = [params[field.name]];
+	       }
+		   
+	       params[field.name].push(field.value);
+	     } else {
+	       params[field.name] = field.value;
+	     }
+	   }
+	 });
 
-     // 페이지 값만 덮어쓰기
-     params.page = page;
+	 const keyword = $("#keyword").val().trim();
+	 
+	 // 검색어가 한 글자면 false
+	 if (keyword.length == 1) {
+	 	   showAlertModal("검색어는 두 글자 이상 입력해야 합니다");
+	 	   return; 
+	 }
+	 
+	 // 검색어는 있는데 옵션이 선택되지 않은 경우
+	 if (!params.option && keyword.length > 0) {
+		   showAlertModal("검색어 옵션을 선택해 주세요");
+		   return;
+	 }
 
-     // 쿼리스트링 생성
-     const query = $.param(params);
+	 // 옵션은 있는데 검색어가 비어 있는 경우
+	 if (params.option && keyword.length === 0) {
+		   showAlertModal("검색어를 입력해 주세요");
+		   return;
+	 }
 
-     // 이동
-     location.href = "/post/list.do?" + query;
+	// 페이지 : 1
+	params.boardType = boardType;
+	params.page = 1;
+	
+	// 쿼리스트링 생성
+	const queryString = $.param(params, true);
+	//console.log("검색 파라미터:", params);
+	//console.log("쿼리스트링:", queryString);
+
+	// 이동
+	window.location.href = "/post/list.do?" + queryString;
    });	  
 	  
 	

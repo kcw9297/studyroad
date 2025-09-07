@@ -97,13 +97,15 @@ public class PostControllerImpl implements PostController {
 	        
 			// [2] service 조회
 			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
-			System.out.printf("pageResponse = %s, pageResponse.data = %s\n", 
-					pageResponse.getData(), pageResponse.getData().size());
+			System.out.println(pageResponse.toString());
 			
 			// [3] 파라미터 삽입
 			request.setAttribute("page", pageResponse);
 			HttpUtils.setPostConstantAttributes(request, request.getParameter("boardType"));
 
+			
+			
+			
 			// [4] JSON 응답 반환
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
 			HttpUtils.forwardPageFrame(request, response);
@@ -124,12 +126,28 @@ public class PostControllerImpl implements PostController {
 		String keyword = request.getParameter("keyword");
 		String option = request.getParameter("option");
 		String boardType = request.getParameter("boardType");
-		String[] arrayCategories = request.getParameterValues("categories");
+		String[] arrayCategories = request.getParameterValues("category");
 		String strGrade = request.getParameter("grade");
 		Integer grade = Objects.isNull(strGrade) || strGrade.isBlank() ? 0 : Integer.parseInt(strGrade);
 		
-		List<String> categories = new ArrayList<>();
 		
+		System.out.printf(
+			    "[Request Params]%n" +
+			    "- keyword     	: %s%n" +
+			    "- option      	: %s%n" +
+			    "- boardType   	: %s%n" +
+			    "- category		: %s%n" +
+			    "- grade(str)  	: %s%n" +
+			    "- grade(int)  	: %d%n",
+			    keyword,
+			    option,
+			    boardType,
+			    Arrays.toString(arrayCategories),
+			    strGrade,
+			    grade
+			);
+		
+		List<String> categories = new ArrayList<>();
 		if (Objects.nonNull(arrayCategories) && arrayCategories.length > 0)
 			categories.addAll(Arrays.asList(arrayCategories));
 		
@@ -178,7 +196,8 @@ public class PostControllerImpl implements PostController {
 			if (Objects.isNull(loginMember)) {
 				HttpUtils.redirectLogin(request, response);
 				return;
-			}
+			}	
+			
 
 			// [2] 필요 값 확인 - 값이 정상 존재하지 않으면 리다이렉트
 			Long postId = ValidationUtils.getId(request.getParameter("postId"));
@@ -190,8 +209,17 @@ public class PostControllerImpl implements PostController {
 			}
 			
 			
-			// [3] service 조회
+			// [3-1] service 조회 - 게시글
 			PostDTO.Info postInfo = postService.getInfo(postId);
+			
+			// 작성자가 아니면, 오류 페이지로 이동
+			if (Objects.equals(loginMember.getMemberId(), postInfo.getMember().getMemberId())) {
+				HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_ACCESS_ERROR);
+				return;
+			}
+			
+			
+			// [3-2] service 조회 - 게시글 내 파일
 			List<FileDTO.Info> files = fileService.getInfos(postId);
 			postInfo.setPostFiles(files);
 
@@ -329,9 +357,9 @@ public class PostControllerImpl implements PostController {
 		int grade = Objects.nonNull(strGrade) ? Integer.parseInt(request.getParameter("grade")) : 0;
 		String content = request.getParameter("content");
 		String strNotice = request.getParameter("notice");
-		Boolean notice = Boolean.parseBoolean(strNotice);
+		Boolean isNotice = Boolean.parseBoolean(strNotice);
 		
-		return new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
+		return new PostDTO.Write(memberId, title, boardType, category, grade, content, isNotice);
 	}
 
 	
