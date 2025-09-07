@@ -86,17 +86,21 @@ class PostDAOImpl implements PostDAO {
 			
 			// [1] 파라미터 세팅
 			List<Object> params = new ArrayList<>();
+			List<Object> pageParams = new ArrayList<>();
 			
 			// 동적 sql
-			String conditionStr = createPageSql(request, params);
-			StringBuilder sqlCount = new StringBuilder("SELECT COUNT(*) FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
-			StringBuilder sqlPage= new StringBuilder("SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
-			String countSql = sqlCount.append(conditionStr).toString();
-			String pageSql = sqlPage.append(conditionStr).toString();
+			StringBuilder conditionBuilder = createPageSqlBuilder(request, params);
+			StringBuilder sqlCountBuilder = new StringBuilder("SELECT COUNT(*) FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
+			StringBuilder sqlPageBuilder = new StringBuilder("SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
+			String countSql = sqlCountBuilder.append(conditionBuilder.toString()).toString();
+			String pageSql = sqlPageBuilder.append(conditionBuilder.append(" LIMIT ? OFFSET ?").toString()).toString();
 			
+			pageParams.addAll(params);
+			pageParams.add(request.getSize());
+			pageParams.add(request.getPage()*request.getSize());
 			
 			// 페이징 된 게시글들의 postId
-			Integer dataCount;
+			Integer dataCount = 0;
 
 			
 			// [2-1] 카운팅 쿼리
@@ -114,8 +118,8 @@ class PostDAOImpl implements PostDAO {
 			// [2-2] 페이징 쿼리
 			try (PreparedStatement pstmt = connection.prepareStatement(pageSql)) {
 
-				for (int i = 0; i < params.size(); i++) {
-					pstmt.setObject(i + 1, params.get(i));
+				for (int i = 0; i < pageParams.size(); i++) {
+					pstmt.setObject(i + 1, pageParams.get(i));
 				}
 
 				// SQL 수행 + 결과 DTO 생성 후 반환
@@ -134,7 +138,7 @@ class PostDAOImpl implements PostDAO {
 	}
     
     
-    private String createPageSql(Page.Request<PostDTO.Search> request, List<Object> allParams) {
+    private StringBuilder createPageSqlBuilder(Page.Request<PostDTO.Search> request, List<Object> allParams) {
     	
     	// [1] 검색 파라미터 문자를 저장할 문자열
     	StringBuilder condition = new StringBuilder();
@@ -214,18 +218,13 @@ class PostDAOImpl implements PostDAO {
 		else {
 			switch(order) {
 				case "1": condition.append(" ORDER BY p.like_count DESC"); break;
-				case "2": condition.append(" ORDER BY p.views ASC"); break;
+				case "2": condition.append(" ORDER BY p.views DESC"); break;
 			    case "3": condition.append(" ORDER BY p.written_at DESC"); break;
 			    default: condition.append(" ORDER BY p.written_at DESC"); break;
 			}
 		}
 		
-		
-		// [3-6] 페이징 - size, page
-		condition.append(" LIMIT ? OFFSET ?");
-    	allParams.add(size);
-    	allParams.add(page*size);
-    	return condition.toString();
+    	return condition;
     }
     
 	
@@ -235,7 +234,7 @@ class PostDAOImpl implements PostDAO {
 		// 카운트 쿼리 결과 반환
 		try	(ResultSet rs = pstmt.executeQuery()) {
 			if (rs.next()) return rs.getInt(1);
-			return null;
+			return 0;
 		}
 	}
 	
@@ -263,7 +262,7 @@ class PostDAOImpl implements PostDAO {
 						rs.getLong("comment_count"),
 					new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
 				));
-			return new Page.Response<>(data, request.getPage(), ValidationUtils.PAGE_SIZE_POST, request.getSize(), dataCount);
+			return new Page.Response<>(data, request.getPage(), ValidationUtils.GROUP_SIZE_POST, request.getSize(), dataCount);
 		}
 	}
 	

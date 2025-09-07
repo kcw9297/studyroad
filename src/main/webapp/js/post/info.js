@@ -147,13 +147,8 @@ function writeChild() {
 	submitForm.append("parentId", parentId);
 	submitForm.append("mentionId", mentionId);
 	submitForm.append("content", content);
+	submitForm.append("boardType", boardType);
 	console.log("부모댓글 제출 폼 : " + submitForm);
-	
-	console.log("FormData 확인 시작 ===");
-	for (let [key, value] of submitForm.entries()) {
-	  console.log(key, ":", value);
-	}
-	console.log("FormData 확인 끝 ===");
 	
 	
 	sendRequest("/api/comment/write.do", "post", submitForm)
@@ -690,20 +685,6 @@ function loadComments() {
 			// 실패 응답 JSON 파싱 후 보기
 			const response = xhr.responseJSON || {};
 			console.log("실패 응답:", response);
-			
-			// 로그인이 필요함을 안내하는 경우
-			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
-			
-			if (response.errorCode === 2) {
-				showConfirmModal(msg, function() {
-					if (response.redirectURL) {
-						window.location.href = response.redirectURL + "?returnURL=/post/info.do?boardType="+boardType+"postId="+postId;
-					}
-				});
-				
-			} else {
-				showAlertModal(msg);
-			}
 	    });
 	
 }

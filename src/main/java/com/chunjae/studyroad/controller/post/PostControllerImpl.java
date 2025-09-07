@@ -50,6 +50,8 @@ public class PostControllerImpl implements PostController {
 				HttpUtils.redirectHome(response);
 				return;
 			}
+			
+			System.out.println(postId);
 
 			
 			// [2-1] service 조회 - 게시글 정보 조회
@@ -93,8 +95,17 @@ public class PostControllerImpl implements PostController {
 
 			// [1] 페이징 요청 객체 생성
 			int page = ValidationUtils.getPage(request.getParameter("page"));
-			Page.Request<PostDTO.Search> search = new Page.Request<>(mapToSearchDTO(request), page, 10);
+			Page.Request<PostDTO.Search> search = new Page.Request<>(mapToSearchDTO(request), page, ValidationUtils.PAGE_SIZE_POST);
 	        
+			// 만약 게시판을 구분할 값이 없으면, 홈으로 리다이렉트
+			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
+			
+			if (Objects.isNull(boardType)) {
+				HttpUtils.redirectHome(response);
+				return;
+			}
+			
+			
 			
 			// [2] service 조회
 			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
@@ -266,8 +277,14 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.checkMethod(request, HttpUtils.GET);
 
 			
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String boardType = request.getParameter("boardType");
+			// [2] FORM 요청 파라미터 확인 
+			// 만약 게시판을 구분할 값이 없으면, 오류 응답 반환
+			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
+			
+			if (Objects.isNull(boardType)) {
+				HttpUtils.writeServerErrorJSON(response);
+				return;
+			}
 	        
 			
 			// [3] service 조회
@@ -293,13 +310,18 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.checkMethod(request, HttpUtils.GET);
 
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String boardType = request.getParameter("boardType");
+			// 만약 게시판을 구분할 값이 없으면, 오류 응답 반환
+			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
+			
+			if (Objects.isNull(boardType)) {
+				HttpUtils.writeServerErrorJSON(response);
+				return;
+			}
 
 			// [3] service 조회
 			List<PostDTO.Info> PostInfo = postService.getHomeList(boardType, ValidationUtils.LIMIT_POST_HOME); 
 			
 			// [4] JSON 응답 반환
-	        
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
@@ -328,8 +350,15 @@ public class PostControllerImpl implements PostController {
 			}
 			
 			// [2-2] 뉴스, 공지사항 작성 시 관리자 검증
-			String boardType = request.getParameter("boardType");
+			// 게시글 유형 값 자체가 없으면, 오류 응답 반환
+			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
 			
+			if (Objects.isNull(boardType)) {
+				HttpUtils.writeServerErrorJSON(response);
+				return;
+			}
+			
+			// 관리자 이외의 회원이 접근 시 접근 오류 응답 반환
 			if (ValidationUtils.isNewsOrNotify(boardType) && 
 					!Objects.equals(loginMember.getStatus(), ValidationUtils.ADMIN)) {
 				
@@ -405,9 +434,16 @@ public class PostControllerImpl implements PostController {
 				return;
 			}
 			
-			// [2-2] 뉴스, 공지사항 작성 시 관리자 검증
-			String boardType = request.getParameter("boardType");
+			// [2-2] 뉴스, 공지사항 수정 시 관리자 검증
+			// 게시글 유형 값 자체가 없으면, 오류 응답 반환
+			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
 			
+			if (Objects.isNull(boardType)) {
+				HttpUtils.writeServerErrorJSON(response);
+				return;
+			}
+			
+			// 관리자 이외의 회원이 접근 시 접근 오류 응답 반환
 			if (ValidationUtils.isNewsOrNotify(boardType) && 
 					!Objects.equals(loginMember.getStatus(), ValidationUtils.ADMIN)) {
 				

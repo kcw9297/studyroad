@@ -2,7 +2,6 @@ package com.chunjae.studyroad.controller.comment;
 
 import java.util.Objects;
 
-import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.dto.Page;
@@ -106,7 +105,9 @@ public class CommentControllerImpl implements CommentController {
 			
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("댓글 작성에 성공했습니다", "/post/info.do?postId="+postId);
+	        String boardType = request.getParameter("boardType");
+	        String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			APIResponse rp = APIResponse.success("댓글 작성에 성공했습니다", redirectURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 

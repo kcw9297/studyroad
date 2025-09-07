@@ -201,6 +201,7 @@ input, textarea, select, button {font-family:inherit;}
 .pagination{margin-top:20px; display:flex; justify-content:center; gap:10px;}
 .pagination span{color:var(--gray-text); font-size:var(--medium); cursor:pointer;}
 .pagination span:hover{color:var(--main); font-weight:700;}
+.pagination .now{color:var(--main);}
 .board-new{display:flex; justify-content:flex-end;}
 .board-new button{font-size:var(--medium); color:white; background:var(--main); border-radius:3px; border:none; padding:10px 20px;}
 .board-new button:hover{background:var(--hover);}

@@ -34,7 +34,7 @@ class FileDAOImpl implements FileDAO {
 	public List<FileDTO.Info> findAllByPostId(Long postId) {
 
 		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(DAOUtils.SQL_FILE_FIND_BY_POSTID)) {
+			 PreparedStatement pstmt = conn.prepareStatement(FileSQL.SQL_FILE_FIND_BY_POSTID)) {
 
 			// 파라미터 세팅
 			pstmt.setLong(1, postId);
@@ -78,7 +78,7 @@ class FileDAOImpl implements FileDAO {
 	public List<Long> saveAll(List<FileDTO.Store> requests) {
 
 		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(DAOUtils.SQL_FILE_SAVE_ALL, Statement.RETURN_GENERATED_KEYS)) {
+			 PreparedStatement pstmt = conn.prepareStatement(FileSQL.SQL_FILE_SAVE_ALL, Statement.RETURN_GENERATED_KEYS)) {
 
 			// 파라미터 세팅
 			for (FileDTO.Store request : requests) {
@@ -122,7 +122,7 @@ class FileDAOImpl implements FileDAO {
 	public Integer deleteAllByIds(List<Long> fileIds) {
 
 		try (Connection conn = dataSource.getConnection();
-			 PreparedStatement pstmt = conn.prepareStatement(DAOUtils.SQL_FILE_DELETE_ALL_BY_ID + DAOUtils.createPlaceholder(1, fileIds.size()))) {
+			 PreparedStatement pstmt = conn.prepareStatement(FileSQL.SQL_FILE_DELETE_ALL_BY_ID + DAOUtils.createPlaceholder(1, fileIds.size()))) {
 
 			// 파라미터 세팅
 			for (int i = 0; i < fileIds.size(); i++) pstmt.setLong(i+1, fileIds.get(i));

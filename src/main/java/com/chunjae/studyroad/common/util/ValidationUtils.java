@@ -50,7 +50,8 @@ public class ValidationUtils {
 	public static final int MAX_SIZE_FILE = 5*1024*1024; // 한 파일당 최대 5MB 초과불가
 	public static final int MAX_COUNT_FILE = 3; // 최대 등록가능 파일 개수 3개
 	public static final int PAGE_SIZE_COMMENT = 5;
-	public static final int PAGE_SIZE_POST = 10;
+	public static final int PAGE_SIZE_POST = 5; // 10
+	public static final int GROUP_SIZE_POST = 5;
 	public static final int LIMIT_POST_HOME = 5; // HOME (Index) 페이지에 표시할 게시글 개수
 	
 	// 기타 상수
