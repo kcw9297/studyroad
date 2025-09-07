@@ -394,7 +394,7 @@ function checkCommentContent(fieldType = "#content") {
 		
 	// 빈 값이면 기본 안내문 삽입
 	if (isNullOrEmpty(content)) {
-		showAlertModal("본문을 입력해 주세요");
+		showAlertModal("내용을 입력해 주세요");
 		$(fieldType).focus();
 		return false;
 	}
@@ -441,4 +441,20 @@ function insertSelectedValue(selectedType, targetType) {
     } else {
         $(targetType).val("").prop("readonly", false);
     }
+}
+
+
+// 시간 포메팅
+function formatDateTime(date) {
+
+	//  날짜 포메팅 - 25.09.06. 오후 03:35
+	return new Date(date).toLocaleString("ko-KR", {
+	  year: "2-digit",
+	  month: "2-digit",
+	  day: "2-digit",
+	  hour: "2-digit",
+	  minute: "2-digit",
+	  hour12: true // 12시간제 (오전/오후)
+	});
+
 }

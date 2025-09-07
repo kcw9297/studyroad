@@ -27,19 +27,20 @@ public interface PostDAO {
     
     
     /**
-     * 홈 화면 최근 게시글
-     * @param boardType 게시판 정보
-     * @return Info     게시글정보 DTO 반환
+     * 게시글 유형 기반 게시글 조회 (limit)
+     * @param boardType 게시글이 속하는 게시글 유형 ("1", "2", "3", "4")
+     * @param limit		한 번에 조회해 올 게시글 개수 (SQL LIMIT)
+     * @return Info     조회된 게시글정보 DTO List 반환
      */
-    List<PostDTO.Info> home(String boardType);
+    List<PostDTO.Info> findAllByBoardType(String boardType, Integer limit);
     
     
     /**
-     * 알림 게시글
-     * @param boardType 게시판 정보
-     * @return Info     알림 게시글정보 DTO 반환
+     * 알림 게시글 조회 (isNotice = true)
+     * @param boardType 게시글이 속하는 게시글 유형 ("1", "2", "3", "4")
+     * @return Info     조회된 게시글정보 DTO List 반환
      */
-    List<PostDTO.Info> notice(String boardType);
+    List<PostDTO.Info> findAllByBoardTypeAndIsNoticeTrue(String boardType);
 
 
     /**
@@ -66,6 +67,15 @@ public interface PostDAO {
      */
     Integer updateLikeCount(Long postId, Long amount);
 
+    
+    /**
+     * 게시글번호 기반 조회수 변경
+     * @param postId    삭제 대상 게시글번호 (PK)
+     * @param amount    변동 수량
+     * @return Integer  수정에 성공한 행 개수 반환 (성공 = 1)
+     */
+    Integer updateViews(Long postId, Long amount);
+    
 
     /**
      * 게시글번호 기반 상태 댓글수 변경

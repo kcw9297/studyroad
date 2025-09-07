@@ -27,17 +27,17 @@ public interface PostService {
 
 
     /**
-     * 최근 게시글 검색
-     * @param boardType 게시판 정보
-     * @return Info     검색된 페이징된 게시글정보 DTO 반환
+     * HOME (Index) 페이지에 표시할 게시글 조회
+     * @param boardType 게시글이 속하는 게시판 유형 ("1", "2", "3", "4")
+     * @return Info     검색된 페이징된 게시글정보 DTO List 반환
      */
-    List<PostDTO.Info> getLatestList(String boardType);
+    List<PostDTO.Info> getHomeList(String boardType, Integer limit);
 
 
     /**
      * 알림 게시글 리스트
-     * @param boardType 게시판 정보
-     * @return Info     검색된 페이징된 게시글정보 DTO 반환
+     * @param boardType 게시글이 속하는 게시판 유형 ("1", "2", "3", "4")
+     * @return Info     검색된 페이징된 게시글정보 DTO List 반환
      */
     List<PostDTO.Info> getNoticeList(String boardType);
 
@@ -55,25 +55,32 @@ public interface PostService {
      * @param request   게시글 수정요청 DTO
      */
     void edit(PostDTO.Edit request);
+    
+    
+    /**
+     * 게시글 읽기 (회원이 게시글을 클릭한 경우)
+     * @param postId    대상 게시글번호 (PK)
+     */
+    void read(Long postId);
 
 
     /**
-     * 게시글 공감 수행
-     * @param postId    공감 개대상
+     * 게시글 추천 수행
+     * @param postId    대상 게시글번호 (PK)
      */
     void like(Long postId);
 
 
     /**
-     * 게시글 공감취소 수행
-     * @param postId    공감 개대상
+     * 게시글 추천취소 수행
+     * @param postId    대상 게시글번호 (PK)
      */
     void unlike(Long postId);
 
 
     /**
      * 댓글 추가 수행
-     * @param postId    공감 개대상
+     * @param postId    대상 게시글번호 (PK)
      */
     void comment(Long postId);
 

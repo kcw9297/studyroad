@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.Page;
+import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.util.*;
 import com.chunjae.studyroad.domain.file.dto.FileDTO;
@@ -42,12 +45,17 @@ public class PostControllerImpl implements PostController {
 			// [1] 검증 - 만약 조회에 필요한 정보가 없으면, 홈으로 보냄
 			Long postId = ValidationUtils.getId(request.getParameter("postId"));
 			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
-			if (Objects.isNull(postId) || Objects.isNull(boardType)) HttpUtils.redirectHome(response);
+			
+			if (Objects.isNull(postId) || Objects.isNull(boardType)) {
+				HttpUtils.redirectHome(response);
+				return;
+			}
 
 			
 			// [2-1] service 조회 - 게시글 정보 조회
 			PostDTO.Info post = postService.getInfo(postId);
-			post.setCategoryName(ValidationUtils.getCategoryName(boardType, post.getCategory()));
+			postService.read(postId);
+			post.setCategoryName(ValidationUtils.getCategoryName(post.getCategory()));
 			
 			 
 			// [2-2] service 조회 - 게시글 내 파일 정보 조회
@@ -58,7 +66,9 @@ public class PostControllerImpl implements PostController {
 			// [3] 파라미터 삽입
 			request.setAttribute("data", post);
 			request.setAttribute("postId", postId);
+			request.setAttribute("pageSizeComment", ValidationUtils.PAGE_SIZE_COMMENT);
 			HttpUtils.setValidationConstantAttributes(request);
+			HttpUtils.setPostConstantAttributes(request, boardType);
 			
 			
 			// [4] view 출력
@@ -66,74 +76,72 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.forwardPageFrame(request, response);
 
 			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "getInfoView", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
 
+	
 	@Override
 	public void getListView(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
 
-			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
-				return;
-		
+			// [1] 페이징 요청 객체 생성
 			int page = ValidationUtils.getPage(request.getParameter("page"));
-			int size = 10;
-			Page.Request<PostDTO.Search> search = new Page.Request<>(search(request), page, size);
+			Page.Request<PostDTO.Search> search = new Page.Request<>(mapToSearchDTO(request), page, 10);
 	        
-			// [3] service 조회
-			
+			// [2] service 조회
 			Page.Response<PostDTO.Info> pageResponse = postService.getList(search); 
+			System.out.printf("pageResponse = %s, pageResponse.data = %s\n", 
+					pageResponse.getData(), pageResponse.getData().size());
 			
-			
-			request.setAttribute("boardType", request.getParameter("boardType"));
+			// [3] 파라미터 삽입
 			request.setAttribute("page", pageResponse);
 			HttpUtils.setPostConstantAttributes(request, request.getParameter("boardType"));
 
+			// [4] JSON 응답 반환
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/list.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "getListView", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
 	
+	
 	//검색할때 필요한 정보를 객체로 만들어서 전달하는 메소드
-	private PostDTO.Search search(HttpServletRequest request) {
+	private PostDTO.Search mapToSearchDTO(HttpServletRequest request) {
 		
 		String keyword = request.getParameter("keyword");
 		String option = request.getParameter("option");
 		String boardType = request.getParameter("boardType");
 		String[] arrayCategories = request.getParameterValues("categories");
-		List<String> categories;
-		if (arrayCategories == null || arrayCategories.length == 0) {
-			categories = new ArrayList<>();
-		} else {
-			categories = Arrays.asList(arrayCategories);
-		}
-		String[] arrayGrades = request.getParameterValues("grades");
-		List<Integer> grades;
-		if (arrayGrades == null || arrayGrades.length == 0) {
-			grades = new ArrayList<>();
-		} else {
-		    grades = Arrays.stream(arrayGrades).map(Integer::parseInt).collect(Collectors.toList());
-		}
-		String order = request.getParameter("order");
-		return new PostDTO.Search(keyword, option, boardType, categories, grades, order);
+		String strGrade = request.getParameter("grade");
+		Integer grade = Objects.isNull(strGrade) || strGrade.isBlank() ? 0 : Integer.parseInt(strGrade);
 		
+		List<String> categories = new ArrayList<>();
+		
+		if (Objects.nonNull(arrayCategories) && arrayCategories.length > 0)
+			categories.addAll(Arrays.asList(arrayCategories));
+		
+		String order = request.getParameter("order");
+		return new PostDTO.Search(keyword, option, boardType, categories, grade, order);
 	}
 
+	
 	@Override
 	public void getWriteView(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
-			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
-				return;
 
 			// [1] 세션 확인 - 비 로그인 회원이면 리다이렉트
 			if (Objects.isNull(SessionUtils.getLoginMember(request))) {
@@ -143,7 +151,6 @@ public class PostControllerImpl implements PostController {
 
 			// [2] 파라미터 삽입
 			String boardType = request.getParameter("boardType");
-			request.setAttribute("boardType", boardType);
 			HttpUtils.setPostConstantAttributes(request, boardType);
 			HttpUtils.setValidationConstantAttributes(request);
 
@@ -151,8 +158,11 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/write.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "getWriteView", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
@@ -161,8 +171,6 @@ public class PostControllerImpl implements PostController {
 	public void getEditView(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
-			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET)) return;
 
 			// [1] 세션 확인 - 비 로그인 회원이면 리다이렉트
 			LoginMember loginMember = SessionUtils.getLoginMember(request);
@@ -188,7 +196,6 @@ public class PostControllerImpl implements PostController {
 			postInfo.setPostFiles(files);
 
 			// [4] 파라미터 삽입
-			request.setAttribute("boardType", boardType);
 			request.setAttribute("postId", postId);
 			request.setAttribute("data", postInfo);
 			HttpUtils.setPostConstantAttributes(request, boardType);
@@ -198,8 +205,11 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/post/edit.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "getEditView", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
@@ -211,7 +221,6 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.checkMethod(request, "GET");
 
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-
 			String boardType = request.getParameter("boardType");
 	        
 	        
@@ -223,11 +232,12 @@ public class PostControllerImpl implements PostController {
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-
-			System.out.printf("[getListAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp = APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "getListAPI", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 		
 	}
@@ -240,20 +250,21 @@ public class PostControllerImpl implements PostController {
 
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			String boardType = request.getParameter("boardType");
-	        
+
 			// [3] service 조회
-			List<PostDTO.Info> PostInfo = postService.getLatestList(boardType); 
+			List<PostDTO.Info> PostInfo = postService.getHomeList(boardType, ValidationUtils.LIMIT_POST_HOME); 
 			
 			// [4] JSON 응답 반환
 	        
 			APIResponse rp = APIResponse.success("요청에 성공했습니다!", PostInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-
-			System.out.printf("[getListAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp = APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "getHomeAPI", e);
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
 
@@ -264,14 +275,21 @@ public class PostControllerImpl implements PostController {
 		try {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
-
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			PostDTO.Write write = write(request);
 			
-			// [3-1] service - 게시글 작성
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
+			}
+
+			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			PostDTO.Write write = mapToWriteDto(request);
+			
+			// [4-1] service - 게시글 작성
 			long postId = postService.write(write);
 
-			// [3-2] 파일 저장
+			// [4-2] 파일 저장
 			List<Part> fileParts = HttpUtils.getFileParts(request, "file");
 			List<FileDTO.Store> fileStores = 
 					fileParts.stream().map(part -> {
@@ -279,61 +297,61 @@ public class PostControllerImpl implements PostController {
 						return new FileDTO.Store(postId, FileUtils.getOriginalFileName(part), file.getName());
 					}).toList();
 
-			// [3-3] service - 게시글 내 파일 정보 저장
+			// [4-3] service - 게시글 내 파일 정보 저장
 			fileService.store(fileStores);
 
-			// [4] JSON 응답 반환
-			// String.format("/post/info.do?postId=", postId)
-			APIResponse rp = APIResponse.success("게시글 작성을 완료했습니다");
+			// [5] JSON 응답 반환
+			String boardType = request.getParameter("boardType");
+			String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			APIResponse rp = APIResponse.success("게시글 작성을 완료했습니다", redirectURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postWriteAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp = APIResponse.error("게시글 작성에 실패했습니다.<br>잠시 후에 다시 시도해 주세요", "/",
-					StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "postWriteAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 	
-	private PostDTO.Write write(HttpServletRequest request) {
+	
+	private PostDTO.Write mapToWriteDto(HttpServletRequest request) {
+		
 		long memberId = SessionUtils.getLoginMember(request).getMemberId();
 		String title = request.getParameter("title");
 		String boardType = request.getParameter("boardType");
 		String category = request.getParameter("category");
-		int grade = Integer.parseInt(request.getParameter("grade"));
+		String strGrade = request.getParameter("grade");
+		int grade = Objects.nonNull(strGrade) ? Integer.parseInt(request.getParameter("grade")) : 0;
 		String content = request.getParameter("content");
 		String strNotice = request.getParameter("notice");
 		Boolean notice = Boolean.parseBoolean(strNotice);
+		
 		return new PostDTO.Write(memberId, title, boardType, category, grade, content, notice);
 	}
 
+	
 	@Override
 	public void postEditAPI(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
-
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String strPostId = request.getParameter("postId");
-			long postId = Long.parseLong(strPostId);
-
 			
-			for (Part part : request.getParts()) {
-	            System.out.println("=== Part 정보 ===");
-	            System.out.println("Name          : " + part.getName());
-	            System.out.println("SubmittedName : " + part.getSubmittedFileName());
-	            System.out.println("Size          : " + part.getSize());
-	            System.out.println("ContentType   : " + part.getContentType());
-
-	            // 일반 필드라면 값까지 출력
-	            if (part.getSubmittedFileName() == null) {
-	                String value = request.getParameter(part.getName());
-	                System.out.println("Value         : " + value);
-	            }
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
 			}
-			
 
-			// [3-1] 파일 삭제
+			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			long postId = Long.parseLong(request.getParameter("postId"));		
+
+			// [4-1] 파일 삭제
 			// 새롭게 등록한 파일 생성 & 삭제된 파일 삭제
 			List<Part> fileParts = HttpUtils.getFileParts(request, "file");
 			
@@ -351,7 +369,7 @@ public class PostControllerImpl implements PostController {
 			
 			// DB 내 파일정보 삭제
 			List<Long> fileIds = removedFiles.keySet().stream().map(Long::parseLong).toList();
-			fileService.remove(fileIds);
+			if (!fileIds.isEmpty()) fileService.remove(fileIds);
 			
 		
 			// [3-2] 새롭게 등록한 파일 등록
@@ -370,24 +388,40 @@ public class PostControllerImpl implements PostController {
 			
 
 			// [4] 게시글 정보 갱신
-			long memberId = SessionUtils.getLoginMember(request).getMemberId();
-			String title = request.getParameter("title");
-			String category = request.getParameter("category");
-			int grade = Integer.parseInt(request.getParameter("grade"));
-			String content = request.getParameter("content");
-			PostDTO.Edit edit = new PostDTO.Edit(postId, memberId, title, category, grade, content);
+			PostDTO.Edit edit = mapToEditDto(request);
 			postService.edit(edit);
 	
 			
 			// [5] JSON 응답 반환
-			APIResponse rp = APIResponse.success("게시글 수정을 완료했습니다");
+			String boardType = request.getParameter("boardType");
+			String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			APIResponse rp = APIResponse.success("게시글 수정을 완료했습니다", redirectURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp = APIResponse.error("게시글 수정에 실패했습니다. 잠시 후에 시도해 주세요", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "postEditAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
+	}
+	
+	
+	private PostDTO.Edit mapToEditDto(HttpServletRequest request) {
+		
+		long postId = Long.parseLong(request.getParameter("postId"));		
+		long memberId = SessionUtils.getLoginMember(request).getMemberId();
+		String title = request.getParameter("title");
+		String category = request.getParameter("category");
+		String strGrade = request.getParameter("grade");
+		int grade = Objects.nonNull(strGrade) ? Integer.parseInt(request.getParameter("grade")) : 0;
+		String content = request.getParameter("content");
+		
+		return new PostDTO.Edit(postId, memberId, title, category, grade, content);
 	}
 
 	
@@ -397,21 +431,35 @@ public class PostControllerImpl implements PostController {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 
-			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			String strPostId = request.getParameter("postId");
-			long postId = Long.parseLong(strPostId);
-
+			// [2] 세션 검증
+			LoginMember loginMember = SessionUtils.getLoginMember(request);
+			if (Objects.isNull(loginMember)) {
+				HttpUtils.writeLoginErrorJSON(response);
+				return;
+			}
+						
+						
+			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			long postId = Long.parseLong(request.getParameter("postId"));
 			postService.remove(postId);
 
-			// [3] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			// [4] JSON 응답 반환
+			String boardType = request.getParameter("boardType");
+			String redirectURL = String.format("/post/list.do?boardType=%s&page=1", boardType);
+			
+			APIResponse rp = APIResponse.success("게시글을 삭제했습니다", redirectURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postRemoveAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp = APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "postRemoveAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 }

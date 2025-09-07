@@ -168,20 +168,14 @@ public class CommentDTO {
 
         private Long commentId;
         private String content;
-        private Long mentionId;
 
-        public Edit(Long commentId, Long mentionId, String content) {
+        public Edit(Long commentId, String content) {
             this.commentId = commentId;
-            this.mentionId = mentionId;
             this.content = content;
         }
 
         public Long getCommentId() {
             return commentId;
-        }
-
-        public Long getMentionId() {
-            return mentionId;
         }
 
         public String getContent() {

@@ -69,15 +69,18 @@ public class HttpUtils {
 		switch (boardType.toUpperCase()) {
 			case "1" : request.setAttribute("categories", ValidationUtils.CATEGORY_NOTICE); break;
 			case "2" : request.setAttribute("categories", ValidationUtils.CATEGORY_NEWS); break;
-			case "3" : request.setAttribute("categories", ValidationUtils.CATEGORY_PROBLEM);
+			case "3" : request.setAttribute("categories", ValidationUtils.CATEGORY_PROBLEM); break;
 			case "4" : request.setAttribute("categories", ValidationUtils.CATEGORY_COMMUNITY); break;
 		}
 		
+		request.setAttribute("allCategories", ValidationUtils.CATEGORY_ALL);
 		request.setAttribute("grades", ValidationUtils.LIST_GRADES);
 		request.setAttribute("searchOptions", ValidationUtils.OPTION_SEARCH);
 		request.setAttribute("postOrders", ValidationUtils.ORDER_POST);
 		request.setAttribute("commentOrders", ValidationUtils.ORDER_COMMENT);
+		request.setAttribute("boardType", boardType);
 	}
+	
 	
 	
 	/**
@@ -86,6 +89,7 @@ public class HttpUtils {
 	 */
 	public static void setDefaultConstantAttributes(HttpServletRequest request) {
 		
+		request.setAttribute("today", new Date());
 		request.setAttribute("boardTypes", ValidationUtils.BOARD_TYPES);
 		request.setAttribute("date", ValidationUtils.PATTERN_DATE);
 		request.setAttribute("time", ValidationUtils.PATTERN_TIME);
@@ -144,13 +148,28 @@ public class HttpUtils {
 			throw new ServletException(e);
 		}
 	}
+
 	
-	
-	
-	public static void writeForbiddenErrorJSON(HttpServletResponse response) {
+	public static void writeLoginErrorJSON(HttpServletResponse response) {
 		
 		try {
-			APIResponse rp =  APIResponse.error("잘못된 접근입니다", StatusCode.CODE_ACCESS_ERROR);
+			APIResponse rp =  APIResponse.error("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?", "/login.do", StatusCode.CODE_LOGIN_ERROR);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_FORBIDDEN);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+		
+	}
+
+	
+	
+	public static void writeForbiddenErrorJSON(HttpServletResponse response, String alertMessage) {
+		
+		try {
+			String msg = Objects.isNull(alertMessage) ? "잘못된 접근입니다" : alertMessage;
+			APIResponse rp =  APIResponse.error(msg, "/", StatusCode.CODE_ACCESS_ERROR);
 			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_FORBIDDEN);
 			
 		} catch (Exception e) {
@@ -206,31 +225,6 @@ public class HttpUtils {
 	
 	
 	/**
-	 * 의도한 Http 요청인지 검증 후, 올바른 요청이 아니면 redirect (현재 프로젝트는 GET 아니면 POST 요청만 취급)
-	 * @param request		서블릿 요청 객체
-	 * @param response		서블릿 응답 객체
-	 * @param targetMethod	개발자가 의도한 메소드명 (GET, POST, ...)
-	 * @return boolean		정상적인 POST 요청이면 true, 그 외의 요청이면 false 반환
-	 */
-	public static boolean requireMethodOrRedirectHome(HttpServletRequest request, HttpServletResponse response, String targetMethod) {
-     
-		try {
-			// [1] 메소드 검증 - 올바른 요청이면 true 반환
-			if (Objects.equals(request.getMethod(), targetMethod)) return true;
-
-			// [2] 올바른 요청이 아님 - 리다이렉트 수행 후 false 반환
-			response.sendRedirect("/");
-			return false;
-			
-		} catch (Exception e) {
-			System.out.printf("[HttpUtils] Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
-		}
-    }
-	
-	
-	
-	/**
 	 * 의도한 Http 요청인지 검증 (현재 프로젝트는 GET 아니면 POST 요청만 취급)
 	 * @param request		서블릿 요청 객체
 	 * @param targetMethod	개발자가 의도한 메소드명 (GET, POST, ...)
@@ -241,6 +235,41 @@ public class HttpUtils {
 		}
 			
     }
+	
+	
+	
+	/**
+	 * 뼈대가 되는 frame.jsp forward 수행
+	 * @param request	서블릿 요청 객체
+	 * @param response	서블릿 응답 객체
+	 */
+	public static void forwardPageFrame(HttpServletRequest request, HttpServletResponse response) {
+		
+		try {
+			request.getRequestDispatcher("/WEB-INF/views/base/frame.jsp").forward(request, response);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	/**
+	 * frame.jsp 내 ${body} 내 삽입할 jsp 파일 주소 값 삽입
+	 * @param request	서블릿 요청 객체
+	 * @param jspPath	${body} 내 삽입할 jsp 파일 주소
+	 */
+	public static void setBodyAttribute(HttpServletRequest request, String jspPath) {
+		
+		try {
+			request.setAttribute("body", jspPath);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
 	
 	
 	
@@ -274,42 +303,6 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] 에러 페이지로 Redirect 처리에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
-		}
-	}
-
-
-	
-	
-	/**
-	 * 뼈대가 되는 frame.jsp forward 수행
-	 * @param request	서블릿 요청 객체
-	 * @param response	서블릿 응답 객체
-	 */
-	public static void forwardPageFrame(HttpServletRequest request, HttpServletResponse response) {
-		
-		try {
-			request.getRequestDispatcher("/WEB-INF/views/base/frame.jsp").forward(request, response);
-			
-		} catch (Exception e) {
-			System.out.printf("[HttpUtils] frame.jsp 파일의 forward 과정에 실패했습니다! : %s\n", e);
-			throw new ServletException(e);
-		}
-	}
-	
-	
-	/**
-	 * frame.jsp 내 ${body} 내 삽입할 jsp 파일 주소 값 삽입
-	 * @param request	서블릿 요청 객체
-	 * @param jspPath	${body} 내 삽입할 jsp 파일 주소
-	 */
-	public static void setBodyAttribute(HttpServletRequest request, String jspPath) {
-		
-		try {
-			request.setAttribute("body", jspPath);
-			
-		} catch (Exception e) {
-			System.out.printf("[HttpUtils] frame.jsp 파일내 삽입할 body Attrubute 삽입에 실패했습니다! : %s\n", e);
 			throw new ServletException(e);
 		}
 	}

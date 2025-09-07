@@ -113,25 +113,17 @@ public class MemberServiceImpl implements MemberService {
 		try {
 			MemberDTO.Info memberInfo = 
 					memberDAO.findByEmail(email).orElseThrow(() -> new BusinessException("가입한 이메일이 존재하지 않습니다"));
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-
-=======
-	
-	
->>>>>>> 86b1cd23b0ff818af644d46017a3e58d9d1a5a5c
 			if(!Objects.equals(password, memberInfo.getPassword())) 
 				throw new BusinessException("비밀번호가 일치하지 않습니다");
 			
-			
-<<<<<<< HEAD
 			if(Objects.equals("QUITED", memberInfo.getStatus()) && memberInfo.getQuitedAt() != null) {
 				if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) {
 					throw new QuitException("계정을 복구하시겠습니까?");
 				}else {
 					throw new BusinessException("탈퇴 처리된 계정입니다");
 				}
+<<<<<<< HEAD
 
       
 
@@ -154,6 +146,9 @@ public class MemberServiceImpl implements MemberService {
 =======
 >>>>>>> 181904a9fd7563dc6e74cf27c1f530e74ae93cbc
 >>>>>>> 4954c781b2cfab30990931b4f7fc3833414e2c36
+=======
+			}
+>>>>>>> 22ce2eac0eab3928ada2e8be3630f767c7cc106e
 			
 			if(Objects.equals("QUITED", memberInfo.getStatus()) && memberInfo.getQuitedAt() != null) {
 				if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) {

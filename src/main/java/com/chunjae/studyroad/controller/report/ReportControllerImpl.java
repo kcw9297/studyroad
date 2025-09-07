@@ -43,9 +43,6 @@ public class ReportControllerImpl implements ReportController {
 	public void getListView(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
-			if (!HttpUtils.requireMethodOrRedirectHome(request, response, HttpUtils.GET))
-				return;
 		
 			/*
 			Page.Request<PostDTO.Search> search = new Page.Request<>(new PostDTO.Search(keyword, option, boardType, categories, grades, order), page, 10);
