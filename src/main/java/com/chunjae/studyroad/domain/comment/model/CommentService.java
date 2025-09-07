@@ -35,7 +35,7 @@ public interface CommentService {
      * 댓글 수정
      * @param request   댓글 수정요청 DTO
      */
-    void edit(CommentDTO.Edit request);
+    void edit(CommentDTO.Edit request, Long memberId);
 
 
     /**
@@ -56,7 +56,7 @@ public interface CommentService {
      * 댓글 삭제
      * @param commentId 삭제 대상 댓글번호 (PK)
      */
-    void remove(Long commentId);
+    void remove(Long commentId, Long memberId);
 
 
     /**

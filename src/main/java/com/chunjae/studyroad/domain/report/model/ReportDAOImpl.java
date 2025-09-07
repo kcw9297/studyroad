@@ -39,7 +39,7 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public List<ReportDTO.Info> list() {
 		try (Connection connection = dataSource.getConnection();
-				PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_LIST)) {
+				PreparedStatement pstmt = connection.prepareStatement(ReportSQL.SQL_REPORT_LIST)) {
 				try	(ResultSet rs = pstmt.executeQuery()) {
 				List<ReportDTO.Info> data = new ArrayList<>();
 				
@@ -71,7 +71,7 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public Long save(ReportDTO.Submit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(ReportSQL.SQL_REPORT_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 
@@ -109,7 +109,7 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public Integer updateStatus(Long reportId, String status) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_UPDATE_STATUS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(ReportSQL.SQL_REPORT_UPDATE_STATUS)) {
 				
 				// [1] 파라미터 세팅
 				pstmt.setString(1, status);
@@ -133,7 +133,7 @@ class ReportDAOImpl implements ReportDAO {
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_REPORT_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(ReportSQL.SQL_REPORT_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 

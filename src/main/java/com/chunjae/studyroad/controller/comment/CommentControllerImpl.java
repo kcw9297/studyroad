@@ -157,7 +157,7 @@ public class CommentControllerImpl implements CommentController {
 
 			
 			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성=
-			commentService.edit(mapToEditDTO(request));
+			commentService.edit(mapToEditDTO(request), loginMember.getMemberId());
 			
 			
 			// [4] JSON 응답 반환
@@ -208,7 +208,7 @@ public class CommentControllerImpl implements CommentController {
 			
 			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long commentId = Long.parseLong(request.getParameter("commentId"));
-			commentService.remove(commentId);
+			commentService.remove(commentId, loginMember.getMemberId());
 			
 			
 			// [4] JSON 응답 반환

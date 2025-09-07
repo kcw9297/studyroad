@@ -89,7 +89,7 @@ public interface PostService {
      * 게시글 삭제
      * @param postId    삭제 대상 게시글번호 (PK)
      */
-    void remove(Long postId);
+    void remove(Long postId, Long memberId);
 
 
     /**

@@ -1,0 +1,19 @@
+# Eclipse 설정
+.settings/
+.metadata/
+.classpath
+.project
+
+# 빌드 산출물
+build/
+target/
+webapp/WEB-INF/classes/
+
+# 톰캣 서버 설정
+Servers/
+
+# 로그
+*.log
+
+# 메일 설정
+src/main/resources/mail.properties

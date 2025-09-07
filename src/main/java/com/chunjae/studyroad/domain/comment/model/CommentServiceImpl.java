@@ -114,8 +114,13 @@ public class CommentServiceImpl implements CommentService {
 
 
 	@Override
-	public void edit(CommentDTO.Edit request) {
+	public void edit(CommentDTO.Edit request, Long memberId) {
 		try {
+			CommentDTO.Info info = commentDAO.findbyId(request.getCommentId()).orElseThrow(() -> new BusinessException("이미 삭제되었거나 존재하지 않는 댓글입니다"));
+			
+			if(!Objects.equals(info.getMember().getMemberId(), memberId)) {
+				throw new BusinessException("작성자 이외에는 수정할 수 없습니다");
+			}
 			if (!Objects.equals(commentDAO.update(request), 1)) {
 				throw new BusinessException("댓글 수정에 실패했습니다");
 			}
@@ -177,8 +182,13 @@ public class CommentServiceImpl implements CommentService {
 
 
 	@Override
-	public void remove(Long commentId) {	
+	public void remove(Long commentId, Long memberId) {	
 		try {
+			CommentDTO.Info info = commentDAO.findbyId(commentId).orElseThrow(() -> new BusinessException("이미 삭제되었거나 존재하지 않는 댓글입니다"));
+			
+			if(!Objects.equals(info.getMember().getMemberId(), memberId)) {
+				throw new BusinessException("작성자 이외에는 삭제할 수 없습니다");
+			}
 			if (!Objects.equals(commentDAO.updateStatus(commentId, "REMOVED"), 1)) {
 				throw new BusinessException("댓글 삭제에 실패했습니다");
 

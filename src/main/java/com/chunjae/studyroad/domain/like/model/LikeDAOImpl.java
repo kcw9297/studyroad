@@ -34,7 +34,7 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Boolean exists(Long memberId, Long targetId, String targetType) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_EXISTS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(LikeSQL.SQL_LIKE_EXISTS)) {
 				
 				// [1] 파라미터 세팅
 
@@ -62,7 +62,7 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Long save(LikeDTO.Like request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(LikeSQL.SQL_LIKE_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 
@@ -99,7 +99,7 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Integer updateStatus(Long likeId, String status) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_UPDATE_STATUS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(LikeSQL.SQL_LIKE_UPDATE_STATUS)) {
 					
 					// [1] 파라미터 세팅
 					pstmt.setString(1, status);
@@ -123,7 +123,7 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public void updateStatusByMemberId(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_UPDATE_STATUS_BY_MEMBERID)) {
+				 PreparedStatement pstmt = connection.prepareStatement(LikeSQL.SQL_LIKE_UPDATE_STATUS_BY_MEMBERID)) {
 				
 				// [1] 파라미터 세팅
 
@@ -149,7 +149,7 @@ class LikeDAOImpl implements LikeDAO {
 	@Override
 	public Integer deleteById(Long likeId) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_LIKE_DELETE)) {
+				 PreparedStatement pstmt = connection.prepareStatement(LikeSQL.SQL_LIKE_DELETE)) {
 				
 				// [1] 파라미터 세팅
 

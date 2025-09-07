@@ -153,6 +153,12 @@ public class PostServiceImpl implements PostService {
 	public void edit(PostDTO.Edit request) {
 		
 		try {
+			
+			PostDTO.Info info = postDAO.findById(request.getPostId()).orElseThrow(() -> new BusinessException("이미 삭제되었거나 존재하지 않는 게시판입니다"));
+			
+			if(!Objects.equals(info.getMember().getMemberId(), request.getMemberId())) {
+				throw new BusinessException("작성자 이외에는 수정할 수 없습니다");
+			}
 			if (!Objects.equals(postDAO.update(request), 1)) {
 			throw new BusinessException("게시글 수정 실패하셨습니다");
 
@@ -252,12 +258,18 @@ public class PostServiceImpl implements PostService {
 
 
 	@Override
-	public void remove(Long postId) {
+	public void remove(Long postId, Long memberId) {
 		try {
-			if (Objects.equals(postDAO.updateStatus(postId, "REMOVED"), 1)) {
-			throw new BusinessException("게시글 삭제 실패하셨습니다");
-
+			PostDTO.Info info = postDAO.findById(postId).orElseThrow(() -> new BusinessException("이미 삭제되었거나 존재하지 않는 게시판입니다"));
+			
+			if(!Objects.equals(memberId, info.getMember().getMemberId()))	{
+				throw new BusinessException("작성자 이외에는 삭제할 수 없습니다");
 			}
+			if (Objects.equals(postDAO.updateStatus(postId, "REMOVED"), 1)) {
+				throw new BusinessException("게시글 삭제 실패하셨습니다");
+			}
+			
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			

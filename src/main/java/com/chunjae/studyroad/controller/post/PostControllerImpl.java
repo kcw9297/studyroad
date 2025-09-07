@@ -440,8 +440,9 @@ public class PostControllerImpl implements PostController {
 						
 						
 			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			long memberId = loginMember.getMemberId();
 			long postId = Long.parseLong(request.getParameter("postId"));
-			postService.remove(postId);
+			postService.remove(postId, memberId);
 
 			// [4] JSON 응답 반환
 			String boardType = request.getParameter("boardType");
