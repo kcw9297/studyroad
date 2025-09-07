@@ -22,6 +22,8 @@
 	const isStartPage = ${page.startPage};
 	const isEndPage = ${page.endPage};
 	const boardType = ${boardType};
+	const currentGroupStartPage = ${page.currentGroupStartPage};
+	const currentGroupEndPage = ${page.currentGroupEndPage};
 </script>
 
 <form id="post-search-form" class="container option" method="get">
@@ -59,12 +61,14 @@
 		<p style="margin-left: 5px;"><fmt:formatNumber value="${page.dataCount}" type="number" /></p>
 		</div>
 		<div class="order-buttons">
-			<select name="grade">
+			<c:if test="${boardType eq '3'}">
+				<select name="grade">
 				<option value="" <c:if test="${empty param.grade}">selected</c:if>>선택</option>
 				<c:forEach var="grade" items="${grades}">
 			        <option value="${grade}" <c:if test="${param.grade eq grade}">selected</c:if>>고${grade}</option>
 			    </c:forEach>
 			</select>
+			</c:if>
 			<div class="order-count">
 			    <c:forEach var="entry" items="${postOrders}">
 			        <span class="order-post">
@@ -95,26 +99,6 @@
 	    <div>등록일</div>
     </div>
 	<ul class="board-list">
-		<li class="board-notice">
-	      <div class="notice-list">공지</div>
-	      <div>-</div>
-	      <div> </div>
-	      <div class="list-title"><a href="#">게시판 이용 수칙</a></div>
-	      <div>관리자</div>
-	      <div>8,540</div>
-	      <div>0</div>
-	      <div>25.08.26</div>
-	    </li>
-	    <li class="board-notice">
-	      <div class="notice-list">공지</div>
-	      <div>-</div>
-	      <div> </div>
-	      <div class="list-title"><a href="#">대학수학능력시험일 게시판 조정 안내</a></div>
-	      <div>관리자</div>
-	      <div>8,540</div>
-	      <div>0</div>
-	      <div>25.08.26</div>
-	    </li>
 	    <c:forEach var="dto" items="${page.data}">
 		    <li class="board-post">
 		      <div>${dto.postId}</div>
@@ -154,9 +138,9 @@
 		    </c:otherwise>
 		  </c:choose>
 		
-		  <c:forEach var="pageNum" begin="${page.currentGroupStartPage}" end="${page.currentGroupEndPage}">
-		    <span>${pageNum}</span>
-		  </c:forEach>
+		<c:forEach var="pageNum" begin="${page.currentGroupStartPage}" end="${page.currentGroupEndPage}">
+		    <span data-page="${pageNum}" class="${param.page eq pageNum ? 'now' : ''}">${pageNum}</span>
+		</c:forEach>
 		
 		  <c:choose>
 		    <c:when test="${not page.endPage}">

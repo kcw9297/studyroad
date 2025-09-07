@@ -6,6 +6,7 @@ import com.chunjae.studyroad.common.constant.StatusCode;
 import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.BusinessException;
+import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.exception.ServletException;
 import com.chunjae.studyroad.common.mail.MailSender;
@@ -61,12 +62,11 @@ public class MemberControllerImpl implements MemberController {
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/join.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 			
-		} catch (BusinessException e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+		} catch (DAOException | ServiceException e) {
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "getJoinView", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
 	}
@@ -96,22 +96,13 @@ public class MemberControllerImpl implements MemberController {
 			HttpUtils.setBodyAttribute(request, "/WEB-INF/views/member/info.jsp");
 			HttpUtils.forwardPageFrame(request, response);
 			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
+			
 		} catch (Exception e) {
-			System.out.printf("view forward 실패! 원인 : %s\n", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "getInfoView", e);
 			HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_INTERNAL_ERROR);
 		}
-	}
-
-	
-	@Override
-	public void getEditView(HttpServletRequest request, HttpServletResponse response) {
-		
-	}
-
-	
-	@Override
-	public void getRecoverQuitView(HttpServletRequest request, HttpServletResponse response) {
-		
 	}
 
 	
@@ -140,10 +131,15 @@ public class MemberControllerImpl implements MemberController {
 			
 		
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postJoinAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "postJoinAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 	
@@ -157,12 +153,6 @@ public class MemberControllerImpl implements MemberController {
         String password = request.getParameter("password");
         String zipcode = request.getParameter("zipcode");
         String address = request.getParameter("address");
- 
-        
-        System.out.printf(
-        	    "회원가입 입력 값 => 이름: %s, 닉네임: %s, 이메일: %s, 비밀번호: %s, 우편번호: %s, 주소: %s%n",
-        	    name, nickname, email, password, zipcode, address
-        	);
         
         return new MemberDTO.Join(name, nickname, email, password, zipcode, address);
 	}
@@ -188,12 +178,18 @@ public class MemberControllerImpl implements MemberController {
 			
 		
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postEditAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("수정 요청에 실패했습니다. 잠시 후에 시도해 주세요.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "postEditAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
+	
 	
 	private void editAllType(HttpServletRequest request) {
 		long memberId = SessionUtils.getLoginMember(request).getMemberId();
@@ -243,16 +239,16 @@ public class MemberControllerImpl implements MemberController {
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
-		} catch (ServiceException e) {
-			System.out.printf("[postExistMemberAPI] - 비즈니스 예외 발생!: %s\n", e);
-			APIResponse rp =  APIResponse.error(e.getMessage(), StatusCode.CODE_INPUT_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_BAD_REQUEST);
-		
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postExistMemberAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("검증 요청이 실패했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		} 
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "postFindPasswordAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
+		}
 		
 	}
 
@@ -312,10 +308,15 @@ public class MemberControllerImpl implements MemberController {
 			
 		
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postQuitAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "postQuitAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 
@@ -345,10 +346,15 @@ public class MemberControllerImpl implements MemberController {
 			
 		
 			// [예외 발생] 오류 응답 반환
+		} catch (BusinessException e) {
+			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
+			
+		} catch (DAOException | ServiceException e) {
+			HttpUtils.writeServerErrorJSON(response);
+			
 		} catch (Exception e) {
-			System.out.printf("[postRecoverQuitAPI] - 기타 예외 발생! 확인 요망 : %s\n", e);
-			APIResponse rp =  APIResponse.error("조회에 실패했습니다.", "/", StatusCode.CODE_INTERNAL_ERROR);
-			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "MemberControllerImpl", "postRecoverQuitAPI", e);
+			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
 

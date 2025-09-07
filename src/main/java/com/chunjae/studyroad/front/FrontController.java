@@ -80,11 +80,10 @@ public class FrontController extends HttpServlet {
                 else if (path.startsWith("/api/login.do")) loginController.postLoginAPI(request, response);
                 else if (path.startsWith("/api/logout.do")) loginController.postLogoutAPI(request, response);
                 else if (path.startsWith("/api/post/list.do")) postController.getListAPI(request, response);
-                else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
-                else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
                 else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
                 else if (path.startsWith("/api/post/write.do")) postController.postWriteAPI(request, response);
                 else if (path.startsWith("/api/post/edit.do")) postController.postEditAPI(request, response);
+                else if (path.startsWith("/api/post/home.do")) postController.getHomeAPI(request, response);
                 else if (path.startsWith("/api/post/remove.do")) postController.postRemoveAPI(request, response);
                 else if (path.startsWith("/api/comment/list.do")) commentController.getListAPI(request, response);
                 else if (path.startsWith("/api/comment/write.do")) commentController.postWriteAPI(request, response);

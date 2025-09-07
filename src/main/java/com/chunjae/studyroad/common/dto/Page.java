@@ -69,7 +69,7 @@ public class Page {
 
         public Response(List<T> data, int currentPage, int groupSize, int pageSize, int dataCount) {
             this.data = data;
-            this.currentPage = currentPage+1;
+            this.currentPage = currentPage + 1;
             this.groupSize = groupSize;
             this.pageSize = pageSize;
             this.dataCount = dataCount;
@@ -82,11 +82,16 @@ public class Page {
          * 페이지와 그룹은 1부터 시작
          */
         public void calculateGroup() {
-        	// 총 페이지 계산
-        	this.totalPage = (int) Math.ceil((double) dataCount / pageSize);
-        	
-            // 현재 그룹 계산
-            this.currentGroup = (int) Math.ceil((double) currentPage / groupSize);
+            // 총 페이지 계산
+            this.totalPage = (int) Math.ceil((double) dataCount / pageSize);
+            if (this.totalPage == 0) this.totalPage = 1;
+
+            // currentPage는 생성자에서 이미 +1 보정한 상태
+            if (this.currentPage < 1) this.currentPage = 1;
+            if (this.currentPage > this.totalPage) this.currentPage = this.totalPage;
+
+            // 현재 그룹 계산 (this.currentPage 사용)
+            this.currentGroup = (int) Math.ceil((double) this.currentPage / groupSize);
 
             // 다음 그룹 존재 여부 및 페이지
             this.hasNextGroup = (currentGroup * groupSize) < totalPage;
@@ -97,12 +102,12 @@ public class Page {
             this.previousGroupPage = hasPreviousGroup ? ((currentGroup - 1) * groupSize) : 1;
 
             // 페이지 시작/끝 여부 계산
-            this.isStartPage = currentPage == 1; // 서버에선 0이 시작 페이지
-            this.isEndPage = currentPage == totalPage;
-            
-            // 현재 그룹에서 시작 및 끝페이지 계산
-            this.currentGroupStartPage = (currentGroup - 1) * groupSize + 1;  			// 현재 그룹의 시작 페이지 번호
-            this.currentGroupEndPage = Math.min(currentGroup * groupSize, totalPage);   // 현재 그룹의 끝 페이지 번호
+            this.isStartPage = this.currentPage == 1;
+            this.isEndPage = this.currentPage == totalPage;
+
+            // 현재 그룹에서 시작 및 끝 페이지
+            this.currentGroupStartPage = (currentGroup - 1) * groupSize + 1;
+            this.currentGroupEndPage = Math.min(currentGroup * groupSize, totalPage);
         }
         
         /**

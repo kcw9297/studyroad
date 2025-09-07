@@ -33,7 +33,7 @@ class MemberDAOImpl implements MemberDAO {
     public Optional<MemberDTO.Info> findById(Long mId) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_ID)) {
+			 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_FIND_BY_ID)) {
 			
 			// [1] 파라미터 세팅
 			pstmt.setLong(1, mId);
@@ -56,7 +56,7 @@ class MemberDAOImpl implements MemberDAO {
     public Optional<MemberDTO.Info> findByEmail(String email) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_EMAIL)) {
+			 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_FIND_BY_EMAIL)) {
 			
 			// [1] 파라미터 세팅
 			pstmt.setString(1, email);
@@ -79,7 +79,7 @@ class MemberDAOImpl implements MemberDAO {
 	public Optional<MemberDTO.Info> findByNickname(String nickname) {
 		
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_FIND_BY_NICKNAME)) {
+			 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_FIND_BY_NICKNAME)) {
 				
 				// [1] 파라미터 세팅
 				pstmt.setString(1, nickname);
@@ -122,7 +122,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Long save(MemberDTO.Join request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_SAVE, Statement.RETURN_GENERATED_KEYS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_SAVE, Statement.RETURN_GENERATED_KEYS)) {
 				
 				// [1] 파라미터 세팅
 				pstmt.setString(1, request.getName());
@@ -160,7 +160,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateName(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NAME)) {
+				 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_UPDATE_NAME)) {
 				
 				pstmt.setString(1, request.getName());
 				pstmt.setLong(2, request.getMemberId());
@@ -180,7 +180,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateNickname(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_NICKNAME)) {
+				 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_UPDATE_NICKNAME)) {
 				
 				pstmt.setString(1, request.getNickname());
 				pstmt.setLong(2, request.getMemberId());
@@ -200,7 +200,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updatePassword(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD)) {
+				 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_UPDATE_PASSWORD)) {
 				
 				pstmt.setString(1, request.getPassword());
 				pstmt.setLong(2, request.getMemberId());
@@ -223,7 +223,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updatePasswordByEmail(String email, String password) {
 		try (Connection connection = dataSource.getConnection();
-			 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_PASSWORD_BY_EMAIL)) {
+			 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_UPDATE_PASSWORD_BY_EMAIL)) {
 				
 				pstmt.setString(1, password);
 				pstmt.setString(2, email);
@@ -244,7 +244,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateAddress(MemberDTO.Edit request) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_ADDRESS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_UPDATE_ADDRESS)) {
 				
 				pstmt.setString(1, request.getZipcode());
 				pstmt.setString(2, request.getAddress());
@@ -265,7 +265,7 @@ class MemberDAOImpl implements MemberDAO {
 	@Override
 	public Integer updateStatus(Long memberId, String beforeStatus, String afterStatus) {
 		try (Connection connection = dataSource.getConnection();
-				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_MEMBER_UPDATE_STATUS)) {
+				 PreparedStatement pstmt = connection.prepareStatement(MemberSQL.SQL_MEMBER_UPDATE_STATUS)) {
 				
 				pstmt.setString(1, afterStatus);
 				switch(afterStatus) {

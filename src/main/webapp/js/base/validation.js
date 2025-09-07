@@ -458,3 +458,21 @@ function formatDateTime(date) {
 	});
 
 }
+
+
+
+function formatWrittenAt(timestamp) {
+  const date = new Date(timestamp); // 바로 Date 객체 생성
+  const now = new Date();
+
+  const isToday =
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate();
+
+  if (isToday) {
+    return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  } else {
+    return `${String(date.getFullYear()).slice(2)}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+  }
+}

@@ -20,18 +20,6 @@ public interface MemberController {
 
 
     /**
-     * [GET] /member/edit.do
-     */
-    void getEditView(HttpServletRequest request, HttpServletResponse response);
-
-
-    /**
-     * [GET] /member/recover-quit.do
-     */
-    void getRecoverQuitView(HttpServletRequest request, HttpServletResponse response);
-
-
-    /**
      * [POST] /api/member/join.do
      */
     void postJoinAPI(HttpServletRequest request, HttpServletResponse response);
