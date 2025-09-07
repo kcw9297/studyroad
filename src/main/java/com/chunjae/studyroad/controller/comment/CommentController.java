@@ -14,12 +14,6 @@ public interface CommentController {
 
 
     /**
-     * [GET] /api/comment/edit.do
-     */
-    void getEditAPI(HttpServletRequest request, HttpServletResponse response);
-
-
-    /**
      * [POST] /api/comment/write.do
      */
     void postWriteAPI(HttpServletRequest request, HttpServletResponse response);

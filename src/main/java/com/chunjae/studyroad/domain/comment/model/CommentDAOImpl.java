@@ -73,7 +73,7 @@ class CommentDAOImpl implements CommentDAO {
 				
 				pstmt.setLong(1, params.getPostId());
 				pstmt.setInt(2, size);
-				pstmt.setInt(3, (page-1)*size);
+				pstmt.setInt(3, page*size);
 				
 				// SQL 수행 + 결과 DTO 생성 후 반환
 				return executeAndMapToSearchDTO(pstmt, request, dataCount);
@@ -128,11 +128,10 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public List<CommentDTO.Info> findAllChildByParentIds(List<Long> commentIds) {
 		try (Connection connection = dataSource.getConnection()) {
-			String placeholders = commentIds.stream()
-	                .map(id -> "?")
-	                .collect(Collectors.joining(", "));
+			String placeholders = DAOUtils.createPlaceholder(1, commentIds.size());
+
 	
-			String childSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE parent_id IN (" + placeholders + ")";
+			String childSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE parent_id IN " + placeholders + " ORDER BY comment_id";
 			
 			try (PreparedStatement pstmt = connection.prepareStatement(childSql)) {
 				
@@ -145,17 +144,17 @@ class CommentDAOImpl implements CommentDAO {
 				try (ResultSet rs = pstmt.executeQuery()) {
 			        while (rs.next()) {
 			            CommentDTO.Info dto = new CommentDTO.Info(
-													rs.getLong("comment_id"),
-													rs.getLong("post_id"),
-													rs.getLong("parent_id"),
-													rs.getString("content"),
-													rs.getTimestamp("written_at"),
-													rs.getTimestamp("edited_at"),
-													rs.getLong("mention_id"),
-													rs.getString("status"),
-													rs.getLong("likeCount"),
-													new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
-				            					  );
+								rs.getLong("comment_id"),
+								rs.getLong("post_id"),
+								rs.getLong("parent_id"),
+								rs.getString("content"),
+								rs.getTimestamp("written_at"),
+								rs.getTimestamp("edited_at"),
+								rs.getLong("mention_id"),
+								rs.getString("status"),
+								rs.getLong("likeCount"),
+								new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
+        					  );
 			            info.add(dto);
 			        }
 			    }
@@ -211,7 +210,7 @@ class CommentDAOImpl implements CommentDAO {
 							rs.getLong("mention_id"),
 							rs.getString(8),
 							rs.getLong("likeCount"),
-							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("name"), rs.getString("nickname"), rs.getString("email"), rs.getString("password"), rs.getString("zipcode"), rs.getString("address"), rs.getTimestamp("joined_at"), rs.getTimestamp("quited_at"), rs.getTimestamp("ban_end_at"), rs.getString(20))
+							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
 				    ) : null;
 		}
 	}
@@ -264,9 +263,8 @@ class CommentDAOImpl implements CommentDAO {
 				 PreparedStatement pstmt = connection.prepareStatement(DAOUtils.SQL_COMMENT_UPDATE)) {
 				
 				// [1] 파라미터 세팅
-	    		pstmt.setObject(1, request.getMentionId(), Types.BIGINT);
-	    		pstmt.setString(2, request.getContent());
-	    		pstmt.setLong(3, request.getCommentId());
+	    		pstmt.setString(1, request.getContent());
+	    		pstmt.setLong(2, request.getCommentId());
 					
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 

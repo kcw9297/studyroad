@@ -39,6 +39,7 @@ function initFileUpload(options = {}) {
       e.preventDefault();
 	  
 	  // 기존 파일은 파일 선택창 비활성화
+	  const parent = $(this).closest(".file-item");
 	  const status = parent.data("status");
 	  if (status === 2) return;
 	  

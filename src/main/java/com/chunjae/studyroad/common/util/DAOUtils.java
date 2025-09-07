@@ -27,16 +27,10 @@ public class DAOUtils {
     public static final String SQL_FILE_SAVE_ALL = "INSERT INTO file (post_id, original_name, stored_name) VALUES (?, ?, ?)";
     public static final String SQL_FILE_FIND_BY_POSTID = "SELECT file_id, post_id, original_name, stored_name FROM file where post_id = ?";
     public static final String SQL_FILE_DELETE_ALL_BY_ID = "DELETE FROM file WHERE file_id IN ";
-    public static final String SQL_POST_FIND_BY_ID = "SELECT p.post_id, p.title, p.board_type, p.category, p.grade, p.content, p.written_at, p.edited_at, p.views, p.status, p.is_notice, p.likeCount, p.commentCount, m.member_id, m.name, m.nickname, m.email, m.password, m.zipcode, m.address, m.joined_at, m.quited_at, m.ban_end_at, m.status FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.post_id = ?";
-    public static final String SQL_POST_SAVE = "INSERT INTO post(member_id, title, board_type, category, grade, content, is_notice) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    public static final String SQL_POST_UPDATE = "UPDATE post SET title = ?, category = ?, grade = ?, content = ? WHERE post_id = ? AND member_id = ?";
-    public static final String SQL_POST_UPDATE_STATUS = "UPDATE post SET status = ? WHERE post_id = ?";
-    public static final String SQL_POST_UPDATE_STATUS_BY_MEMBERID = "UPDATE post SET status = ? WHERE member_id = ? AND status = ?";
-    public static final String SQL_POST_UPDATE_LIKECOUNT = "UPDATE post SET likeCount = likeCount + ? WHERE post_id = ?";
-    public static final String SQL_POST_UPDATE_COMMENTCOUNT = "UPDATE post SET commentCount = commentCount + ? WHERE post_id = ?";
-    public static final String SQL_COMMENT_FIND_BY_ID = "SELECT c.comment_id, c.post_id, c.parent_id, c.content, c.written_at, c.edited_at, c.mention_id, c.status, c.likeCount, m.member_id, m.name, m.nickname, m.email, m.password, m.zipcode, m.address, m.joined_at, m.quited_at, m.ban_end_at, m.status FROM comment c JOIN member m ON c.member_id = m.member_id WHERE c.comment_id = ?";
+
+    public static final String SQL_COMMENT_FIND_BY_ID = "SELECT c.comment_id, c.post_id, c.parent_id, c.content, c.written_at, c.edited_at, c.mention_id, c.status, c.likeCount, m.member_id, m.name, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE c.comment_id = ?";
     public static final String SQL_COMMENT_SAVE = "INSERT INTO comment(post_id, member_id, parent_id, mention_id, content) VALUES (?, ?, ?, ?, ?)";
-    public static final String SQL_COMMENT_UPDATE = "UPDATE comment SET mention_id = ?, content = ? WHERE comment_id = ?";
+    public static final String SQL_COMMENT_UPDATE = "UPDATE comment SET content = ? WHERE comment_id = ?";
     public static final String SQL_COMMENT_UPDATE_STATUS = "UPDATE comment SET status = ? WHERE comment_id = ?";
     public static final String SQL_COMMENT_UPDATE_STATUS_BY_MEMBERID = "UPDATE comment SET status = ? WHERE member_id = ? AND status = ?";
     public static final String SQL_COMMENT_UPDATE_LIKECOUNT = "UPDATE comment SET likeCount = likeCount + ? WHERE comment_id = ?";

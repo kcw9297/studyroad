@@ -90,20 +90,19 @@ public class PostServiceImpl implements PostService {
 
 
 	@Override
-	public List<PostDTO.Info> getLatestList(String boardType) {
+	public List<PostDTO.Info> getHomeList(String boardType, Integer limit) {
 		try {
-			return postDAO.home(boardType);
-
+			return postDAO.findAllByBoardType(boardType, limit);
 			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
 		} catch (BusinessException e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "PostServiceImpl", "getLatestList", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "PostServiceImpl", "getHomeList", e);
 			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
 			
 		} catch (Exception e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "PostServiceImpl", "getLatestList", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "PostServiceImpl", "getHomeList", e);
 			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 		}
 	}
@@ -112,7 +111,7 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostDTO.Info> getNoticeList(String boardType) {
 		try {
-			return postDAO.notice(boardType);
+			return postDAO.findAllByBoardTypeAndIsNoticeTrue(boardType);
 
 			
 		} catch (DAOException e) {
@@ -130,8 +129,7 @@ public class PostServiceImpl implements PostService {
 
 
 	@Override
-	public Long write(PostDTO.Write request) {
-		
+	public Long write(PostDTO.Write request) {	
 		
 		try {
 			return postDAO.save(request);
@@ -173,15 +171,27 @@ public class PostServiceImpl implements PostService {
 		
 			
 	}
+	
+	
+	@Override
+	public void read(Long postId) {
+		try {
+			if (!Objects.equals(postDAO.updateViews(postId, 1L), 1)) 
+				throw new BusinessException("게시글 추천 실패하셨습니다");
+			
+			// 조회수 증가는 예외가 발생해도, 다른 예외를 던지지 않음
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "PostServiceImpl", "like", e);
+		}
+	}
 
 
 	@Override
 	public void like(Long postId) {
 		try {
-			if (!Objects.equals(postDAO.updateLikeCount(postId, 1L), 1)) {
-			throw new BusinessException("게시글 추천 실패하셨습니다");
-
-			}
+			if (!Objects.equals(postDAO.updateLikeCount(postId, 1L), 1)) 
+				throw new BusinessException("게시글 추천 실패하셨습니다");
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			

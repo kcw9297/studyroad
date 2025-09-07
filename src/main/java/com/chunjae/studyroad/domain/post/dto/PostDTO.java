@@ -144,15 +144,15 @@ public class PostDTO {
         private String option;              // 검색 항목(제목, 본문, 사용자, ...)
         private String boardType;           // 선택 게시판 (공지사항, 뉴스, 문제공유, 커뮤니티)
         private List<String> categories;    // 선택 카테고리 (일상, 입시, ...)
-        private List<Integer> grades;       // 선택 학년 (1학년, 2학년, ...)
+        private Integer grade;       		// 선택 학년 (1, 2, 3)
         private String order;               // 정렬 기준 (추천순, 조회순, 최신순, ...)
 
-        public Search(String keyword, String option, String boardType, List<String> categories, List<Integer> grades, String order) {
+        public Search(String keyword, String option, String boardType, List<String> categories, Integer grade, String order) {
         	this.keyword = keyword;
             this.option = option;
             this.boardType = boardType;
             this.categories = categories;
-            this.grades = grades;
+            this.grade = grade;
             this.order = order;
         }
         
@@ -176,8 +176,8 @@ public class PostDTO {
             return categories;
         }
 
-        public List<Integer> getGrades() {
-            return grades;
+        public Integer getGrade() {
+            return grade;
         }
 
         public String getOrder() {

@@ -95,9 +95,10 @@ public class Page {
             this.previousGroupPage = hasPreviousGroup ? ((currentGroup - 1) * groupSize) : 1;
 
             // 페이지 시작/끝 여부 계산
-            this.isStartPage = (currentPage == 1);
-            this.isEndPage = (currentPage == totalPage);
+            this.isStartPage = currentPage == 0; // 서버에선 0이 시작 페이지
+            this.isEndPage = currentPage == totalPage;
         }
+        
         /**
          * 서비스에서 가공한 데이터로 변경
          */

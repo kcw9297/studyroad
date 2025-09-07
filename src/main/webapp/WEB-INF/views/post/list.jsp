@@ -1,50 +1,43 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<fmt:formatDate value="${today}" pattern="yyyy-MM-dd" var="todayDate"/>
 
 <%-- login.jsp 스크립트 --%>
 <script src="<c:url value='/js/post/list.js'/>"></script>
-1
+
 <%-- 서버에서 내려준 변수 --%>
 <script>
+
 </script>
 
+<form id="post-search-form" class="container option" method="get">
 
-<form class="container option" method="get">
 	<fieldset>
 		<div class="board-search">
 			<select name="category">
 				<option value="">선택</option>
-				<c:forEach var="entry" items="${categories}">
+				<c:forEach var="entry" items="${searchOptions}">
 					<option value="${entry.key}">${entry.value}</option>
 				</c:forEach>
 			</select>
 			<div class="search-box">
-				<input id="title" name="title" type="search" placeholder="두 글자 이상 입력하세요">
+				<input id="keyword" name="keyword" type="search" placeholder="두 글자 이상 입력하세요">
 				<button type="submit"><img src="/file/display.do?fileName=search.png&type=BASE" width="20" height="20"/></button>
 			</div>
 		</div>
 		<div class="board-category">
 			<ul>
 				<li>
-					<input type="radio" name="category" value="" id="category-all" checked>
-					<label for="category-all">전체</label>
+					<input type="checkbox" name="category" value="" id="categoryAll" checked>
+					<label for="categoryAll">전체</label>
 				</li>
-				<li>
-					<input type="radio" name="category" value="국어" id="category-ko">
-					<label for="category-ko">국어</label>
-				</li>
-				<li>
-					<input type="radio" name="category" value="영어" id="category-eng">
-					<label for="category-eng">영어</label>
-				</li>
-				<li>
-					<input type="radio" name="category" value="수학" id="category-math">
-					<label for="category-math">수학</label>
-				</li>
-				<li>
-					<input type="radio" name="category" value="탐구" id="category-sci">
-					<label for="category-sci">탐구</label>
-				</li>
+				<c:forEach var="entry" items="${categories}">
+					<li>
+						<input type="checkbox" name="category" value="${entry.key}" id="category${entry.key}">
+						<label for="category${entry.key}">${entry.value}</label>
+					</li>
+				</c:forEach>
 			</ul>
 		</div>
 	</fieldset>
@@ -77,7 +70,12 @@
 	<div class="board-header">
 	    <div>번호</div>
 	    <div>분류</div>
-	    <div>학년</div>
+	    <c:if test="${boardType eq '3'}">
+	    	<div>학년</div>
+	    </c:if>
+	    <c:if test="${boardType ne '3'}">
+	    	<div> </div>
+	    </c:if>
 	    <div>제목</div>
 	    <div>작성자</div>
 	    <div>조회수</div>
@@ -88,7 +86,7 @@
 		<li class="board-notice">
 	      <div class="notice-list">공지</div>
 	      <div>-</div>
-	      <div>-</div>
+	      <div> </div>
 	      <div class="list-title"><a href="#">게시판 이용 수칙</a></div>
 	      <div>관리자</div>
 	      <div>8,540</div>
@@ -98,65 +96,51 @@
 	    <li class="board-notice">
 	      <div class="notice-list">공지</div>
 	      <div>-</div>
-	      <div>-</div>
+	      <div> </div>
 	      <div class="list-title"><a href="#">대학수학능력시험일 게시판 조정 안내</a></div>
 	      <div>관리자</div>
 	      <div>8,540</div>
 	      <div>0</div>
 	      <div>25.08.26</div>
 	    </li>
-	    <li class="board-post">
-	      <div>15</div>
-	      <div>수학</div>
-	      <div class="board-grade">고1</div>
-	      <div class="list-title"><a href="#">뭐라는 거임?</a><span class="comment-count">[8]</span></div>
-	      <div>abcabc</div>
-	      <div>10</div>
-	      <div>1</div>
-	      <div>15:00</div>
-	    </li>
-	    <li class="board-post">
-	      <div>14</div>
-	      <div>국어</div>
-	      <div class="board-grade">고2</div>
-	      <div class="list-title"><a href="#">한국어인데 이해를 못하겠네</a><span class="comment-count">[3]</span></div>
-	      <div>하나둘셋</div>
-	      <div>10</div>
-	      <div>2</div>
-	      <div>25.08.24</div>
-	    </li>
-	    <li class="board-post">
-	      <div>13</div>
-	      <div>영어</div>
-	      <div class="board-grade">고3</div>
-	      <div class="list-title"><a href="#">이거 해석 가능한 사람???</a></div>
-	      <div>김수한무거북이와두루미척척박사석박사아아</div>
-	      <div>10</div>
-	      <div>3</div>
-	      <div>25.08.24</div>
-	    </li>
-		<li class="board-post">
-			<div>12</div>
-			<div>탐구</div>
-			<div class="board-grade">고3</div>
-			<div class="list-title"><a href="#">시범적인 게시물입니다 글자수가 길어지면 자동으로 생략되는지 테스트</a><span class="comment-count">[1]</span></div>
-			<div>교과서공부자</div>
-			<div>10</div>
-			<div>3</div>
-			<div>25.08.24</div>
-		</li>
+	    <c:forEach var="dto" items="${page.data}">
+		    <li class="board-post">
+		      <div>${dto.postId}</div>
+		      <div>${allCategories[dto.category]}</div>
+		      <c:if test="${boardType eq '3'}">
+		      	<div class="board-grade">고${dto.grade}</div>
+		      </c:if>
+		      <c:if test="${boardType ne '3'}">
+		      	<div class="board-grade"> </div>
+		      </c:if>
+		      <div class="list-title"><a href="#">${dto.title}</a><span class="comment-count">[${dto.commentCount}]</span></div>
+		      <div>${dto.member.nickname}</div>
+		      <div><fmt:formatNumber value="${dto.views}" type="number" /></div>
+		      <div><fmt:formatNumber value="${dto.likeCount}" type="number" /></div>
+		      <fmt:formatDate value="${dto.writtenAt}" pattern="yyyy-MM-dd" var="writtenDate"/>
+		      <c:if test="${todayDate eq writtenDate}">
+		      	<div><fmt:formatDate value="${dto.writtenAt}" pattern="${time}" /></div>
+		      </c:if>
+		      <c:if test="${todayDate ne writtenDate}">
+		      	<div><fmt:formatDate value="${dto.writtenAt}" pattern="${date}" /></div>
+		      </c:if>
+		    </li>
+	    </c:forEach>
+	    
 	</ul>
 	<div class="pagination">
-	    <span><<</span>
-	    <span><</span>
-	    <span>1</span>
-	    <span>2</span>
-	    <span>3</span>
-	    <span>4</span>
-	    <span>5</span>
-	    <span>></span>
-    	<span>>></span>
-		</div>
+		<c:if test="${not page.isStartPage}"><a href="javascript:void(0)" onClick="goPrevGroup()"><<</a></c:if>
+		<c:if test="${not page.isStartPage}"><a href="javascript:void(0)" onClick="goPrevPage()"><</a></c:if>
+		<c:if test="${page.isStartPage}"><<</c:if>
+		<c:if test="${page.isStartPage}"><</c:if>
+		<c:forEach var="pageNum" begin="${page.currentGroup}" end="${page.currentGroup * page.groupSize}" step="1">
+			<span>${pageNum}</span>
+		</c:forEach>
+		<c:if test="${not page.isEndPage}"><a href="javascript:void(0)" onClick="goNextPage()">></a></c:if>
+		<c:if test="${not page.isEndPage}"><a href="javascript:void(0)" onClick="goNextGroup()">>></a></c:if>
+		<c:if test="${page.isEndPage}">></c:if>
+		<c:if test="${page.isEndPage}">>></c:if>
+	</div>
 		<div class="board-new">
     	<button type="button" onclick="location.href='/post/write.do?boardType=${boardType}'">글쓰기</button>
     </div>

@@ -17,7 +17,7 @@ import com.chunjae.studyroad.common.exception.FileException;
 public class FileUtils {
 
     // 파일 상수
-    private static final String FILE_PATH = "D:/CYS/project/pro_1_imgs";	// 파일이 저장된 기본 주소
+    private static final String FILE_PATH = "C:/KCW/project/pro_1_imgs";	// 파일이 저장된 기본 주소
     public static final String DIR_BASE = "base"; // 기본 이미지 저장 디렉토리명
     public static final String DIR_POST = "post"; 
     public static final String EMPTY_IMAGE = "empty.png";  // 현재 이미지가 존재하지 않을 때 출력

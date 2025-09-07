@@ -32,10 +32,16 @@ public class LikeServiceImpl implements LikeService {
 	@Override
 	public void like(LikeDTO.Like request) {
 		try {
-			if (!Objects.nonNull(likeDAO.save(request))) {
-			throw new BusinessException("추천에 실패했습니다");
+			
+			// [1] 기존 추천이력 조회
+			if (likeDAO.exists(request.getMemberId(), request.getTargetId(), request.getTargetType()))
+				throw new BusinessException("이미 추천했습니다");
+				
+			// [2] 저장 수행
+			if (!Objects.nonNull(likeDAO.save(request))) 
+				throw new BusinessException("추천에 실패했습니다");
 
-			}
+			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			

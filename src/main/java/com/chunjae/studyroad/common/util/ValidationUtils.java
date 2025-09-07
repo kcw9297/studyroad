@@ -2,6 +2,8 @@ package com.chunjae.studyroad.common.util;
 
 import java.util.*;
 
+import com.chunjae.studyroad.common.dto.LoginMember;
+
 
 
 /**
@@ -42,8 +44,14 @@ public class ValidationUtils {
 	public static final int MAX_LANGTH_TITLE = 30;
 	public static final int MAX_LANGTH_CONTENT_POST = 20; //2000
 	public static final int MAX_LANGTH_CONTENT_COMMENT = 20; // 100W
+	
+	
+	// 재한 값
 	public static final int MAX_SIZE_FILE = 5*1024*1024; // 한 파일당 최대 5MB 초과불가
 	public static final int MAX_COUNT_FILE = 3; // 최대 등록가능 파일 개수 3개
+	public static final int PAGE_SIZE_COMMENT = 5;
+	public static final int PAGE_SIZE_POST = 10;
+	public static final int LIMIT_POST_HOME = 5; // HOME (Index) 페이지에 표시할 게시글 개수
 	
 	
 	public static final List<Integer> LIST_GRADES = List.of(1, 2, 3);
@@ -53,6 +61,25 @@ public class ValidationUtils {
 	    put("2", "뉴스");
 	    put("3", "문제공유");
 	    put("4", "커뮤니티");
+	}};
+	
+	public static final Map<String, String> CATEGORY_ALL = new LinkedHashMap<>() {{
+		put("101", "점검");
+	    put("102", "행사");
+	    put("103", "설문");
+	    put("104", "안내");
+	    put("201", "사회");
+	    put("202", "경제");
+	    put("203", "IT");
+	    put("204", "과학");
+	    put("301", "국어");
+	    put("302", "영어");
+	    put("303", "수학");
+	    put("304", "탐구");
+	    put("401", "일상");
+	    put("402", "고민");
+	    put("403", "입시");
+	    put("404", "진로");
 	}};
 	
 
@@ -154,20 +181,9 @@ public class ValidationUtils {
 	}
 	
 	
-	public static String getCategoryName(String boardType, String category) {
+	public static String getCategoryName(String category) {
+		return CATEGORY_ALL.getOrDefault(category, null);
 		
-		// 게시판 유형이 정해진 것 이외의 값이면 null
-		if (Objects.isNull(boardType)) return null;
-		
-		System.out.printf("boardType = %s, category = %s\n", boardType, category);
-		
-		// 카테고리 타입 별 조회 후 반환
-		switch (boardType) {
-			case "1": return CATEGORY_NOTICE.getOrDefault(category, null);
-			case "2": return CATEGORY_NEWS.getOrDefault(category, null);
-			case "3": return CATEGORY_PROBLEM.getOrDefault(category, null);
-			case "4": return CATEGORY_COMMUNITY.getOrDefault(category, null);
-			default: return null;
-		}
 	}
+
 }
