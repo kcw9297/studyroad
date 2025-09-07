@@ -81,6 +81,7 @@ public class DAOUtils {
      * @return String       생성된 문자열 반환
      */
     public static String createPlaceholder(Integer rowCount, Integer columnCount) {
+    	
         return IntStream.range(0, rowCount)
                 .mapToObj(i -> String.format("(%s)", String.join(", ", Collections.nCopies(columnCount, "?"))))
                 .collect(Collectors.joining(", "));

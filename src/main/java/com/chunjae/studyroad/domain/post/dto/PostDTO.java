@@ -233,9 +233,10 @@ public class PostDTO {
             return content;
         }
 
-        public Boolean getNotice() {
+        public Boolean isNotice() {
             return isNotice;
         }
+
     }
 
     

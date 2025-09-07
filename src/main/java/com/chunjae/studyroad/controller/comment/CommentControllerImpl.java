@@ -61,17 +61,14 @@ public class CommentControllerImpl implements CommentController {
 	        APIResponse rp = APIResponse.success(commentInfo);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
-		} catch (BusinessException e) {
-			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
 			
-		} catch (DAOException | ServiceException e) {
-			HttpUtils.writeServerErrorJSON(response);
-			
+			// 가벼운 조회기 때문에, 구체적인 예외를 잡지 않음
 		} catch (Exception e) {
 			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "CommentControllerImpl", "getListAPI", e);
 			HttpUtils.writeServerErrorJSON(response);
 		}
     }
+	
 	
 	private CommentDTO.Search mapToSearchDTO(HttpServletRequest request) {
         long postId = Long.parseLong(request.getParameter("postId"));
@@ -148,16 +145,15 @@ public class CommentControllerImpl implements CommentController {
 			// [1] HTTP 메소드 판단 - 만약 적절한 요청이 아니면 로직 중단
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 			
-			// [2] 세션 검증
+			// [2-1] 세션 검증
 			LoginMember loginMember = SessionUtils.getLoginMember(request);
 			if (Objects.isNull(loginMember)) {
 				HttpUtils.writeLoginErrorJSON(response);
 				return;
 			}
-
-			
-			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성=
-			commentService.edit(mapToEditDTO(request));
+	
+			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
+			commentService.edit(mapToEditDTO(request, loginMember));
 			
 			
 			// [4] JSON 응답 반환
@@ -181,11 +177,12 @@ public class CommentControllerImpl implements CommentController {
 	}
 	
 	
-	private CommentDTO.Edit mapToEditDTO(HttpServletRequest request){
+	private CommentDTO.Edit mapToEditDTO(HttpServletRequest request, LoginMember loginMember) {
 
         Long commentId = Long.parseLong(request.getParameter("commentId"));
+        Long memberId = loginMember.getMemberId();
         String content = request.getParameter("content");
-        return new CommentDTO.Edit(commentId, content);
+        return new CommentDTO.Edit(memberId, commentId, content);
 	}
 
 
@@ -197,18 +194,19 @@ public class CommentControllerImpl implements CommentController {
 			HttpUtils.checkMethod(request, HttpUtils.POST);
 			
 			
-			// [2] 세션 검증
+			// [2-1] 세션 검증
 			LoginMember loginMember = SessionUtils.getLoginMember(request);
 			if (Objects.isNull(loginMember)) {
 				HttpUtils.writeLoginErrorJSON(response);
 				return;
-			}
-						
+			}			
 
 			
 			// [3] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long commentId = Long.parseLong(request.getParameter("commentId"));
-			commentService.remove(commentId);
+			String status = loginMember.getStatus();
+			CommentDTO.Remove remove = mapToRemoveDTO(request, loginMember);
+			commentService.remove(remove);
 			
 			
 			// [4] JSON 응답 반환
@@ -229,6 +227,15 @@ public class CommentControllerImpl implements CommentController {
 			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "CommentControllerImpl", "postRemoveAPI", e);
 			HttpUtils.writeServerErrorJSON(response);
 		}
+	}
+	
+	
+	private CommentDTO.Remove mapToRemoveDTO(HttpServletRequest request, LoginMember loginMember) {
+
+        Long commentId = Long.parseLong(request.getParameter("commentId"));
+        Long memberId = loginMember.getMemberId();
+        String status = loginMember.getStatus();
+        return new CommentDTO.Remove(memberId, commentId, status);
 	}
 
 }

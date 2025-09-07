@@ -89,7 +89,7 @@ class PostDAOImpl implements PostDAO {
 			
 			// 동적 sql
 			String conditionStr = createPageSql(request, params);
-			StringBuilder sqlCount = new StringBuilder("SELECT COUNT(*) FROM post WHERE status = 'EXIST' AND is_notice = false");
+			StringBuilder sqlCount = new StringBuilder("SELECT COUNT(*) FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
 			StringBuilder sqlPage= new StringBuilder("SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false");
 			String countSql = sqlCount.append(conditionStr).toString();
 			String pageSql = sqlPage.append(conditionStr).toString();
@@ -147,69 +147,76 @@ class PostDAOImpl implements PostDAO {
 		String boardType = params.getBoardType();
 		Integer grade = params.getGrade();
 		String order = params.getOrder();
+		List<String> categories = params.getCategories();
 		int size = request.getSize();
 		int page = request.getPage();
 		
 		System.out.printf(
-			    "[PostSearch] keyword=%s | option=%s | grade = %d | boardType=%s | order=%s | size=%d | page=%d\n",
-			    keyword, option, grade, boardType, order, size, page
+			    "[PostSearch] keyword=%s | option=%s | grade = %d | boardType=%s | order=%s | size=%d | page=%d | categories = %s\n",
+			    keyword, option, grade, boardType, order, size, page, categories
 			);
 		
 		
+
 		// [3-1] 조건 - keyword
+	    // "1" - 작성자, "2" - 제목, "3" - 본문, "4" - 제목+본문
 		if (Objects.nonNull(keyword) && !keyword.isEmpty()) {
+			String formatted = String.format("%%%s%%", keyword);
+			
 		    switch(option) {
-		        case "NICKNAME": 
-		        	condition.append(" AND nickname LIKE ?");
-		        	allParams.add(keyword);
+		        case "1": 
+		        	condition.append(" AND m.nickname LIKE ?");
+		        	allParams.add(formatted);
 		            break;
-		        case "TITLE":
-		        	condition.append(" AND title LIKE ?");
-		        	allParams.add(keyword);
+		        case "2":
+		        	condition.append(" AND p.title LIKE ?");
+		        	allParams.add(formatted);
 		            break;
-		        case "CONTENT":
-		        	condition.append(" AND content LIKE ?");
-		        	allParams.add(keyword);
+		        case "3":
+		        	condition.append(" AND p.content LIKE ?");
+		        	allParams.add(formatted);
 		            break;
-		        case "TITLE_CONTENT":
-		        	condition.append(" AND (title LIKE ? OR content LIKE ?)");
-		        	allParams.add(keyword);
-		        	allParams.add(keyword);
+		        case "4":
+		        	condition.append(" AND (p.title LIKE ? OR p.content LIKE ?)");
+		        	allParams.add(formatted);
+		        	allParams.add(formatted);
 		            break;
 		    }
 		}
 		
 		// [3-2] 조건 - boardType
 		if (Objects.nonNull(boardType) && !boardType.isEmpty()) {
-			condition.append(" AND board_type = ?");
+			condition.append(" AND p.board_type = ?");
 			allParams.add(boardType);
 		}
 		
 		
 		// [3-3] 조건 - categories
-		List<String> categories = params.getCategories();
 		if (Objects.nonNull(categories) && !categories.isEmpty()) {
-			condition.append(" AND category IN ");
-		    String placeholder = DAOUtils.createPlaceholder(1, categories.size());
-		    allParams.addAll(categories); 
+		    condition.append(" AND p.category IN ");
+		    String placeholder = DAOUtils.createPlaceholder(1, categories.size()); 
+		    condition.append(placeholder);
+		    allParams.addAll(categories);
 		}
 		
 		
 		// [3-4] 조건 - grade
 		if (Objects.nonNull(grade) && !Objects.equals(grade, 0)) {
-			condition.append(" AND grade = ? ");
+			condition.append(" AND p.grade = ? ");
 			allParams.add(grade); 
 		}
 		
 		
+		
 		// [3-5] 정렬 - order
-		if (Objects.isNull(order)) {condition.append(" ORDER BY written_at DESC");}
+		// "1" - 추천순, "2" - 조회순, "3" - 최신순
+		if (Objects.isNull(order)) {condition.append(" ORDER BY p.written_at DESC");}
 		else {
 			switch(order) {
-				case "OLDEST": condition.append(" ORDER BY written_at ASC"); break;
-			    case "LATEST": condition.append(" ORDER BY written_at DESC"); break;
-			    case "LIKE": condition.append(" ORDER BY like_count DESC"); break;
-			    default: condition.append(" ORDER BY written_at DESC"); break;
+				case "1": condition.append(" ORDER BY p.like_count DESC"); break;
+				case "2": condition.append(" ORDER BY p.views ASC"); break;
+			    case "3": condition.append(" ORDER BY p.written_at DESC"); break;
+			    default: condition.append(" ORDER BY p.written_at DESC"); break;
 			}
 		}
 		
@@ -369,7 +376,7 @@ class PostDAOImpl implements PostDAO {
 	    		pstmt.setString(4, request.getCategory());
 	    		pstmt.setInt(5, request.getGrade());
 	    		pstmt.setString(6, request.getContent());
-	    		pstmt.setBoolean(7, request.getNotice());
+	    		pstmt.setBoolean(7, request.isNotice());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 

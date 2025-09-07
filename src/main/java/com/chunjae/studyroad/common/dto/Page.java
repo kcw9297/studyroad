@@ -64,10 +64,12 @@ public class Page {
         private int previousGroupPage;      // 이전 그룹 시작 페이지
         private boolean isStartPage;        // 첫 페이지 여부
         private boolean isEndPage;          // 마지막 페이지 여부
+        private int currentGroupStartPage;  // 현재 그룹의 시작 페이지 번호
+        private int currentGroupEndPage;    // 현재 그룹의 끝 페이지 번호
 
         public Response(List<T> data, int currentPage, int groupSize, int pageSize, int dataCount) {
             this.data = data;
-            this.currentPage = currentPage;
+            this.currentPage = currentPage+1;
             this.groupSize = groupSize;
             this.pageSize = pageSize;
             this.dataCount = dataCount;
@@ -95,8 +97,12 @@ public class Page {
             this.previousGroupPage = hasPreviousGroup ? ((currentGroup - 1) * groupSize) : 1;
 
             // 페이지 시작/끝 여부 계산
-            this.isStartPage = currentPage == 0; // 서버에선 0이 시작 페이지
+            this.isStartPage = currentPage == 1; // 서버에선 0이 시작 페이지
             this.isEndPage = currentPage == totalPage;
+            
+            // 현재 그룹에서 시작 및 끝페이지 계산
+            this.currentGroupStartPage = (currentGroup - 1) * groupSize + 1;  			// 현재 그룹의 시작 페이지 번호
+            this.currentGroupEndPage = Math.min(currentGroup * groupSize, totalPage);   // 현재 그룹의 끝 페이지 번호
         }
         
         /**
@@ -111,6 +117,10 @@ public class Page {
         public int getTotalPage() { return totalPage; }
 
         public int getGroupSize() { return groupSize; }
+        
+        public int getDataCount() {return dataCount; }
+        
+        public int getPageSize() { return pageSize; }
 
         public int getCurrentGroup() { return currentGroup; }
 
@@ -125,5 +135,42 @@ public class Page {
         public boolean isStartPage() { return isStartPage; }
 
         public boolean isEndPage() { return isEndPage; }
+        
+        public int getCurrentGroupStartPage() { return currentGroupStartPage; }
+
+        public int getCurrentGroupEndPage() { return currentGroupEndPage; }
+        
+        @Override
+        public String toString() {
+            return String.format(
+                "\n[Response Log]" +
+                "\n- currentPage       		: %d" +
+                "\n- pageSize          		: %d" +
+                "\n- groupSize         		: %d" +
+                "\n- dataCount         		: %d" +
+                "\n- totalPage        		: %d" +
+                "\n- currentGroup     		: %d" +
+                "\n- hasPreviousGroup 		: %b (previousGroupPage=%d)" +
+                "\n- hasNextGroup     		: %b (nextGroupPage=%d)" +
+                "\n- isStartPage      		: %b" +
+                "\n- isEndPage        		: %b" +
+                "\n- currentGroupStartPage	: %d" +
+                "\n- currentGroupEndPage	: %d" +
+                "\n- data size         		: %d",
+                currentPage,
+                pageSize,
+                groupSize,
+                dataCount,
+                totalPage,
+                currentGroup,
+                hasPreviousGroup, previousGroupPage,
+                hasNextGroup, nextGroupPage,
+                isStartPage,
+                isEndPage,
+                currentGroupStartPage,
+                currentGroupEndPage,
+                (data != null ? data.size() : 0)
+            );
+        }
     }
 }

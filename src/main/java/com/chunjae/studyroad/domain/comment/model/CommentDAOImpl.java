@@ -42,9 +42,9 @@ class CommentDAOImpl implements CommentDAO {
 			int size = request.getSize();
 			String order;
 			switch(params.getOrder()) {
-				case "OLDEST": order = "written_at ASC"; break;
-			    case "LATEST": order = "written_at DESC"; break;
-			    case "LIKE": order = "like_count DESC"; break;
+				case "1": order = "written_at ASC"; break;
+			    case "2": order = "written_at DESC"; break;
+			    case "3": order = "like_count DESC"; break;
 			    default: order = "written_at ASC"; break;
 			}
 			
@@ -117,7 +117,7 @@ class CommentDAOImpl implements CommentDAO {
 					rs.getTimestamp("edited_at"),
 					rs.getLong("mention_id"),
 					rs.getString("status"),
-					rs.getLong("likeCount"),
+					rs.getLong("like_count"),
 					new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
 				));
 			return new Page.Response<>(data, request.getPage(), 5, request.getSize(), dataCount);
@@ -128,16 +128,22 @@ class CommentDAOImpl implements CommentDAO {
 	@Override
 	public List<CommentDTO.Info> findAllChildByParentIds(List<Long> commentIds) {
 		try (Connection connection = dataSource.getConnection()) {
-			String placeholders = DAOUtils.createPlaceholder(1, commentIds.size());
-
-	
-			String childSql = "SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id WHERE parent_id IN " + placeholders + " ORDER BY comment_id";
 			
-			try (PreparedStatement pstmt = connection.prepareStatement(childSql)) {
+			// [1] sql 생성
+			String placeholders = DAOUtils.createPlaceholder(1, commentIds.size());
+			StringBuilder sqlBuilder = new StringBuilder("SELECT c.*, m.nickname, m.email FROM comment c JOIN member m ON c.member_id = m.member_id ");
+			
+			// 만약 commentIds 가 비어있으면, WHERE 조건문을 생성하지 않음
+			if (Objects.equals(commentIds.size(), 0)) sqlBuilder.append("ORDER BY c.comment_id");
+			else sqlBuilder.append(String.format("WHERE comment_id IN %s ORDER BY c.comment_id", placeholders));
+			String sql = sqlBuilder.toString();
+			
+			// [2] sql 수행
+			try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 				
-				for (int i = 0; i < commentIds.size(); i++) {
+				for (int i = 0; i < commentIds.size(); i++) 
 					pstmt.setLong(i + 1, commentIds.get(i));
-				}
+				
 				
 				List<CommentDTO.Info> info = new ArrayList<>();
 					
@@ -152,7 +158,7 @@ class CommentDAOImpl implements CommentDAO {
 								rs.getTimestamp("edited_at"),
 								rs.getLong("mention_id"),
 								rs.getString("status"),
-								rs.getLong("likeCount"),
+								rs.getLong("like_count"),
 								new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
         					  );
 			            info.add(dto);
@@ -209,7 +215,7 @@ class CommentDAOImpl implements CommentDAO {
 							rs.getTimestamp("edited_at"),
 							rs.getLong("mention_id"),
 							rs.getString(8),
-							rs.getLong("likeCount"),
+							rs.getLong("like_count"),
 							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
 				    ) : null;
 		}

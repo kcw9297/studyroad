@@ -162,14 +162,27 @@ public class HttpUtils {
 		}
 		
 	}
+	
+	
+	public static void writeForbiddenErrorJSON(HttpServletResponse response) {
+		
+		try {
+			String msg = "잘못된 접근입니다";
+			APIResponse rp =  APIResponse.error(msg, "/", StatusCode.CODE_ACCESS_ERROR);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_FORBIDDEN);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
 
 	
 	
 	public static void writeForbiddenErrorJSON(HttpServletResponse response, String alertMessage) {
 		
 		try {
-			String msg = Objects.isNull(alertMessage) ? "잘못된 접근입니다" : alertMessage;
-			APIResponse rp =  APIResponse.error(msg, "/", StatusCode.CODE_ACCESS_ERROR);
+			APIResponse rp =  APIResponse.error(alertMessage, "/", StatusCode.CODE_ACCESS_ERROR);
 			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_FORBIDDEN);
 			
 		} catch (Exception e) {

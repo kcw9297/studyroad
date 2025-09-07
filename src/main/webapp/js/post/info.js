@@ -667,7 +667,7 @@ function loadComments() {
 	if (isLoading || page > totalPage) return; // 로딩 중이거나 페이지 한도면 수행하지 않음
 	isLoading = true;
 
-	const requestURL = "/api/comment/list.do?postId="+postId +"&page="+page+"&order="+"LATEST";
+	const requestURL = "/api/comment/list.do?postId="+postId +"&page="+page+"&order=1";
 
 	sendRequest(requestURL, "get")
 	    .then(response => {
