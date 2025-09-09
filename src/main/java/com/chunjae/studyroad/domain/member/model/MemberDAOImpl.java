@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
 class MemberDAOImpl implements MemberDAO {
@@ -269,8 +270,8 @@ class MemberDAOImpl implements MemberDAO {
 				
 				pstmt.setString(1, afterStatus);
 				switch(afterStatus) {
-					case "QUITED": pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().plusDays(7)));
-					case "ACTIVE": pstmt.setNull(2, java.sql.Types.TIMESTAMP);
+					case ValidationUtils.QUITED : pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now().plusMinutes(3))); break;
+					case ValidationUtils.ACTIVE	: pstmt.setNull(2, java.sql.Types.TIMESTAMP); break;
 				}
 				pstmt.setLong(3, memberId);
 				pstmt.setString(4, beforeStatus);

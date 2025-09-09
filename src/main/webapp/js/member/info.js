@@ -67,7 +67,30 @@ $(document).ready(function() {
 	});
 	
 	$(".quit").on("click", function(e) {
-		alert("quit");
+		showConfirmModal("회원 탈퇴 하시겠습니까?<br>1주일 경과 후엔 복구할 수 없습니다", function() {
+			
+			sendRequest("/api/member/quit.do", "post")
+			    .then(response => {
+					
+					// 응답 JSON 보기
+					console.log("성공 응답:", response);
+					
+					// 응답 모달 띄움
+					showAlertModal(response.alertMessage || "회원 탈퇴애 성고했습니다.<br>로그인 페이지로 이동합니다", function() {
+						if (response.redirectURL) window.location.href = response.redirectURL;
+					});
+			    })
+			    .catch(xhr => {
+					
+					// 실패 응답 JSON 파싱 후 보기
+					const response = xhr.responseJSON || {};
+					console.log("실패 응답:", response);
+					
+					// 실패 응답 메세지를 로그인 페이지에 출력
+					showAlertModal(response.alertMessage || "잠시 후에 다시 시도해 주세요");
+			    });	
+			
+		})
 	});
 	
 });

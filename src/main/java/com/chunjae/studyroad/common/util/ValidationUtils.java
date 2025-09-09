@@ -42,7 +42,7 @@ public class ValidationUtils {
 	public static final int MIN_LANGTH_ADDRESS = 20;
 	public static final int MAX_LANGTH_ADDRESS = 100;
 	public static final int MAX_LANGTH_TITLE = 30;
-	public static final int MAX_LANGTH_CONTENT_POST = 50; //2000
+	public static final int MAX_LANGTH_CONTENT_POST = 2000; //2000
 	public static final int MAX_LANGTH_CONTENT_COMMENT = 20; // 100W
 	
 	
@@ -140,7 +140,11 @@ public class ValidationUtils {
 	    put("4", "제목+본문");
 	}};
 	
-
+	
+	/**
+	 * 짧은 UUID 생성
+	 * @param String	생성된 UUID 문자열 반환
+	 */
 	public static String getShortUUID() {
 
         // 랜덤 문자열 생성
@@ -161,7 +165,11 @@ public class ValidationUtils {
 	
 
 	
-	
+	/**
+	 * 현재 페이지정보 반환 - 만약 유효한 페이지가 아니면 0으로 사용
+	 * @param strPage	페이지 값
+	 * @param int		현재 페이지에서 -1 뺀 값 혹은 기본 값 반환 (서버에서 페이지 기준은 0)
+	 */
 	public static int getPage(String strPage) {
 		
 		return Objects.nonNull(strPage) && isNumberString(strPage) ?
@@ -169,6 +177,11 @@ public class ValidationUtils {
 	}
 	
 	
+	/**
+	 * 받아온 ID (PK) 값 유효성 판별
+	 * @param strId		getParameter 메소드로 얻어온 문자열 ID 값
+	 * @param boolean	판별된 값 반환 (유효하지 않으면 null)
+	 */
 	public static Long getId(String strId) {
 		
 		return Objects.nonNull(strId) && isNumberString(strId) ?
@@ -177,11 +190,22 @@ public class ValidationUtils {
 	
 	
 	
+	/**
+	 * 유효한 숫자 값인지 판별
+	 * @param str		숫자 문자열
+	 * @param boolean	판별된 값 반환 (유효한 문자열이면 true)
+	 */
 	public static boolean isNumberString(String str) {
 		return Objects.nonNull(str) && str.matches("^[0-9]+$");
 	}
 	
 	
+	
+	/**
+	 * 게시판 유형 값이 유효한지 판별
+	 * @param boardType		게시판 유형
+	 * @param boolean		판별 값 반환 (현재 프로젝트에서 취급하는 개시판 유형이면 true)
+	 */
 	public static String getBoardType(String boardType) {
 		
 		if (Objects.nonNull(boardType) && BOARD_TYPES.containsKey(boardType))
@@ -189,13 +213,14 @@ public class ValidationUtils {
 		
 		else return null;
 	}
+
 	
 	
-	public static String getCategoryName(String category) {
-		return CATEGORY_ALL.getOrDefault(category, null);
-	}
-	
-	
+	/**
+	 * 현재 게시판이 뉴스, 공지인지 판별
+	 * @param boardType		게사판 유형
+	 * @param boolean		판별 값 반환 (맞을 시 true)
+	 */
 	public static boolean isNewsOrNotify(String boardType) {
 		return LIST_BOARD_TYPES_ONLY_ADMIN.contains(boardType);
 	}

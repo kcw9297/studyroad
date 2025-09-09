@@ -7,6 +7,7 @@ import com.chunjae.studyroad.common.dto.APIResponse;
 import com.chunjae.studyroad.common.dto.LoginMember;
 import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.DAOException;
+import com.chunjae.studyroad.common.exception.QuitException;
 import com.chunjae.studyroad.common.exception.ServiceException;
 import com.chunjae.studyroad.common.util.HttpUtils;
 import com.chunjae.studyroad.common.util.JSONUtils;
@@ -70,12 +71,13 @@ public class LoginControllerImpl implements LoginController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			String email = request.getParameter("email");
 			String password = request.getParameter("password");
-			System.out.printf("email = %s, password = %s\n", email, password);
+			
 			
 			
 			// [3] service 조회
 			LoginMember loginMember = memberService.login(email, password);
 			SessionUtils.setLoginMember(request, loginMember);
+
 			
 			// [4] JSON 응답 반환
 			String returnURL = request.getParameter("returnURL");	// 만약 로그인 서비스가 필요한 곳에서 접근한 경우 존재
@@ -87,6 +89,9 @@ public class LoginControllerImpl implements LoginController {
 			
 		
 			// 오류 응답 반환
+		} catch (QuitException e) {
+			HttpUtils.writeLoginErrorJSON(response, e.getMessage());	
+			
 		} catch (BusinessException e) {
 			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
 			

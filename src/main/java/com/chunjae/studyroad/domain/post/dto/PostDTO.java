@@ -21,7 +21,6 @@ public class PostDTO {
         private String title;
         private String boardType;
         private String category;
-        private String categoryName;
         private Integer grade;
         private String content;
         private Timestamp writtenAt;
@@ -60,14 +59,6 @@ public class PostDTO {
             this.files = files;
         }
         
-        /**
-         * 게시글의 카테고리 번호에 대응하는 카테고리명 정보 추가
-         * @param categoryName 대상 카테고리명
-         */
-        public void setCategoryName(String categoryName) {
-            this.categoryName = categoryName;
-        }
-        
 
         public Long getPostId() {
             return postId;
@@ -83,10 +74,6 @@ public class PostDTO {
 
         public String getCategory() {
             return category;
-        }
-        
-        public String getCategoryName() {
-            return categoryName;
         }
 
         public Integer getGrade() {

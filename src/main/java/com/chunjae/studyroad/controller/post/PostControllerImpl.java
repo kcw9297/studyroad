@@ -1,6 +1,8 @@
 package com.chunjae.studyroad.controller.post;
 
 import java.io.File;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,7 @@ public class PostControllerImpl implements PostController {
 	public void getInfoView(HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-
+			
 			// [1] 검증 - 만약 조회에 필요한 정보가 없으면, 홈으로 보냄
 			Long postId = ValidationUtils.getId(request.getParameter("postId"));
 			String boardType = ValidationUtils.getBoardType(request.getParameter("boardType"));
@@ -50,14 +52,11 @@ public class PostControllerImpl implements PostController {
 				HttpUtils.redirectHome(response);
 				return;
 			}
-			
-			System.out.println(postId);
 
 			
 			// [2-1] service 조회 - 게시글 정보 조회
 			PostDTO.Info post = postService.getInfo(postId);
 			postService.read(postId);
-			post.setCategoryName(ValidationUtils.getCategoryName(post.getCategory()));
 			
 			 
 			// [2-2] service 조회 - 게시글 내 파일 정보 조회
@@ -237,8 +236,11 @@ public class PostControllerImpl implements PostController {
 			// [2-1] service 조회 - 게시글
 			PostDTO.Info postInfo = postService.getInfo(postId);
 			
-			// 작성자가 아니면, 오류 페이지로 이동
-			if (Objects.equals(loginMember.getMemberId(), postInfo.getMember().getMemberId())) {
+			// 작성자 혹은 관리자가 아니면, 오류 페이지로 이동
+			boolean isWritter = Objects.equals(loginMember.getMemberId(), postInfo.getMember().getMemberId());
+			boolean isAdmin = Objects.equals(loginMember.getStatus(), ValidationUtils.ADMIN);
+			
+			if (!isWritter && !isAdmin) {
 				HttpUtils.redirectErrorPage(request, response, StatusCode.CODE_ACCESS_ERROR);
 				return;
 			}
@@ -387,9 +389,12 @@ public class PostControllerImpl implements PostController {
 
 			
 			// [5] JSON 응답 반환
-			String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			String encodedBoardType = HttpUtils.getEncodedStr("1");
+			String encodedPostId = HttpUtils.getEncodedStr(String.valueOf("1L"));
+			String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", encodedBoardType, encodedPostId);
 			APIResponse rp = APIResponse.success("게시글 작성을 완료했습니다", redirectURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
+			
 
 		} catch (BusinessException e) {
 			HttpUtils.writeBusinessErrorJSON(response, e.getMessage());	
@@ -398,7 +403,7 @@ public class PostControllerImpl implements PostController {
 			HttpUtils.writeServerErrorJSON(response);
 			
 		} catch (Exception e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "postWriteAPI", e);
+			//System.out.printf(ValidationUtils.EX_MESSAGE_CONTROLLER, "PostControllerImpl", "postWriteAPI", e);
 			HttpUtils.writeServerErrorJSON(response);
 		}
 	}
@@ -443,7 +448,6 @@ public class PostControllerImpl implements PostController {
 				return;
 			}
 			
-			// 관리자 이외의 회원이 접근 시 접근 오류 응답 반환
 			if (ValidationUtils.isNewsOrNotify(boardType) && 
 					!Objects.equals(loginMember.getStatus(), ValidationUtils.ADMIN)) {
 				
@@ -497,7 +501,9 @@ public class PostControllerImpl implements PostController {
 	
 			
 			// [5] JSON 응답 반환
-			String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", boardType, postId);
+			String encodedBoardType = HttpUtils.getEncodedStr(boardType);
+			String encodedPostId = HttpUtils.getEncodedStr(String.valueOf(postId));
+			String redirectURL = String.format("/post/info.do?boardType=%s&postId=%s", encodedBoardType, encodedPostId);
 			APIResponse rp = APIResponse.success("게시글 수정을 완료했습니다", redirectURL);
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 
@@ -520,7 +526,8 @@ public class PostControllerImpl implements PostController {
 		long postId = Long.parseLong(request.getParameter("postId"));		
 		long memberId = SessionUtils.getLoginMember(request).getMemberId();
 		String title = request.getParameter("title");
-		String category = request.getParameter("category");
+		String c = request.getParameter("category");
+		String category = Objects.nonNull(c) ? c : "";
 		String strGrade = request.getParameter("grade");
 		int grade = Objects.nonNull(strGrade) ? Integer.parseInt(request.getParameter("grade")) : 0;
 		String content = request.getParameter("content");

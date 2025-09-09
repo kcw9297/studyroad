@@ -29,10 +29,20 @@ $(document).ready(function() {
   $("#editPostForm").on("submit", function(e) {
     e.preventDefault();
 	
-	if (boardType == "3" && !checkGrade()) return;	
-	
-	// 유효성 검사
-	if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;		
+	if (memberStatus === "ADMIN") {
+	    if (boardType === "3" || boardType === "4") {
+	        if (!checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    } else {
+	        if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    }
+	} else {
+	    if (boardType === "3") {
+	        if (!checkGrade() || !checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    } else {
+	        if (!checkCategory() || !checkTitle() || !checkPostContent() || !checkPostFile()) return;
+	    }
+	}
+
 	
 	// 요청 수행
 	sendAJAX(this);
@@ -73,8 +83,17 @@ function sendAJAX(form) {
 			
 			// 실패 응답 메세지를 로그인 페이지에 출력
 			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
-			showAlertModal(response.alertMessage);
-	    });
+			if (response.errorCode === 2) {
+				showConfirmModal(msg, function() {
+					if (response.redirectURL) {
+						window.location.href = response.redirectURL + "?returnURL=/post/edit.do?boardType="+boardType+"postId="+postId;
+					}
+				});
+				
+			} else {
+				showAlertModal(msg);
+			}
+		});
 }
 
 

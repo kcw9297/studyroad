@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=utf-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <%-- write.jsp 스크립트 --%>
 <script src="<c:url value='/js/base/file.js'/>"></script>
@@ -28,10 +29,9 @@
 <form class="container information" id="editPostForm" method="post" enctype="multipart/form-data">
 	<div class="information-form">
 		<label for="nickname">작성자</label>
-		<input id="nickname" name="nickname" type="text" value="${loginMember.nickname}" disabled/>
+		<input id="nickname" name="nickname" type="text" value="${data.member.nickname}" disabled/>
 	</div>
-	<%--관리자는 분류를 공지사항 에서만 선택 가능--%>
-	<c:if test="${memberStatus != 'ADMIN' || boardType == 1 || boardType == 2 }">
+	<c:if test="${data.member.status ne 'ADMIN' or (boardType eq '1' or boardType eq '2')}">
 		<div class="information-form">
 			<label for="category">분류</label>
 			<select id="category" name="category">
@@ -42,8 +42,7 @@
 			</select>
 		</div>
 	</c:if>	
-	<%--학년은 문제 공유에서만 선택 가능--%>
-	<c:if test="${boardType == 3}">
+	<c:if test="${data.member.status ne 'ADMIN' and boardType eq '3'}">
 		<div class="information-form">
 			<label for="grade">학년</label>
 			<select id="grade" name="grade">
@@ -65,7 +64,7 @@
 	</div>
 
 	<div class="information-content">
-		<input type="hidden" id="content" name="content" value="${data.title}">
+		<textarea id="content" name="content" style="display:none;"><c:out value="${data.content}" escapeXml="false"/></textarea>
 		<iframe id="editorFrame" src="/editor.do"style="width:100%; height:800px; border:none;"></iframe>
 	</div>
 

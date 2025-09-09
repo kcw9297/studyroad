@@ -74,7 +74,7 @@ class PostDAOImpl implements PostDAO {
 							rs.getBoolean("is_notice"),
 							rs.getLong("like_count"),
 							rs.getLong("comment_count"),
-							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"))
+							new MemberDTO.Info(rs.getLong("member_id"), rs.getString("nickname"), rs.getString("email"), rs.getString(24))
 				    ) : null;
 		}
 	}
@@ -413,7 +413,6 @@ class PostDAOImpl implements PostDAO {
 	    		pstmt.setInt(3, request.getGrade()); 
 	    		pstmt.setString(4, request.getContent());
 	    		pstmt.setLong(5, request.getPostId());
-	    		pstmt.setLong(6, request.getMemberId());
 				
 				// [2] SQL 수행 + 결과 DTO 생성 후 반환
 				return pstmt.executeUpdate();

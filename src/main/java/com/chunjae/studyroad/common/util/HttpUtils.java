@@ -167,6 +167,21 @@ public class HttpUtils {
 	}
 	
 	
+	public static void writeLoginErrorJSON(HttpServletResponse response, String alertMessage) {
+		
+		try {
+			APIResponse rp =  APIResponse.error(alertMessage, StatusCode.CODE_LOGIN_ERROR);
+			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_FORBIDDEN);
+			
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] JSON write 과정이 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+		
+	}
+	
+	
+	
 	public static void writeForbiddenErrorJSON(HttpServletResponse response) {
 		
 		try {
@@ -199,7 +214,7 @@ public class HttpUtils {
 	public static void writeServerErrorJSON(HttpServletResponse response) {
 		
 		try {
-			APIResponse rp =  APIResponse.error("오류가 발생했습니다. 잠시 후에 시도해 주세요", StatusCode.CODE_INTERNAL_ERROR);
+			APIResponse rp =  APIResponse.error("오류가 발생했습니다. 잠시 후에 시도해 주세요", "/", StatusCode.CODE_INTERNAL_ERROR);
 			writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			
 		} catch (Exception e) {
@@ -234,6 +249,18 @@ public class HttpUtils {
 			
 		} catch (Exception e) {
 			System.out.printf("[HttpUtils] HTTP 요청 내 JSON 문자열 추출에 실패했습니다! 원인 : %s\n", e);
+			throw new ServletException(e);
+		}
+	}
+	
+	
+	
+
+	public static String getEncodedStr(String str) {
+		try {
+			return URLEncoder.encode(str, StandardCharsets.UTF_8.toString());
+		} catch (Exception e) {
+			System.out.printf("[HttpUtils] 문자열 인코딩에 실패했습니다! 원인 : %s\n", e);
 			throw new ServletException(e);
 		}
 	}

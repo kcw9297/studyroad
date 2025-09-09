@@ -42,7 +42,7 @@
 		</div>
 	</c:if>	
 
-	<c:if test="${boardType eq 3}">
+	<c:if test="${loginMember.status ne 'ADMIN' and boardType eq 3}">
 		<div class="information-form">
 			<label for="grade">학년</label>
 			<select id="grade" name="grade">
