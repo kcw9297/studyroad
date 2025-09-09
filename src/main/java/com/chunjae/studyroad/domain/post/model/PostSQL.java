@@ -18,4 +18,5 @@ class PostSQL {
     public static final String SQL_POST_UPDATE_VIEWS = "UPDATE post SET views = views + ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_LIKECOUNT = "UPDATE post SET like_count = like_count + ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_COMMENTCOUNT = "UPDATE post SET comment_count = comment_count + ? WHERE post_id = ?";
+
 }
