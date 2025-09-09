@@ -582,6 +582,8 @@ function reportComment(commentId) {
   console.log("신고 클릭됨, commentId =", commentId);
 }
 
+<<<<<<< HEAD
+=======
 
 
 
@@ -743,3 +745,4 @@ $(function () {
 });
 	
 
+>>>>>>> 22ce2eac0eab3928ada2e8be3630f767c7cc106e

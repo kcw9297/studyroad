@@ -2,6 +2,12 @@
  * homs.jsp 스크립트
  */
 
+<<<<<<< HEAD
+$(document).ready(function() {
+
+	
+	
+=======
 
 // 페이지 로드 시 실행
 $(document).ready(function () {
@@ -9,6 +15,7 @@ $(document).ready(function () {
   loadHomeList("2", ".home-list.news");   		// 뉴스
   loadHomeList("3", ".home-list.problem");   	// 문제공유
   loadHomeList("4", ".home-list.community");  	// 커뮤니티
+>>>>>>> 5e91cf8c49b7d6d0cac489c11c421317d6f38a52
 });
 
 

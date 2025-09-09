@@ -114,8 +114,7 @@ public class MemberServiceImpl implements MemberService {
 				}else {
 					throw new BusinessException("탈퇴 처리된 계정입니다");
 				}
-			}
-			
+
 			return new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus()); 
 			
 		} catch (DAOException e) {

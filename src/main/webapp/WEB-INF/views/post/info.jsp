@@ -87,6 +87,16 @@
 	</div>
 </article>
 
+<<<<<<< HEAD
+<div class="container reply">
+	<div class="reply-top">
+		<div class="reply-count">
+			<div>댓글</div>&nbsp;
+			<div>${data.commentCount}</div>
+		</div>
+		<div class="reply-notice">
+			<p>규칙 위반(욕설, 비방, 도배 등)은 사전 통보 없이 삭제될 수 있습니다.</p>
+=======
 <div class="container article-button">
 	<button type="button" onclick="location.href='/post/list.do?boardType=${boardType}&page=1'">목록</button>
 </div>
@@ -101,13 +111,24 @@
 			<div class="reply-notice">
 				<p>규칙 위반(욕설, 비방, 도배 등)은 사전 통보 없이 삭제될 수 있습니다.</p>
 			</div>
+>>>>>>> 5e91cf8c49b7d6d0cac489c11c421317d6f38a52
 		</div>
 		<fieldset class="reply-comment">
 			<textarea id="content" name="content" class="content" placeholder="댓글은 최대 ${maxLengthContentComment}byte 까지 입력 가능합니다."></textarea>
 			<button type="button" class="write parent">등록</button>
 		</fieldset>
 	</div>
+<<<<<<< HEAD
+	<fieldset class="reply-comment">
+		<textarea id="content" name="content" placeholder="댓글은 최대 ${maxLengthContentComment}byte 까지 입력 가능합니다."></textarea>
+		<button type="button" class="write parent">등록</button>
+	</fieldset>
+</div>
+
+<ul class="container reply-list"></ul>
+=======
 	<ul class="container reply-list"></ul>
 </c:if>
 
 
+>>>>>>> 5e91cf8c49b7d6d0cac489c11c421317d6f38a52
