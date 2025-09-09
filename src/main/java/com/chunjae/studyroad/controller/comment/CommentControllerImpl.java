@@ -182,8 +182,9 @@ public class CommentControllerImpl implements CommentController {
 
         Long commentId = Long.parseLong(request.getParameter("commentId"));
         Long memberId = loginMember.getMemberId();
+        String status = loginMember.getStatus();
         String content = request.getParameter("content");
-        return new CommentDTO.Edit(memberId, commentId, content);
+        return new CommentDTO.Edit(memberId, commentId, content, status);
 	}
 
 

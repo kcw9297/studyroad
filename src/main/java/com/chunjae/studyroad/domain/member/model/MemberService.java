@@ -87,14 +87,15 @@ public interface MemberService {
      * 회원정보 수정 - 회원 탈퇴 (활성화 → 탈퇴됨)
      * @param memberId  대상 회원번호 (PK)
      */
-    void quit(Long memberId);
+	void quit(Long memberId);
 
 
     /**
      * 회원정보 수정 - 회원 탈퇴 복구 (탈퇴됨 → 활성화)
-     * @param memberId  탈퇴 대상 회원번호
+     * @param email		복구 대상 이메일 문자열
+     * @return Long		복구에 성공한 대상 회원번호 반환 (PK)
      */
-    void recoverQuit(Long memberId);
+	Long recoverQuit(String email);
 
 
 }

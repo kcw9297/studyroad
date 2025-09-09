@@ -295,15 +295,21 @@ public class MemberControllerImpl implements MemberController {
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
 			long memberId = SessionUtils.getLoginMember(request).getMemberId();
 			
-			// [3] service 조회
+			
+			// [3] service 조회 - 탈퇴 처리
 	        memberService.quit(memberId); 
 	        postService.quit(memberId); 
 	        commentService.quit(memberId); 
 	        likeService.quit(memberId); 
 	        reportService.quit(memberId); 
+	        
+	        
+	        // [4] 세션 무효화 처리
+	        SessionUtils.invalidate(request);
 			
-			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+	        
+			// [5] JSON 응답 반환
+			APIResponse rp = APIResponse.success("회원 탈퇴요청에 성공했습니다.<br>로그인 페이지로 이동합니다", "/login.do");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		
@@ -330,10 +336,10 @@ public class MemberControllerImpl implements MemberController {
 
 			
 			// [2] FORM 요청 파라미터 확인 & 필요 시 DTO 생성
-			long memberId = SessionUtils.getLoginMember(request).getMemberId();
+			String email = request.getParameter("email");
 			
 			// [3] service 조회
-	        memberService.recoverQuit(memberId); 
+			Long memberId = memberService.recoverQuit(email); 
 	        postService.recoverQuit(memberId); 
 	        commentService.recoverQuit(memberId); 
 	        likeService.recoverQuit(memberId); 
@@ -341,7 +347,7 @@ public class MemberControllerImpl implements MemberController {
 			
 			
 			// [4] JSON 응답 반환
-			APIResponse rp = APIResponse.success("요청에 성공했습니다!");
+			APIResponse rp = APIResponse.success("탈퇴 취소처리에 성공했습니다. 다시 로그인해 주세요");
 			HttpUtils.writeJSON(response, JSONUtils.toJSON(rp), HttpServletResponse.SC_OK);
 			
 		

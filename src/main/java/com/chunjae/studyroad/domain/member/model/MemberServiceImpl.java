@@ -8,6 +8,7 @@ import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.exception.QuitException;
 import com.chunjae.studyroad.common.exception.ServiceException;
+import com.chunjae.studyroad.common.util.TimeUtils;
 import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
@@ -27,19 +28,7 @@ public class MemberServiceImpl implements MemberService {
 	
 	// 이미 생성한 인스턴스 제공
 	public static MemberServiceImpl getInstance() {
-		try {
-			return INSTANCE;
-		} catch (DAOException e) {
-			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
-			
-		} catch (BusinessException e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "MemberServiceImpl", e);
-			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
-			
-		} catch (Exception e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "MemberServiceImpl", e);
-			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
-		}
+		return INSTANCE;
 	}
 	
 	@Override
@@ -117,58 +106,26 @@ public class MemberServiceImpl implements MemberService {
 			if(!Objects.equals(password, memberInfo.getPassword())) 
 				throw new BusinessException("비밀번호가 일치하지 않습니다");
 			
-			if(Objects.equals("QUITED", memberInfo.getStatus()) && memberInfo.getQuitedAt() != null) {
-				if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) {
-					throw new QuitException("계정을 복구하시겠습니까?");
-				}else {
-					throw new BusinessException("탈퇴 처리된 계정입니다");
-				}
-<<<<<<< HEAD
-
-      
-
-=======
-=======
-
-
-			if(!Objects.equals(password, memberInfo.getPassword())) 
-				throw new BusinessException("비밀번호가 일치하지 않습니다");
-			
-<<<<<<< HEAD
-=======
->>>>>>> 181904a9fd7563dc6e74cf27c1f530e74ae93cbc
-			if(Objects.equals("QUITED", memberInfo.getStatus()) && Objects.nonNull(memberInfo.getQuitedAt())) {
-				if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) throw new QuitException("계정을 복구하시겠습니까?");
-				else throw new BusinessException("탈퇴 처리된 계정입니다");
-			}
-<<<<<<< HEAD
->>>>>>> 86b1cd23b0ff818af644d46017a3e58d9d1a5a5c
-=======
->>>>>>> 181904a9fd7563dc6e74cf27c1f530e74ae93cbc
->>>>>>> 4954c781b2cfab30990931b4f7fc3833414e2c36
-=======
-			}
->>>>>>> 22ce2eac0eab3928ada2e8be3630f767c7cc106e
-			
-			if(Objects.equals("QUITED", memberInfo.getStatus()) && memberInfo.getQuitedAt() != null) {
-				if(LocalDateTime.now().isAfter(memberInfo.getQuitedAt().toLocalDateTime())) {
-					throw new QuitException("계정을 복구하시겠습니까?");
+			if(Objects.equals(memberInfo.getStatus(), ValidationUtils.QUITED) && Objects.nonNull(memberInfo.getQuitedAt())) {
+				
+				if(LocalDateTime.now().isBefore(memberInfo.getQuitedAt().toLocalDateTime())) {
+					String msg = String.format("탈퇴 처리완료 기간 : %s<br>확인을 클릭하면 계정을 복구합니다", TimeUtils.formatKoreanDateTime(memberInfo.getQuitedAt().toLocalDateTime()));
+					throw new QuitException(msg);
 				}else {
 					throw new BusinessException("탈퇴 처리된 계정입니다");
 				}
 
-  
 			return new LoginMember(memberInfo.getMemberId(), memberInfo.getNickname(), memberInfo.getStatus()); 
 			
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
 			
-		} catch (BusinessException e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "editName", e);
+		} catch (BusinessException | QuitException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "login", e);
 			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
 			
 		} catch (Exception e) {
-			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "editName", e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "login", e);
 			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
 		}
 
@@ -177,8 +134,28 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	public MemberDTO.Info join(MemberDTO.Join request) {
-		Long memberId = memberDAO.save(request);
-		return getInfo(memberId);
+		
+		try {
+
+			if (memberDAO.findByEmail(request.getEmail()).isPresent())throw new BusinessException("");
+			if (memberDAO.findByNickname(request.getNickname()).isPresent()) throw new BusinessException("");
+			
+			Long memberId = memberDAO.save(request);
+			
+			return memberDAO.findById(memberId)
+					.orElseThrow(() -> new BusinessException("회원정보 조회에 실패했습니다<br>잠시 후에 다시 시도해 주세요"));
+			
+		} catch (DAOException e) {
+			throw e; // DB 예외와 비즈니스 예외는 바로 넘김
+			
+		} catch (BusinessException e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE_BUSINESS, "MemberServiceImpl", "join", e);
+			throw e; // 비즈니스 예외는 알림만 하고 그대로 던짐
+			
+		} catch (Exception e) {
+			System.out.printf(ValidationUtils.EX_MESSAGE_SERVICE, "MemberServiceImpl", "join", e);
+			throw new ServiceException(e); // 그 외의 예외는 서비스 예외로 넘김
+		}
 	}
   
 
@@ -314,7 +291,7 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public void quit(Long memberId) {
 	try {
-		if (!Objects.equals(memberDAO.updateStatus(memberId, "ACTIVE", "QUITED"), 1)) {
+		if (!Objects.equals(memberDAO.updateStatus(memberId, ValidationUtils.ACTIVE, ValidationUtils.QUITED), 1)) {
 		throw new BusinessException("회원 탈퇴에 실패했습니다");
 
 		
@@ -335,12 +312,22 @@ public class MemberServiceImpl implements MemberService {
 }
 
 	@Override
-	public void recoverQuit(Long memberId) {
+	public Long recoverQuit(String email) {
 	try {
-		if (!Objects.equals(memberDAO.updateStatus(memberId, "QUITED", "ACTIVE"), 1)) {
-		throw new BusinessException("회원 탈퇴 복구에 실패했습니다");
+		
+		// [1] 탈퇴 회원정보 조회
+		MemberDTO.Info memberInfo = 
+				memberDAO.findByEmail(email).orElseThrow(() -> new BusinessException("가입한 이메일이 존재하지 않습니다"));
+		
+		
+		// [2] 상태 갱신 수행 후, 회원번호 반환
+		Long memberId = memberInfo.getMemberId();
+		
+		if (!Objects.equals(memberDAO.updateStatus(memberId, ValidationUtils.QUITED, ValidationUtils.ACTIVE), 1))
+			throw new BusinessException("회원 탈퇴 복구에 실패했습니다");
+		
+		return memberId;
 
-		}
 
 	} catch (DAOException e) {
 		throw e; // DB 예외와 비즈니스 예외는 바로 넘김

@@ -107,7 +107,7 @@ function writeParent() {
 			
 			// 모달 띄우기
 			showAlertModal(response.alertMessage, function() {
-				if (response.redirectURL) window.location.href = response.redirectURL;
+				window.location.reload();
 			});	
 
 	    })
@@ -159,7 +159,7 @@ function writeChild() {
 			
 			// 모달 띄우기
 			showAlertModal(response.alertMessage, function() {
-				if (response.redirectURL) window.location.href = response.redirectURL;
+				window.location.reload();
 			});	
 
 	    })
@@ -188,20 +188,37 @@ function writeChild() {
 }
 
 function createParentHTML(parent) {
-  // 삭제된 댓글이면 별도 처리
-  if (parent.status === "REMOVED") {
-    const html = `
-      <li class="reply-row removed" data-reply-id="${parent.commentId}">
-        <div class="reply reply-parent removed">
-          <div class="reply-removed">삭제된 댓글입니다.</div>
-        </div>
-      </li>
-    `;
-    $(".container.reply-list").append(html);
-    return;
-  }
+	if (parent.status === "REMOVED") {
+	  let html;
+	  if (memberStatus === "ADMIN") {
+	    html = `
+	      <li class="reply-row removed" data-reply-id="${parent.commentId}">
+	        <div class="reply reply-parent removed">
+	          <div class="reply-top">
+	            <div class="article-member">
+	              <div>${parent.member.nickname}</div>
+	              <div>${formatDateTime(parent.writtenAt)}</div>
+	              <div class="reply-count">추천수 ${parent.likeCount}</div>
+	            </div>
+	          </div>
+	          <div class="reply-removed-admin">(삭제됨) ${parent.content}</div>
+	        </div>
+	      </li>
+	    `;
+	  } else {
+	    html = `
+	      <li class="reply-row removed" data-reply-id="${parent.commentId}">
+	        <div class="reply reply-parent removed">
+	          <div class="reply-removed">삭제된 댓글입니다.</div>
+	        </div>
+	      </li>
+	    `;
+	  }
+	  $(".container.reply-list").append(html);
+	  return;
+	}
 
-  // 기존 로직
+  // 기존 로직 (삭제되지 않은 댓글)
   const editButton = createEditBtnHTML(parent);
   const likeButton = creatLikeBtnHTML(parent);
   const reportButton = createReportBtnHTML(parent);
@@ -214,7 +231,7 @@ function createParentHTML(parent) {
           <div class="article-member">
             <div>${parent.member.nickname}</div>
             <div>${formatDateTime(parent.writtenAt)}</div>
-            <div class="reply-count">추천수 ${parent.likeCount}</span></div>
+            <div class="reply-count">추천수 ${parent.likeCount}</div>
           </div>
           <div class="article-system">
             ${editButton}
@@ -229,7 +246,6 @@ function createParentHTML(parent) {
   `;
   $(".container.reply-list").append(html);
 
-  // 자식 댓글도 생성
   if (parent.childes && parent.childes.length > 0) {
     parent.childes.forEach(child => {
       createChildHTML(parent.commentId, child);
@@ -239,20 +255,37 @@ function createParentHTML(parent) {
 
 
 function createChildHTML(parentId, child) {
-  // 삭제된 댓글이면 별도 처리
-  if (child.status === "REMOVED") {
-    const newHtml = `
-      <div class="reply reply-child removed" data-reply-id="${child.commentId}">
-        <div class="reply-inner">
-          <div class="reply-removed">삭제된 댓글입니다.</div>
-        </div>
-      </div>
-    `;
-    $(`.reply-row[data-reply-id="${parentId}"]`).append(newHtml);
-    return;
-  }
+	if (child.status === "REMOVED") {
+	  let newHtml;
+	  if (memberStatus === "ADMIN") {
+	    newHtml = `
+	      <div class="reply reply-child removed" data-reply-id="${child.commentId}">
+	        <div class="reply-inner">
+	          <div class="reply-top">
+	            <div class="article-member">
+	              <div>${child.member.nickname}</div>
+	              <div>${formatDateTime(child.writtenAt)}</div>
+	              <div class="reply-count">추천수 ${child.likeCount}</div>
+	            </div>
+	          </div>
+	          <div class="reply-removed-admin">(삭제됨) ${child.content}</div>
+	        </div>
+	      </div>
+	    `;
+	  } else {
+	    newHtml = `
+	      <div class="reply reply-child removed" data-reply-id="${child.commentId}">
+	        <div class="reply-inner">
+	          <div class="reply-removed">삭제된 댓글입니다.</div>
+	        </div>
+	      </div>
+	    `;
+	  }
+	  $(`.reply-row[data-reply-id="${parentId}"]`).append(newHtml);
+	  return;
+	}
 
-  // 기존 로직
+  // 기존 로직 (삭제되지 않은 댓글)
   const mentionNick = child.mentionId ? commentNicknameMap.get(child.mentionId) : null;
   const editButton = createEditBtnHTML(child);
   const likeButton = creatLikeBtnHTML(child);
@@ -284,7 +317,6 @@ function createChildHTML(parentId, child) {
   `;
   $(`.reply-row[data-reply-id="${parentId}"]`).append(newHtml);
 }
-
 
 
 
@@ -338,7 +370,7 @@ function editComment(commentId, newContent) {
 			
 			// 부모 댓글 생성 (부모 내 자식댓글이 있으면 함께 생성)
 			showAlertModal(response.alertMessage, function() {
-				if (response.redirectURL) window.location.href = response.redirectURL;
+				window.location.reload();
 			})
 	    })
 	    .catch(xhr => {
@@ -353,7 +385,8 @@ function editComment(commentId, newContent) {
 			if (response.errorCode === 2) {
 				showConfirmModal(msg, function() {
 					if (response.redirectURL) {
-						window.location.href = response.redirectURL + "?returnURL=/post/info.do?boardType="+boardType+"postId="+postId;
+						const returnURL = `/post/info.do?boardType=${encodeURIComponent(boardType)}&postId=${encodeURIComponent(postId)}`;
+						window.location.href = response.redirectURL + "?returnURL=" + encodeURIComponent(returnURL);
 					}
 				});
 				
@@ -394,7 +427,8 @@ function removePost(postId) {
 				if (response.errorCode === 2) {
 					showConfirmModal(msg, function() {
 						if (response.redirectURL) {
-							window.location.href = response.redirectURL + "?returnURL=/post/info.do?boardType="+boardType+"postId="+postId;
+							const returnURL = `/post/list.do?boardType=${encodeURIComponent(boardType)}&page=${encodeURIComponent(1)}`;
+							window.location.href = response.redirectURL + "?returnURL=" + encodeURIComponent(returnURL);
 						}
 					});
 					
@@ -424,7 +458,7 @@ function removeComment(commentId) {
 				
 				// 부모 댓글 생성 (부모 내 자식댓글이 있으면 함께 생성)
 				showAlertModal(response.alertMessage, function() {
-					if (response.redirectURL) window.location.href = response.redirectURL;
+					window.location.reload();
 				})
 		    })
 		    .catch(xhr => {
@@ -439,7 +473,8 @@ function removeComment(commentId) {
 				if (response.errorCode === 2) {
 					showConfirmModal(msg, function() {
 						if (response.redirectURL) {
-							window.location.href = response.redirectURL + "?returnURL=/post/info.do?boardType="+boardType+"postId="+postId;
+							const returnURL = `/post/info.do?boardType=${encodeURIComponent(boardType)}&postId=${encodeURIComponent(postId)}`;
+							window.location.href = response.redirectURL + "?returnURL=" + encodeURIComponent(returnURL);
 						}
 					});
 					
@@ -555,7 +590,7 @@ function reportComment(commentId) {
 
 function createEditBtnHTML(comment) {
 	
-  if (comment.member.memberId === loginMemberId) {
+  if (comment.member.memberId === loginMemberId || memberStatus === "ADMIN") {
     return `
       <a href="javascript:void(0)" class="article-update" onclick="openEditUI(${comment.commentId})">
         <img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
@@ -566,7 +601,7 @@ function createEditBtnHTML(comment) {
 
 function creatLikeBtnHTML(comment) {
 	
-  if (comment.member.memberId !== loginMemberId) {
+  if (comment.member.memberId !== loginMemberId && memberStatus !== "ADMIN") {
     return `
 			<a href="javascript:void(0)" class="article-like" onclick="likeComment(${comment.commentId})">
 		      <img src="/file/display.do?fileName=recommend1.png&type=BASE" width="16" height="16"/>추천
@@ -579,7 +614,7 @@ function creatLikeBtnHTML(comment) {
 
 function createReportBtnHTML(comment) {
 	
-  if (comment.member.memberId !== loginMemberId) {
+  if (comment.member.memberId !== loginMemberId && memberStatus !== "ADMIN") {
     return `
 			<a href="javascript:void(0)" class="article-report" onclick="reportComment(${comment.commentId})">
 		      <img src="/file/display.do?fileName=report.png&type=BASE" width="16" height="16"/>신고
@@ -592,7 +627,7 @@ function createReportBtnHTML(comment) {
 
 function createRemoveBtnHTML(comment) {
 	
-  if (comment.member.memberId === loginMemberId) {
+  if (comment.member.memberId === loginMemberId || memberStatus === "ADMIN") {
     return `
 			<a href="javascript:void(0)" class="article-remove" onclick="removeComment(${comment.commentId})">
 		      <img src="/file/display.do?fileName=delete3.png&type=BASE" width="16" height="16"/>삭제

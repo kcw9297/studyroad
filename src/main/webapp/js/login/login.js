@@ -45,10 +45,20 @@ $(document).ready(function() {
 				// 실패 응답 JSON 파싱 후 보기
 				const response = xhr.responseJSON || {};
 				console.log("실패 응답:", response);
-				
-				// 실패 응답 메세지를 로그인 페이지에 출력
-				const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
-				$(".login-error").text(msg).show();
+
+				if (response.errorCode === 2) {
+					
+					showConfirmModal(response.alertMessage, function() {
+						sendRecoverAJAX($("#email").val());
+					})
+					
+				} else {
+					
+					// 실패 응답 메세지를 로그인 페이지에 출력
+					const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
+					$(".login-error").text(msg).show();
+				}
+
 		    });
 	});
 	
@@ -97,6 +107,7 @@ $(document).ready(function() {
 						const response = xhr.responseJSON || {};
 						console.log("실패 응답:", response);
 						
+						
 						// 실패 응답 메세지를 로그인 페이지에 출력
 						const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
 						$(".modal.find-password.field").text(msg);
@@ -109,6 +120,49 @@ $(document).ready(function() {
 
 	
 });
+
+
+
+function sendRecoverAJAX(email) {
+	
+	// 제출 폼
+	const form = new FormData();
+	form.append("email", email);
+
+	// AJAX 비동기 요청 수행
+	sendRequest("/api/member/recover-quit.do", "post", form)
+	    .then(response => {
+			
+			// 응답 JSON 보기
+			console.log("성공 응답:", response);
+			
+			// 에러 메세지 비우기
+			$("#email").text("").show();
+			$("#password").text("").show();
+			$(".login-error").text("").show();
+			
+			// 응답 모달 띄움
+			showAlertModal(response.alertMessage || "탈퇴 복구 처리에 성공했습니다",
+				function() { if (response.redirectURL) {window.location.href = response.redirectURL }}
+			);
+	    })
+	    .catch(xhr => {
+			
+			// 실패 응답 JSON 파싱 후 보기
+			const response = xhr.responseJSON || {};
+			console.log("실패 응답:", response);
+
+				
+			// 실패 응답 메세지를 로그인 페이지에 출력
+			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
+			$(".login-error").text(msg).show();
+			
+			showAlertModal(msg, function() {
+				closeModal("#alertModal");
+			})
+
+	    });
+}
 	
 
 

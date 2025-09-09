@@ -64,7 +64,16 @@ function sendAJAX(form) {
 			
 			// 실패 응답 메세지를 로그인 페이지에 출력
 			const msg = response.alertMessage || "잠시 후에 다시 시도해 주세요";
-			showAlertModal(response.alertMessage);
+			if (response.errorCode === 2) {
+				showConfirmModal(msg, function() {
+					if (response.redirectURL) {
+						window.location.href = response.redirectURL + "?returnURL=/post/write.do?boardType="+boardType;
+					}
+				});
+				
+			} else {
+				showAlertModal(msg);
+			}
 	    });
 }
 

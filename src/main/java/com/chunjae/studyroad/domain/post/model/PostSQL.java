@@ -12,10 +12,11 @@ class PostSQL {
     public static final String SQL_POST_FIND_BY_BOARD_TYPE_AND_IS_NOTICE_TRUE = "SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = true AND board_type = ? ORDER BY written_at DESC";
     public static final String SQL_FIND_ALL_BY_BOARD_TYPE = "SELECT p.*, m.nickname, m.email FROM post p JOIN member m ON p.member_id = m.member_id WHERE p.status = 'EXIST' AND p.is_notice = false AND board_type = ? ORDER BY written_at DESC LIMIT ?";
     public static final String SQL_POST_SAVE = "INSERT INTO post(member_id, title, board_type, category, grade, content, is_notice) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    public static final String SQL_POST_UPDATE = "UPDATE post SET title = ?, category = ?, grade = ?, content = ? WHERE post_id = ? AND member_id = ?";
+    public static final String SQL_POST_UPDATE = "UPDATE post SET title = ?, category = ?, grade = ?, content = ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_STATUS = "UPDATE post SET status = ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_STATUS_BY_MEMBERID = "UPDATE post SET status = ? WHERE member_id = ? AND status = ?";
     public static final String SQL_POST_UPDATE_VIEWS = "UPDATE post SET views = views + ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_LIKECOUNT = "UPDATE post SET like_count = like_count + ? WHERE post_id = ?";
     public static final String SQL_POST_UPDATE_COMMENTCOUNT = "UPDATE post SET comment_count = comment_count + ? WHERE post_id = ?";
+
 }

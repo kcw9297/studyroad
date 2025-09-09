@@ -1,20 +1,12 @@
 package com.chunjae.studyroad.domain.post.model;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.sql.DataSource;
+import java.util.*;
 
 import com.chunjae.studyroad.common.dto.Page;
-import com.chunjae.studyroad.common.exception.AccessException;
 import com.chunjae.studyroad.common.exception.BusinessException;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.exception.ServiceException;
-import com.chunjae.studyroad.common.util.DAOUtils;
 import com.chunjae.studyroad.common.util.ValidationUtils;
-import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.post.dto.PostDTO;
 
 /**
@@ -154,9 +146,9 @@ public class PostServiceImpl implements PostService {
 	public void edit(PostDTO.Edit request) {
 		
 		try {
-			if (!Objects.equals(postDAO.update(request), 1)) {
-			throw new BusinessException("게시글 수정 실패하셨습니다");
 
+			if (!Objects.equals(postDAO.update(request), 1)) {
+				throw new BusinessException("게시글 수정 실패하셨습니다");
 			}
 		} catch (DAOException e) {
 			throw e; // DB 예외와 비즈니스 예외는 바로 넘김

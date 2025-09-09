@@ -82,6 +82,14 @@ public class MemberDTO {
              this.nickname = nickname;
              this.email = email;
          }
+         
+         public Info(Long memberId, String nickname, String email, String status) {
+             this.memberId = memberId;
+             this.nickname = nickname;
+             this.email = email;
+             this.status = status;
+         }
+
 
          
          public Info(Long memberId, String name, String nickname, String email, String password, String zipcode, String address, Timestamp joinedAt, Timestamp quitedAt, Timestamp banEndAt, String status) {

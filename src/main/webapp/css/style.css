@@ -39,7 +39,9 @@ input, textarea, select, button {font-family:inherit;}
 .header-menu {display:flex; gap:30px; font-size:var(--menu); font-weight:700;}
 .header-menu a:hover{color:var(--main);}
 
-
+.header-menu a.active {
+  color: var(--main);
+}
 
 /* ===== 푸터 ===== */
 .footer{background:white; border-top:1px solid var(--gray-line);}
@@ -202,7 +204,7 @@ input, textarea, select, button {font-family:inherit;}
 .pagination span{color:var(--gray-text); font-size:var(--medium); cursor:pointer;}
 .pagination span:hover{color:var(--main); font-weight:700;}
 .pagination .now{color:var(--main);}
-.board-new{display:flex; justify-content:flex-end;}
+.board-new{display:flex; justify-content:flex-end; padding:0 10px 30px 10px;}
 .board-new button{font-size:var(--medium); color:white; background:var(--main); border-radius:3px; border:none; padding:10px 20px;}
 .board-new button:hover{background:var(--hover);}
 
@@ -390,6 +392,14 @@ input, textarea, select, button {font-family:inherit;}
   box-sizing:border-box;
 }
 
+.reply-removed-admin {
+  background-color: #f9f9f9;
+  color: #888;
+  font-style: italic;
+  padding: 6px;
+  border-radius: 4px;
+}
+
 /* ===== 댓글 작성폼 (등록) ===== */
 .write-form textarea {
   width:100%;
@@ -438,6 +448,8 @@ input, textarea, select, button {font-family:inherit;}
 .edit-form .edit-buttons .edit.cancel:hover {
   background:#bdbdbd;
 }
+
+
 
 
 /* ===== 글쓰기 ===== */

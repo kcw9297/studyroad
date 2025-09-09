@@ -2,13 +2,13 @@ package com.chunjae.studyroad.domain.comment.model;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.sql.DataSource;
 
 import com.chunjae.studyroad.common.dto.Page;
 import com.chunjae.studyroad.common.exception.DAOException;
 import com.chunjae.studyroad.common.util.DAOUtils;
+import com.chunjae.studyroad.common.util.ValidationUtils;
 import com.chunjae.studyroad.domain.comment.dto.CommentDTO;
 import com.chunjae.studyroad.domain.member.dto.MemberDTO;
 
@@ -42,8 +42,8 @@ class CommentDAOImpl implements CommentDAO {
 			int size = request.getSize();
 			String order;
 			switch(params.getOrder()) {
-				case "1": order = "written_at ASC"; break;
-			    case "2": order = "written_at DESC"; break;
+				case "1": order = "written_at DESC"; break;
+			    case "2": order = "written_at ASC"; break;
 			    case "3": order = "like_count DESC"; break;
 			    default: order = "written_at ASC"; break;
 			}
@@ -81,11 +81,11 @@ class CommentDAOImpl implements CommentDAO {
 			
 			
 		} catch (SQLException e) {
-			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "search" , e);
 			throw new DAOException(e);
-			
+
 		} catch (Exception e) {
-			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "search" , e);
 			throw new DAOException(e);
 		}
 	}
@@ -167,11 +167,11 @@ class CommentDAOImpl implements CommentDAO {
 				return info;
 			}
 		} catch (SQLException e) {
-			System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "findAllChildByParentIds" , e);
 			throw new DAOException(e);
-			
+
 		} catch (Exception e) {
-			System.out.printf(DAOUtils.MESSAGE_EX, e);
+			System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "findAllChildByParentIds" , e);
 			throw new DAOException(e);
 		}
 	}
@@ -192,11 +192,11 @@ class CommentDAOImpl implements CommentDAO {
 	   			return Optional.ofNullable(mapToInfo(pstmt));
 				
 			} catch (SQLException e) {
-				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "findbyId" , e);
 				throw new DAOException(e);
-				
+
 			} catch (Exception e) {
-				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "findbyId" , e);
 				throw new DAOException(e);
 			}
 	}
@@ -242,11 +242,11 @@ class CommentDAOImpl implements CommentDAO {
 				return executeAndGetGeneratedKeys(pstmt);
 				
 			} catch (SQLException e) {
-				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "save" , e);
 				throw new DAOException(e);
-				
+
 			} catch (Exception e) {
-				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "save" , e);
 				throw new DAOException(e);
 			}
 	}
@@ -277,11 +277,11 @@ class CommentDAOImpl implements CommentDAO {
 				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
-				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "update" , e);
 				throw new DAOException(e);
-				
+
 			} catch (Exception e) {
-				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "update" , e);
 				throw new DAOException(e);
 			}
 	}
@@ -301,14 +301,15 @@ class CommentDAOImpl implements CommentDAO {
 				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
-				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "updateLikeCount" , e);
 				throw new DAOException(e);
-				
+
 			} catch (Exception e) {
-				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "updateLikeCount" , e);
 				throw new DAOException(e);
 			}
 	}
+	
 
 
 	@Override
@@ -325,11 +326,11 @@ class CommentDAOImpl implements CommentDAO {
 				return pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
-				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "updateStatus" , e);
 				throw new DAOException(e);
-				
+
 			} catch (Exception e) {
-				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "updateStatus" , e);
 				throw new DAOException(e);
 			}
 	}
@@ -351,11 +352,11 @@ class CommentDAOImpl implements CommentDAO {
 				pstmt.executeUpdate();
 				
 			} catch (SQLException e) {
-				System.out.printf(DAOUtils.MESSAGE_SQL_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO_SQL, "CommentDAOImpl", "updateStatusByMemberId" , e);
 				throw new DAOException(e);
-				
+
 			} catch (Exception e) {
-				System.out.printf(DAOUtils.MESSAGE_EX, e);
+				System.out.printf(ValidationUtils.EX_MESSAGE_DAO, "CommentDAOImpl", "updateupdateStatusByMemberIdStatus" , e);
 				throw new DAOException(e);
 			}
 	}

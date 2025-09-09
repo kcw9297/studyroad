@@ -123,8 +123,9 @@ public class CommentServiceImpl implements CommentService {
 		
 			
 			// [2] 검증 - 작성자가 아닌 경우 예외 반환
-			if (!Objects.equals(info.getMember().getMemberId(), request.getMemberId()))
-				throw new AccessException("접근 권한이 없습니다");
+			if (!Objects.equals(info.getMember().getMemberId(), request.getMemberId()) && 
+					!Objects.equals(request.getStatus(), ValidationUtils.ADMIN))
+				throw new BusinessException("접근 권한이 없습니다");
 
 			
 			// [3] - 수정 시도 후, 실패 시 예외 반환

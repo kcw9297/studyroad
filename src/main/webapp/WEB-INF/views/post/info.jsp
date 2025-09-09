@@ -19,7 +19,7 @@
 <article class="container article">
 	<div class="article-top">
 		<div class="article-type">
-			<div class="article-category">${data.categoryName}</div><c:if test="${boardType} == '3'">|</c:if>
+			<div class="article-category">${allCategories[data.category]}</div><c:if test="${boardType} == '3'">|</c:if>
 			<c:if test="${boardType} == '3'">
 				<div class="article-grade">${data.grade}</div>
 			</c:if>
@@ -34,50 +34,45 @@
 			</div>
 		<div class="article-system">
 
-		    <!-- 로그인 상태 -->
-		    <c:if test="${not empty loginMember}">
-		
-		        <!-- 수정 버튼 -->
-				<c:if test="${data.member.memberId eq loginMember.memberId}">
-				    <a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update">
-				        <img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
-				    </a>
-				</c:if>
-				
-				<c:if test="${loginMember.status eq 'ADMIN' and (boardType ne '3' and boardType ne '4')}">
-				    <a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update">
-				        <img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
-				    </a>
-				</c:if>
-		
-		        <!-- 삭제 버튼 -->
-		        <c:if test="${data.member.memberId eq loginMember.memberId or loginMember.status eq 'ADMIN'}">
-		            <a href='javascript:void(0)' class="article-remove" onclick="removePost(${data.postId})">
-		                <img src="/file/display.do?fileName=delete3.png&type=BASE" width="16" height="16"/>삭제
-		            </a>
-		        </c:if>
-		
-		        <!-- 추천 버튼 -->
-		        <c:if test="${data.member.memberId ne loginMember.memberId and (boardType eq '2' or boardType eq '3' or boardType eq '4')}">
-		            <a class="article-like" href='javascript:void(0)' onclick="likePost(${data.postId})">
-		                <img src="/file/display.do?fileName=recommend1.png&type=BASE" width="16" height="16"/>추천
-		            </a>
-		        </c:if>
-		
-		        <!-- 신고 버튼 -->
-		        <c:if test="${data.member.memberId ne loginMember.memberId 
-		                     and not data.notice 
-		                     and boardType ne '1' 
-		                     and boardType ne '2'}">
-		            <a class="article-report" href='javascript:void(0)' onclick="reportPost(${data.postId})">
-		                <img src="/file/display.do?fileName=report.png&type=BASE" width="16" height="16"/>신고
-		            </a>
-		        </c:if>
-		
-		    </c:if>
-		
-		</div>
-		
+				<c:choose>
+					<c:when test="${empty loginMember}">
+						<a class="article-like" href="javascript:void(0)" onclick="likePost(${data.postId})">
+							<img src="/file/display.do?fileName=recommend1.png&type=BASE" width="16" height="16"/>추천
+						</a>
+						<a class="article-report" href="javascript:void(0)" onclick="reportPost(${data.postId})">
+							<img src="/file/display.do?fileName=report.png&type=BASE" width="16" height="16"/>신고
+						</a>
+					</c:when>
+					<c:otherwise>
+						<c:choose>
+							<c:when test="${data.member.memberId eq loginMember.memberId}">
+								<a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update">
+									<img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
+								</a>
+								<a href='javascript:void(0)' class="article-remove" onclick="removePost(${data.postId})">
+									<img src="/file/display.do?fileName=delete3.png&type=BASE" width="16" height="16"/>삭제
+								</a>
+							</c:when>
+							<c:when test="${loginMember.status eq 'ADMIN'}">
+								<a href='/post/edit.do?boardType=${boardType}&postId=${data.postId}' class="article-update">
+									<img src="/file/display.do?fileName=update2.png&type=BASE" width="16" height="16"/>수정
+								</a>
+								<a href='javascript:void(0)' class="article-remove" onclick="removePost(${data.postId})">
+									<img src="/file/display.do?fileName=delete3.png&type=BASE" width="16" height="16"/>삭제
+								</a>
+							</c:when>
+							<c:otherwise>
+								<a class="article-like" href="javascript:void(0)" onclick="likePost(${data.postId})">
+									<img src="/file/display.do?fileName=recommend1.png&type=BASE" width="16" height="16"/>추천
+								</a>
+								<a class="article-report" href="javascript:void(0)" onclick="reportPost(${data.postId})">
+									<img src="/file/display.do?fileName=report.png&type=BASE" width="16" height="16"/>신고
+								</a>
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+			</div>
 		</div>
 	</div>
 	<div class="article-content">

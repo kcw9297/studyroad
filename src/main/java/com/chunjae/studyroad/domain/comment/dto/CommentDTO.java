@@ -169,11 +169,13 @@ public class CommentDTO {
     	private Long memberId;
         private Long commentId;
         private String content;
+        private String status;
 
-        public Edit(Long memberId, Long commentId, String content) {
+        public Edit(Long memberId, Long commentId, String content, String status) {
         	this.memberId = memberId;
             this.commentId = commentId;
             this.content = content;
+            this.status = status;
         }
         
         public Long getMemberId() {
@@ -186,6 +188,10 @@ public class CommentDTO {
 
         public String getContent() {
             return content;
+        }
+        
+        public String getStatus() {
+            return status;
         }
     }
     

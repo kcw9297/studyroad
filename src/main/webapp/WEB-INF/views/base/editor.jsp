@@ -29,15 +29,21 @@
 		        ['table', ['table']],
 		        ['para', ['ul', 'ol', 'paragraph']],
 		        ['height', ['height']],
-		        ['insert',['link']], //이미지와 비디오는 당장 제외하였음
+		        ['insert',['picture','link','video']],
 		        ['view', ['fullscreen', 'help']]
 		      ],
 		      fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋움체','바탕체'],
 		      fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
 		    });
 		
+		    // 기존 내용 세팅
+		    const oldContent = $(window.parent.document).find("#content").val();
+		    if (oldContent) {
+		      $('#summernote').summernote('code', oldContent);
+		    }
+
+		    // 변경 시 다시 부모창에 저장
 		    $('#summernote').on('summernote.change', function(we, contents) {
-		      // 부모창 hidden input에 값 전달
 		      $(window.parent.document).find("#content").val(contents);
 		    });
 		  });
